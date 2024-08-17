@@ -14,7 +14,17 @@ import AllMessages from "@/app/components/ai/AllMessages"
 
 
 export default function Home() {
-
+    const messages = [{
+        role: 'user',
+        content: 'hello ai' ,
+        id: 'gsfdsdfsdf'
+    }
+        , {
+        role: 'ai',
+        content: 'hello user!' , 
+        id: 'gsdfczxczxc'
+    }
+    ]
     const [sideBarIsOpened, setSideBarIsOpened] = useState(true)
 
     let chatLayout = sideBarIsOpened ? "row " : "column"
@@ -38,7 +48,7 @@ export default function Home() {
                             <IoMdClose className=" hover:text-red-800 ease-in-out duration-300" size={40} onClick={() => setSideBarIsOpened(false)} />
 
                             <div className="flex flex-col h-[70%] justify-evenly ">
-                            <button className="bg-green-500 px-4 py-1 rounded-full ease-in-out duration-300 flex text-sm justify-center items-center gap-2 hover:bg-green-600 active:opacity-70">New Chat <IoIosAddCircleOutline size={30}/> </button>
+                                <button className="bg-green-500 px-4 py-1 rounded-full ease-in-out duration-300 flex text-sm justify-center items-center gap-2 hover:bg-green-600 active:opacity-70">New Chat <IoIosAddCircleOutline size={30} /> </button>
 
                                 <span className=" lg:text-lg font-semibold flex flex-col gap-3">
                                     current chat
@@ -48,10 +58,10 @@ export default function Home() {
 
                                 <span className=" lg:text-lg font-semibold flex flex-col gap-3">
                                     old chats
-                                    <p className=" flex gap-2 items-center text-sm rounded-[4px] font-light active:opacity-60 p-2 ease-in-out duration-300 w-full text-center group hover:bg-green-500"> old chat name <SlOptions size={20} className=" hidden group-hover:block "/> </p>
-                                    <p className=" flex gap-2 items-center text-sm rounded-[4px] font-light active:opacity-60 p-2 ease-in-out duration-300 w-full text-center group hover:bg-green-500"> old chat name <SlOptions size={20} className=" hidden group-hover:block "/> </p>
-                                    <p className=" flex gap-2 items-center text-sm rounded-[4px] font-light active:opacity-60 p-2 ease-in-out duration-300 w-full text-center group hover:bg-green-500"> old chat name <SlOptions size={20} className=" hidden group-hover:block "/> </p>
-                                    <p className=" flex gap-2 items-center text-sm rounded-[4px] font-light active:opacity-60 p-2 ease-in-out duration-300 w-full text-center group hover:bg-green-500"> old chat name <SlOptions size={20} className=" hidden group-hover:block "/> </p>
+                                    <p className=" flex gap-2 items-center text-sm rounded-[4px] font-light active:opacity-60 p-2 ease-in-out duration-300 w-full text-center group hover:bg-green-500"> old chat name <SlOptions size={20} className=" hidden group-hover:block " /> </p>
+                                    <p className=" flex gap-2 items-center text-sm rounded-[4px] font-light active:opacity-60 p-2 ease-in-out duration-300 w-full text-center group hover:bg-green-500"> old chat name <SlOptions size={20} className=" hidden group-hover:block " /> </p>
+                                    <p className=" flex gap-2 items-center text-sm rounded-[4px] font-light active:opacity-60 p-2 ease-in-out duration-300 w-full text-center group hover:bg-green-500"> old chat name <SlOptions size={20} className=" hidden group-hover:block " /> </p>
+                                    <p className=" flex gap-2 items-center text-sm rounded-[4px] font-light active:opacity-60 p-2 ease-in-out duration-300 w-full text-center group hover:bg-green-500"> old chat name <SlOptions size={20} className=" hidden group-hover:block " /> </p>
                                 </span>
 
 
@@ -70,7 +80,7 @@ export default function Home() {
                                 </div>
                             </div>
                             <div className=" bg-neutral-300 px-2 pt-4 lg:px-4 rounded-b-xl w-full flex-1 flex-col lg:overflow-y-scroll flex z-10 relative scrollbar-thin">
-                                <AllMessages/>
+                                <AllMessages messages={messages} />
                                 <MessageInput />
                             </div>
                         </div>
