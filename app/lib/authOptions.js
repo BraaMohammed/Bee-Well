@@ -51,7 +51,7 @@ export const authOptions = {
         if (account.provider === 'google') {
           const name = user.name
           const email = user.email
-          const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+          const baseUrl = process.env.NEXTAUTH_URL || 'https://bee-well.vercel.app'
   
          const res = await fetch(`${baseUrl}/api/auth/signup`, {
             method: 'POST',
