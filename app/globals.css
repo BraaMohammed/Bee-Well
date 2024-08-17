@@ -1,0 +1,229 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+body {
+  margin: 0;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.editor-shell{
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+
+
+
+.toolbar{
+  
+  display: flex;
+  flex-wrap: wrap;
+  height: 130px !important;
+  gap: 5px;
+  z-index: 35;
+  border-radius: 10px;
+  justify-content: center;
+}
+
+.ContentEditable__root{
+  background-color: transparent;
+}
+
+.toolbar * {
+  z-index: 60;
+}
+
+.color-picker-wrapper {
+  z-index: 60;
+}
+
+.editor-container {
+  background-color: red; /* working */
+}
+
+.dropdown {
+  position: relative; /* Add position relative */
+  z-index: 70 !important; /* Keep your z-index */
+}
+
+
+.color-picker-wrapper {
+  z-index: 60 !important;
+}
+
+
+body .dropdown  , .character-style-popup ,.link-editor {
+  z-index: 70 !important;
+}
+
+.editor-container{
+  background-color: transparent;
+}
+
+.editor-shell .editor-container {
+  background-color: transparent !important;
+  width: 100%;
+
+}
+
+.color-picker-wrapper span {
+ color: black;
+}
+
+
+.Modal__content input{
+  color: black;
+}
+
+
+.Modal__content button{
+  background-color: rgb(64 64 64 );
+}
+
+.editor-container img{
+  max-width: 100% !important;
+}
+
+.toolbar button.toolbar-item{
+  align-items: center;
+}
+
+.toolbar div{
+  display: flex;
+  align-items: center;
+}
+
+.toolbar select{
+  display: flex;
+  align-items: center;
+}
+
+.chevron-down{
+  align-self: center;
+}
+
+
+.ContentEditable__root iframe {
+  max-width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+
+/*chatgpt code for list and bullets style */
+
+/* Checklist Styling */
+li[role="checklist"] {
+  list-style-type: none; /* Remove default list styling */
+  position: relative;
+  padding-left: 25px; /* Adjust this value as needed */
+}
+
+li[role="checklist"]::before {
+  content: "☐"; /* Unicode character for an empty checkbox */
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateY(50%);
+  cursor: pointer; /* Change cursor to pointer for better UX */
+  color: white; /* Set checkbox color to white */
+}
+
+/* Optional: Add a checked state */
+li[role="checklist"].checked::before {
+  content: "☑"; /* Unicode character for a checked checkbox */
+  color: white; /* Set checked checkbox color to white */
+}
+
+/* Bullet Point Styling */
+ul {
+  list-style-type: disc; /* Disc bullet points */
+  margin-left: 20px; /* Adjust the indentation as needed */
+}
+
+ul li::marker {
+  color: white; /* Set bullet color to white */
+}
+
+/* Numbered List Styling */
+ol {
+  list-style-type: decimal; /* Decimal numbers */
+  margin-left: 20px; /* Adjust the indentation as needed */
+}
+
+ol li::marker {
+  color: white; /* Set number color to white */
+}
+
+
+li[role="checkbox"] {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+li[role="checkbox"]::before {
+  content: '';
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  border: 2px solid #555;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+li[role="checkbox"][aria-checked="true"]::before {
+  content: '\2705';
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  background: none;
+}
+
+
+.ContentEditable__root * {
+  line-height: 1.5;
+}
+
+
+#typeahead-menu {
+  z-index: 70;
+}
