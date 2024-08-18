@@ -101,7 +101,7 @@ const SelectedDayAnalytics = ({ dailyEntriesFromDb ,  trackedHabbitsFromDb }) =>
       <CardContent className="flex-1 flex items-center justify-center">
         <ChartContainer
           config={chartConfig}
-          className="w-full min-h-[13rem]    max-w-full "
+          className="w-full lg:min-h-[13rem] md:min-h-[13rem]    max-w-full "
         >
           <RadialBarChart
             data={chartData}

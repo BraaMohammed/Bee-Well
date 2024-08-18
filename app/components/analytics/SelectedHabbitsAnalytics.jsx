@@ -242,7 +242,7 @@ const SelectedHabbitsAnalytics = ({ dailyEntriesFromDb, trackedHabbitsFromDb }) 
         <HabbitPicker setSelectedHabbitsAnalytics={setSelectedHabbitsAnalytics} setSelectedCategoryAnalytics={setSelectedCategoryAnalytics} trackedHabbitsFromDb={trackedHabbitsFromDb} />
       </CardHeader>
       <CardContent>
-        <ChartContainer className="h-[200px] w-full" config={chartConfig}>
+        <ChartContainer className=" md:h-[200px] lg:h-[200px] w-full" config={chartConfig}>
           <AreaChart
             accessibilityLayer
             data={currentPlotData.length > 0 ? currentPlotData : chartData} //default chartData
