@@ -3,21 +3,21 @@ import { CiEdit } from "react-icons/ci";
 import { CiSquareRemove } from "react-icons/ci";
 import CardFocuesdTwo from "./CardFocuesdTwo";
 import { useEffect, useState } from "react";
-import { convertStateToHtml } from "../actions/convertStateToHtml";
 import saveNote from "../actions/saveNote";
 import { format } from "date-fns";
 import { IoMdClose } from "react-icons/io";
+import addTailwindClasses from "../actions/experemental/addTailwindClasses";
+import parse from 'html-react-parser';
 
 
-
-
-const Card = ({headingContentFromTheDb, intialContentFocused , id , refreshFunction , labelFromDb , backgroundColorFromDb , dateFromDb }) => {
+const Card = ({headingContentFromTheDb, intialContentFocused , id , refreshFunction , labelFromDb , backgroundColorFromDb , dateFromDb , htmlIntialContent }) => {
 
   const [isClicked, setIsClicked] = useState(false)
   const [cardMovedToDeleted , setCardMovedToDeleted] = useState(false)
   const [prevScrollPos, setPrevScrollPos] = useState(0); // we use this state because of the broken h1 list which of verbum which shows only when you are at the top of the page 
-  const [currentHtmlNoteContent , setCurrentHtmlNoteContent] = useState(convertStateToHtml(intialContentFocused ))
+  const [currentHtmlNoteContent , setCurrentHtmlNoteContent] = useState(htmlIntialContent)
   const [currentHeading , setCurrentHeading] = useState(headingContentFromTheDb.replace(/&nbsp;/g, ""))
+  const [cardBackgroundColor , setCardBackgroundColor] = useState(backgroundColorFromDb)
 
   const handleClick = () => {
     // Store the current scroll position
@@ -56,23 +56,25 @@ const Card = ({headingContentFromTheDb, intialContentFocused , id , refreshFunct
     } , [cardMovedToDeleted]
   )
   
-  
+  const processedHtmlContent = addTailwindClasses(currentHtmlNoteContent);
+
+
 
   return (
     <>
-    <div onClick={handleClick} style={{backgroundColor:backgroundColorFromDb}} className=" max-w-80 min-w-80 flex gap-8 flex-col rounded-xl justify-center py-8 px-4 hover:opacity-60 ease-in-out duration-500 drop-shadow-2xl hover:drop-shadow-2xl  ">
-    <div className=" flex gap-2 items-center">
+    <div onClick={handleClick} style={{backgroundColor:cardBackgroundColor}} className=" max-w-80 min-w-80 flex gap-8 flex-col rounded-xl justify-center py-8 px-4 hover:opacity-60 ease-in-out duration-500 drop-shadow-2xl hover:drop-shadow-2xl  ">
+    <div class=" flex gap-2 items-center">
       <CiEdit  size={40} className=" hover:text-green-300 ease-in-out duration-200 active:opacity-40 " ></CiEdit> <IoMdClose onClick={(e)=>{e.stopPropagation() ; setCardMovedToDeleted(true)}} size={30} className=" hover:opacity-70 hover:text-red-600  ease-in-out duration-200 active:opacity-40  "></IoMdClose>
     </div>
-    <h1 className=" font-semibold break-words	 text-2xl md:text-2xl">{currentHeading}</h1>
-    <div className=" overflow-hidden max-h-44 text-sm" dangerouslySetInnerHTML={{ __html: currentHtmlNoteContent }} />
-    <div className="flex justify-between  text-white">
+    <h1 className=" font-semibold break-words	 text-2xl md:text-2xl">{currentHeading.replace(/&nbsp;/g, "")}</h1>
+    <div className=" overflow-hidden max-h-44 text-sm">{processedHtmlContent}</div>
+    <div className="flex justify-between   text-white">
       <p className=" text-sm">{format(dateFromDb , "PP")}</p> <p className=" text-sm">{labelFromDb}</p>
     </div>
   </div>
   <div className={`fixed inset-0 z-50 transition-opacity duration-300 ${isClicked ? 'opacity-100 visible' : 'opacity-0 invisible'}`}>
         <CardFocuesdTwo
-          setCurrentHtmlNoteContent={setCurrentHtmlNoteContent}
+         setCurrentHtmlNoteContent={setCurrentHtmlNoteContent}
           labelFromDb={labelFromDb}
           refreshFunction={refreshFunction}
           id={id}
@@ -82,6 +84,8 @@ const Card = ({headingContentFromTheDb, intialContentFocused , id , refreshFunct
           onClose={handleClose}
           dateFromDb={format(dateFromDb, "PP")}
           setCurrentHeading={setCurrentHeading}
+          currentHtmlContent={currentHtmlNoteContent}
+          setCardBackgroundColor={setCardBackgroundColor}
         />
       </div>   
        </>
@@ -90,6 +94,8 @@ const Card = ({headingContentFromTheDb, intialContentFocused , id , refreshFunct
 
 export default Card
 
+
+//dangerouslySetInnerHTML={{ __html: currentHtmlNoteContent }}
 
 /*
 

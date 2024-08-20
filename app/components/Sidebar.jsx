@@ -17,6 +17,8 @@ import { useEffect } from "react";
 import getLabels from "../actions/getLabels";
 import { useRouter } from "next/navigation";
 import SidebarMobile from "./SidebarMobile";
+import dynamic from 'next/dynamic';
+const EditorTwo = dynamic(() => import("@/app/components/blocknoteEditor/BlockNoteEditor"), { ssr: false });
 
 
 
@@ -120,6 +122,7 @@ export default Sidebar
 
 
 
+//                <CardFocuesdTwo refreshFunction={refreshFunction} onClose={handleClose} isNewNote={true} />,
 
 
 

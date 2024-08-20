@@ -1,0 +1,128 @@
+.bn-container {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 8px;
+    background-color: transparent !important;
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+}
+
+.bn-editor {
+    background-color: transparent;
+    opacity: 100;
+    @apply px-10
+}
+
+.bn-container {
+    @apply lg:w-[1000px] w-full
+}
+
+.bn-formatting-toolbar {
+    @apply lg:max-w-[1000px] w-full self-center
+}
+
+.bn-mantine .bn-toolbar {
+    justify-content: space-between;
+    @apply shadow-none lg:w-full h-20 lg:h-auto flex-wrap lg:flex-nowrap
+}
+
+
+
+/*
+
+
+ 
+.bn-formatting-toolbar * {
+    
+    @apply opacity-100 z-40 bg-transparent text-black 
+}
+
+.bn-drag-handle-menu * {
+    color: white !important;
+}
+
+
+.bn-container{
+    @apply lg:w-[800px]
+}
+
+.bn-formatting-toolbar{
+   @apply lg:max-w-[1000px] self-center 
+} 
+
+.bn-formatting-toolbar button *  {
+    @apply scrollbar-webkit 
+}
+
+.bn-mantine .bn-toolbar{
+ width: 100%;
+ justify-content: space-between;
+ background-color: white !important ; 
+ @apply shadow-none
+}
+
+.bn-mantine .bn-select *{
+    @apply scrollbar-webkit 
+}
+
+
+
+.bn-toolbar .mantine-Button-root, .bn-toolbar .mantine-ActionIcon-root{
+    @apply  !bg-white hover:bg-neutral-600  ease-in-out duration-300
+}
+
+.bn-toolbar .mantine-Button-root, .bn-toolbar .mantine-ActionIcon-root * {
+       @apply !text-black  
+}
+
+
+.bn-toolbar .mantine-ActionIcon-root[data-selected] {
+@apply !bg-white hover:bg-neutral-600 ease-in-out duration-500
+} 
+
+.bn-toolbar .mantine-ActionIcon-root[data-selected]{
+    @apply !bg-white hover:bg-neutral-600 ease-in-out duration-500
+
+}
+
+.bn-toolbar .mantine-Button-root[data-disabled], .bn-toolbar .mantine-ActionIcon-root[data-disabled] {
+    @apply !bg-white hover:bg-neutral-600 ease-in-out duration-500
+
+}
+
+
+.bn-toolbar .mantine-Button-root{
+    color: black !important;
+}
+
+.bn-mantine .mantine-Menu-dropdown * {
+    @apply    !text-black !z-[1200]
+ }
+
+ .bn-mantine .mantine-Menu-dropdown  {
+    @apply   border-none shadow-none  !z-[1200]
+ }
+
+
+ .bn-mantine .mantine-Tooltip-tooltip * {
+   @apply !text-black shadow-none hover:!bg-neutral-600
+}
+
+.bn-mantine .mantine-Tooltip-tooltip  {
+    @apply hover:!bg-neutral-600 
+ }
+
+
+
+
+
+
+ .bn-suggestion-menu {
+    @apply scrollbar-webkit
+ }
+
+
+
+*/

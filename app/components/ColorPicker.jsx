@@ -13,7 +13,7 @@ import { RgbaStringColorPicker    } from "react-colorful";
 import { useEffect } from 'react';
 
 
-const ColorPicker = ({setBackgroundColor , backgroundColorFromDb}) => {
+const ColorPicker = ({setBackgroundColor , backgroundColorFromDb , setCardBackgroundColor}) => {
 
     const [selectedColor, setSelectedColor] = useState(backgroundColorFromDb); //ui state for the square
 
@@ -34,7 +34,7 @@ const ColorPicker = ({setBackgroundColor , backgroundColorFromDb}) => {
                         </DialogDescription>
                         <RgbaStringColorPicker color={selectedColor} onChange={setSelectedColor} />
                         <div className='flex gap-2'>Your Selected Color is <div style={{backgroundColor : selectedColor  }} className="w-4 h-4  border-[1px] border-black mt-0.5 " /></div>
-                        <button onClick={()=>{ setBackgroundColor(selectedColor)} } style={{backgroundColor:selectedColor , borderRadius : "15px"} } className=' px-3 py-1 hover:opacity-60 ease-in-out duration-300'>Apply</button>
+                        <button onClick={()=>{ setBackgroundColor(selectedColor) ; setCardBackgroundColor(selectedColor)} } style={{backgroundColor:selectedColor , borderRadius : "15px"} } className=' px-3 py-1 hover:opacity-60 ease-in-out duration-300'>Apply</button>
                     </DialogHeader>
                 </DialogContent>
             </Dialog>

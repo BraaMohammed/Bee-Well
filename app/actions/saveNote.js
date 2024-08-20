@@ -6,7 +6,7 @@ import { authOptions } from "@/app/lib/authOptions";
 import { revalidatePath } from 'next/cache';
 import Label from "../lib/models/Label";
 
-export default async function saveNote({ heading, content, isNewNote, id, label , backgroundColor }) {
+export default async function saveNote({ heading, content, isNewNote, id, label , backgroundColor , htmlContent }) {
     try {
         const session = await getServerSession(authOptions);
         if (!session) {
@@ -17,7 +17,7 @@ export default async function saveNote({ heading, content, isNewNote, id, label 
 
         let result;
         if (isNewNote) {
-            const note = new Note({ heading, content, label, userEmail: session.user.email });
+            const note = new Note({ heading, content, label, userEmail: session.user.email , htmlContent , backgroundColor  });
             result = await note.save();
         } else if (id) {
             const note = await Note.findById(id);
@@ -25,9 +25,10 @@ export default async function saveNote({ heading, content, isNewNote, id, label 
                 throw new Error('Note not found');
             }
             note.heading = heading || note.heading;
-            note.content = content || note.content;
+            note.content = content!== null && content || note.content;
             note.label = label || note.label;
             note.backgroundColor = backgroundColor || note.backgroundColor
+            note.htmlContent = htmlContent || note.htmlContent
             result = await note.save();
            
             //following code is to change the labels id if label exsit

@@ -11,6 +11,9 @@
   "dependencies": {
     "@ai-sdk/anthropic": "^0.0.33",
     "@ai-sdk/openai": "^0.0.40",
+    "@blocknote/core": "^0.15.5",
+    "@blocknote/mantine": "^0.15.5",
+    "@blocknote/react": "^0.15.5",
     "@lexical/html": "^0.16.1",
     "@lexical/react": "^0.16.1",
     "@radix-ui/react-alert-dialog": "^1.1.1",
@@ -24,6 +27,7 @@
     "date-fns": "^3.6.0",
     "draft-js": "^0.11.7",
     "embla-carousel-react": "^8.1.7",
+    "html-react-parser": "^5.1.12",
     "lucide-react": "^0.412.0",
     "mongoose": "^8.3.3",
     "next": "14.2.2",

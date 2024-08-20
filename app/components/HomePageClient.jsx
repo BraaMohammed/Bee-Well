@@ -14,7 +14,6 @@ const HomePageClient = ({ labelId }) => {
     const { data: session, status } = useSession()
     const [tiggerRefresh, setTiggerRefresh] = useState(false)
     const [searchQuery, setSearchQuery] = useState(undefined)
-   console.log(searchQuery)
 
     let userName
     if (session) {

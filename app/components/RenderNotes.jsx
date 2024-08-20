@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Card from './Card';
 
+
 const RenderNotes = ({notes , refreshFunction}) => {
    
 
@@ -30,6 +31,7 @@ const RenderNotes = ({notes , refreshFunction}) => {
                     labelFromDb={note.label}
                     backgroundColorFromDb={note.backgroundColor}
                     dateFromDb= {note.created_at}
+                    htmlIntialContent={note.htmlContent}
                 />
             ))}
         </div>
