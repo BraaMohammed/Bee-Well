@@ -72,18 +72,26 @@ export default function App({ getEditorState ,  intialContentFocused ,  setCurre
           },
           menu: {
             text: "#222222",
+            background: "#f5f5f5",
           },
           tooltip: {
             text: "#222222",
+            background: "#e5e5e5",
+
           },
           hovered: {
             text: "#222222",
+            background: "#e5e5e5",
           },
           selected: {
             text: "#222222",
+            background: "#d4d4d4",
+
           },
           disabled: {
             text: "#222222",
+            background: "#f5f5f5",
+
           },
           shadow: "#ffffff00",
 
