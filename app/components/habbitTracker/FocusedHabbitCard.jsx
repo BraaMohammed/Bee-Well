@@ -81,11 +81,11 @@ const FocusedHabbitCard = ({ dateFromDb, trackedHabbitsFromDb, setTiggerRefresh 
             <DialogContent forceMount={false} style={{ borderRadius: "20px" }} className=" bg-neutral-700 border-none focus:outline-none p-10 mx-auto max-w-[85%] lg:max-w-[40%] h-[60%] overflow-y-auto scrollbar-webkit">
                     <div className="flex justify-between ">
                         <div className="flex flex-col gap-2">
-                            <h1 className="lg:text-3xl text-2xl font-semibold"> Your Daily Habbits</h1>
-                            <p className=" font-extralight"> +1% improvment every day will make you a new person  </p>
+                            <h1 className="lg:text-3xl text-base font-semibold "> Your Daily Habbits</h1>
+                            <p className=" font-extralight lg:text-sm text-xs"> +1% improvment every day will make you a new person  </p>
                         </div>
                         <div className=" flex flex-col gap-2">
-                            <button onClick={() => { setNewCategorySubmited(false); setNewCategory(true) }} className="max-w-64 flex justify-center items-center gap-2 px-4 py-0.5 rounded-full text-sm hover:bg-green-700 active:opacity-60 ease-in-out duration-300 bg-green-600">Add A Categry <IoIosAddCircleOutline size={25} /></button>
+                            <button onClick={() => { setNewCategorySubmited(false); setNewCategory(true) }} className="max-w-64 flex justify-center items-center gap-2 px-4 py-0.5 rounded-full lg:text-sm text-xs hover:bg-green-700 active:opacity-60 ease-in-out duration-300 bg-green-600  ">Add A Categry <IoIosAddCircleOutline size={25} /></button>
                         </div>
                     </div>
                     <div className=" flex flex-col gap-4">
@@ -102,7 +102,7 @@ const FocusedHabbitCard = ({ dateFromDb, trackedHabbitsFromDb, setTiggerRefresh 
                             </div>
                         )}
                     </div>
-                    <div className="flex self-end justify-between">
+                    <div className="flex self-end justify-between lg:text-sm text-xs">
                         <p> {date}</p>
                         <SlOptions className='hover:opacity-50 ease-in-out duration-300 active:opacity-30' size={22} />
                     </div>

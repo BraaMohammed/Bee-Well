@@ -10,11 +10,11 @@ import { IoMdClose } from "react-icons/io";
 import { convertStateToHtml } from '../actions/convertStateToHtml';
 import dynamic from 'next/dynamic';
 const EditorTwo = dynamic(() => import("@/app/components/blocknoteEditor/BlockNoteEditor"), { ssr: false });
-
+import { useToast } from '@/components/ui/use-toast';
 
 
 const CardFocuesdTwo = ({ setCurrentHtmlNoteContent, onClose, isNewNote, intialContentFocused, id,
-  headingContentFromTheDb, refreshFunction, labelFromDb, backgroundColorFromDb, dateFromDb, setCurrentHeading, currentHtmlContent , setCardBackgroundColor }) => {
+  headingContentFromTheDb, refreshFunction, labelFromDb, backgroundColorFromDb, dateFromDb, setCurrentHeading, currentHtmlContent , setCardBackgroundColor , setCurrentCardLabel }) => {
 
 
 
@@ -24,6 +24,8 @@ const CardFocuesdTwo = ({ setCurrentHtmlNoteContent, onClose, isNewNote, intialC
   const [currentLabel, setCurrentLabel] = useState(labelFromDb || "") //you should get current label from the db
   const [backgroundColor, setBackgroundColor] = useState(backgroundColorFromDb || "rgb(64 64 64)")
   const [htmlContentForNewNotes , setHtmlContentForNewNotes ] = useState("")
+  const [labelChanged , setLabelChanged] = useState(false)
+  const { toast } = useToast()
 
 
   function debounce(func, wait) {
@@ -80,12 +82,16 @@ const CardFocuesdTwo = ({ setCurrentHtmlNoteContent, onClose, isNewNote, intialC
 
   const debouncedSubmitToDb = debounce(submitToDb, 100)
 
+//here bro 
+
 
   useEffect(() => {
-    if (!newNote) {
-      debouncedSubmitToDb();
+    if (!newNote) {   
+      setCurrentCardLabel(currentLabel)
+      setLabelChanged(true)
+
     }
-  }, [headingContent, editorState, currentLabel, backgroundColor]);
+  }, [ currentLabel]); //when changing label , refetch
 
 
 
@@ -104,24 +110,42 @@ const CardFocuesdTwo = ({ setCurrentHtmlNoteContent, onClose, isNewNote, intialC
 
   return (
     <div onClick={() => {
-      if(newNote){
-        debouncedSubmitToDb()
+      if (newNote) {
+        //add deboounced submit here
+        toast({
+          description: "new note have been created !.",
+        })
 
       }
+
       setNewNote(false)
       //  refreshFunction(prev => !prev)
+      debouncedSubmitToDb()
+      if(currentLabel == "archived" || currentLabel == "deleted"){
+        refreshFunction(prev => !prev)
+      }
       onClose()
     }} className=" fixed inset-0 bg-slate-600 bg-opacity-50 flex justify-center items-center min-h-svh z-30 ease-in-out duration-300   ">
       <div onClick={(e) => e.stopPropagation()} style={{ backgroundColor: backgroundColor }} className=' md:max-w-[635px] lg:w-[1100px]  max-w-[500px] lg:max-h-[700px] max-h-[550px]  flex flex-col gap-4 mb-4 p-6 rounded-xl mt-6 mx-4 z-30 overflow-y-auto overflow-x-clip scrollbar-webkit ease-in-out duration-300 '>
         <div className=' flex items-center justify-between '  >
           <CiSquareRemove onClick={() => {
-           if(newNote){
-            debouncedSubmitToDb()
-    
-          }
+            if (newNote) {
+              //add deboounced submit here
+              debouncedSubmitToDb()
+              toast({
+                description: "new note have been created !.",
+              })
+
+            }
             setNewNote(false)
             // refreshFunction(prev => !prev)
+           
+            debouncedSubmitToDb()
+
             onClose()
+            if(labelChanged){
+              refreshFunction(prev => !prev)
+            }
           }} size={45} className=" hover:opacity-70 hover:text-red-600  ease-in-out duration-200 active:opacity-40"></CiSquareRemove>
           <LabelDropDownInCardFocused refreshFunction={refreshFunction} id={id} labelFromDb={labelFromDb} setCurrentLabel={setCurrentLabel} />
         </div>
@@ -138,7 +162,7 @@ const CardFocuesdTwo = ({ setCurrentHtmlNoteContent, onClose, isNewNote, intialC
         </div>
         <div className=' flex items-center justify-between '>
           <p className=' text-sm'>{dateFromDb}</p>
-          <SettingsDropDownInCardFocused setCardBackgroundColor={setCardBackgroundColor}  setBackgroundColor={setBackgroundColor} backgroundColorFromDb={backgroundColorFromDb} id={id} setCurrentLabel={setCurrentLabel} />
+          <SettingsDropDownInCardFocused setCardBackgroundColor={setCardBackgroundColor} setBackgroundColor={setBackgroundColor} backgroundColorFromDb={backgroundColorFromDb} id={id} setCurrentLabel={setCurrentLabel} />
         </div>
       </div>
     </div>

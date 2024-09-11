@@ -12,6 +12,7 @@ import TotalSuccessAnalytics from '../analytics/TotalSuccessAnalytics'
 import GoodAndBadHabbitsAnalytics from '../analytics/GoodAndBadHabbitsAnalytics'
 import SelectedHabbitsAnalytics from '../analytics/SelectedHabbitsAnalytics'
 import SelectedDayAnalytics from '../analytics/SelectedDayAnalytics'
+import CalendarCardSkeleton from './CalendarCardSkeleton'
 
 const HabbitTrackerPageClient = () => {
     const [trackedHabbitsFromDb, setTrackedHabbitsFromDb] = useState(null)
@@ -20,16 +21,22 @@ const HabbitTrackerPageClient = () => {
     const [selectedDay, setSelectedDay] = useState(null); // selected day from the calender
     const [selectedDayFromCalenderExtractedFromDailyEntries, setSelectedDayFromCalenderExtractedFromDailyEntries] = useState(null) // the object of coresponding picked day from the calender when we compare it to daily entries from db 
     const [modalOpen, setModalOpen] = useState(false); // the modal which is triggered by picking a day from the calender 
+    const [loading, setLoading] = useState(true);
+    const [isInitialFetch, setIsInitialFetch] = useState(true);
 
 
 
 
 
     const gettrackedHabbitsFromDb = async () => {
+        setLoading(true)
         try {
             const res = await getTrackedHabbit()
             const fetchedData = JSON.parse(res)
             setTrackedHabbitsFromDb(fetchedData)
+            setLoading(false)
+            setIsInitialFetch(false);
+
         } catch (err) {
             console.log(err)
         }
@@ -69,7 +76,7 @@ const HabbitTrackerPageClient = () => {
     }, [selectedDay, dailyEntriesFromDb]);
 
 
-   // console.log(trackedHabbitsFromDb)
+    // console.log(trackedHabbitsFromDb)
 
 
 
@@ -99,16 +106,25 @@ const HabbitTrackerPageClient = () => {
                     </div>
 
                 </div>
+                {
+                    loading && isInitialFetch ?
+                        <div style={{width:"100%" , gap: "10px"}} className="w-full flex max-w-xs self-start  ">
+                            <CalendarCardSkeleton isVisible={loading} />
+                            <CalendarCardSkeleton isVisible={loading} />
+                            <CalendarCardSkeleton isVisible={loading} />
+                            <CalendarCardSkeleton isVisible={loading} />
+                        </div>
+                        : <CarouselHabbitCards dailyEntriesFromDb={dailyEntriesFromDb} trackedHabbitsFromDb={trackedHabbitsFromDb} setTiggerRefresh={setTiggerRefresh} />
 
-                <CarouselHabbitCards dailyEntriesFromDb={dailyEntriesFromDb} trackedHabbitsFromDb={trackedHabbitsFromDb} setTiggerRefresh={setTiggerRefresh} />
+                }
                 <div className=' flex flex-col gap-2'>
                     <h1 className=" lg:text-2xl text-xl font-semibold"> Analytics </h1>
                     <p className=" text-sm font-light">data of your daily routine remeber what is messaured can be improved </p>
                     <div className=' lg:w-full self-center flex flex-col lg:flex-row gap-2 items-start'>
                         <SelectedHabbitsAnalytics dailyEntriesFromDb={dailyEntriesFromDb} trackedHabbitsFromDb={trackedHabbitsFromDb} />
-                        <SelectedDayAnalytics   trackedHabbitsFromDb={trackedHabbitsFromDb} dailyEntriesFromDb={dailyEntriesFromDb} />
+                        <SelectedDayAnalytics trackedHabbitsFromDb={trackedHabbitsFromDb} dailyEntriesFromDb={dailyEntriesFromDb} />
                     </div>
-                    <TotalSuccessAnalytics  dailyEntriesFromDb={dailyEntriesFromDb}  trackedHabbitsFromDb={trackedHabbitsFromDb} />
+                    <TotalSuccessAnalytics dailyEntriesFromDb={dailyEntriesFromDb} trackedHabbitsFromDb={trackedHabbitsFromDb} />
                 </div>
             </div>
         </div>

@@ -15,7 +15,7 @@ const DeleteHabbitAlert = ({habbitName , handleDeleteTrackedHabbit , categoryInd
   return (
     <AlertDialog>
     <AlertDialogTrigger>
-        <IoMdClose className=" hidden group-hover:block ease-in-out duration-300 hover:text-red-500 active:opacity-60 justify-self-end mb-1" size={18} />
+        <IoMdClose className=" lg:hidden block lg:group-hover:block ease-in-out duration-300 hover:text-red-500 active:opacity-60 justify-self-end mb-1" size={18} />
     </AlertDialogTrigger>
     <AlertDialogContent  style={{ borderRadius: "15px" }} className=" bg-neutral-600 border-none justify-center items-center shadow-none">
         <p className=' text-center' >Are You Sure To Delete {habbitName} ? </p>

@@ -7,6 +7,7 @@ import { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import React from 'react'
 import Input from './Input'
+import NoteCardSkeleton from './NoteCardSkeleton'
 
 const HomePageClient = ({ labelId }) => {
     const [notes, setNotes] = useState([]);
@@ -14,6 +15,8 @@ const HomePageClient = ({ labelId }) => {
     const { data: session, status } = useSession()
     const [tiggerRefresh, setTiggerRefresh] = useState(false)
     const [searchQuery, setSearchQuery] = useState(undefined)
+    const [loading, setLoading] = useState(true);
+    const [isInitialFetch, setIsInitialFetch] = useState(true);
 
     let userName
     if (session) {
@@ -21,6 +24,7 @@ const HomePageClient = ({ labelId }) => {
     }
 
     const fetchNotes = async () => {
+        setLoading(true);
         try {
             if (labelId) {
                 const response = await fetch(`/api/getnotes?labelId=${encodeURIComponent(labelId)}`, {
@@ -34,6 +38,9 @@ const HomePageClient = ({ labelId }) => {
                     setNotes(fetchedNotes);
                     setOriginalNotes(fetchedNotes);
                     console.log('we got the notes from the db')
+                    setLoading(false)
+                    setIsInitialFetch(false);
+
                 } else {
                     console.error('Failed to fetch notes:', response.status, response.statusText);
                 }
@@ -49,6 +56,9 @@ const HomePageClient = ({ labelId }) => {
                     setNotes(fetchedNotes);
                     setOriginalNotes(fetchedNotes);
                     console.log('we got the notes from the db')
+                    setLoading(false)
+                    setIsInitialFetch(false);
+
                 } else {
                     console.error('Failed to fetch notes:', response.status, response.statusText);
                 }
@@ -75,11 +85,11 @@ const HomePageClient = ({ labelId }) => {
                 const filteredNotes = originalNotes.filter(note => note.heading.includes(searchQuery) || note.content.includes(searchQuery))
                 setNotes(filteredNotes);
             }
-            else{
+            else {
                 setNotes(originalNotes);
             }
 
-        }, [searchQuery , originalNotes]
+        }, [searchQuery, originalNotes]
     )
 
 
@@ -95,7 +105,16 @@ const HomePageClient = ({ labelId }) => {
                     <p className="text-green-700 text-lg p-2 text-center">Welcome Back {userName} Search For A Note Here</p>
                     <Input captureChange={setSearchQuery} />
                 </div>
-                <RenderNotes refreshFunction={setTiggerRefresh} notes={notes} />
+                {
+                    loading && isInitialFetch ? <div style={{display: "flex" , width: "100%" , height: "100vh" , flexWrap: "wrap"}} className='className="flex flex-row h-[100vh] flex-wrap w-full gap-6 px-8 scrollbar-thin  py-14 items-start min-h-[100vh]"'>
+                        <NoteCardSkeleton />
+                        <NoteCardSkeleton />
+                        <NoteCardSkeleton />
+                        <NoteCardSkeleton />
+                    </div> :
+                        <RenderNotes refreshFunction={setTiggerRefresh} notes={notes} />
+                }
+
             </div>
         </div>
     );

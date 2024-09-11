@@ -10,7 +10,9 @@ const trackedHabbitsSchema = new mongoose.Schema({
             text: { type: String} , 
             emoji: { type: String} , 
             options: [String] , 
-            target: { type: String} 
+            target: { type: String} , 
+            importance: {type: Number , default : 0.75 } , 
+            shouldBeDone : {type : Boolean , default: true}
 
         }]
     }]

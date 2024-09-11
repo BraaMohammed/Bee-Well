@@ -114,11 +114,11 @@ const SelectedDayAnalytics = ({ dailyEntriesFromDb ,  trackedHabbitsFromDb }) =>
               gridType="circle"
               radialLines={false}
               stroke="none"
-              className="fill-neutral-600 text-white"
+              className="fill-neutral-600  text-white"
               polarRadius={[86, 74]}
 
             />
-            <RadialBar dataKey="percentage" className="fill-neutral-600" background cornerRadius={10} />
+            <RadialBar dataKey="percentage" className="fill-neutral-600 " background cornerRadius={10} />
             <PolarRadiusAxis domain={[0, 100]} tick={false} tickLine={false} axisLine={false}>
               <Label
                 content={({ viewBox }) => {

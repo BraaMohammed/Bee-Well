@@ -21,7 +21,7 @@ import saveDailyEntry from "@/app/actions/saveDailyEntry";
 import SelectBestOptionDropDown from "./SelectBestOptionDropDown";
 import DeleteHabbitAlert from "./DeleteHabbitAlert";
 import { useLayoutEffect } from "react";
-
+import HabbitSettings from "./HabbitSettings";
 
 
 const TrackedHabbitsSetter = ({ trackedHabbitsFromDb, newCategorySubmited, newCategoryName, setTiggerRefresh, id, entryFromDb, resetStates }) => {  // id is the id of the day's entry from the db 
@@ -126,7 +126,7 @@ const TrackedHabbitsSetter = ({ trackedHabbitsFromDb, newCategorySubmited, newCa
         }
     };
 
-    const handleEditChange = (categoryIndex, elementIndex, newText, newBestOption) => {
+    const handleEditChange = (categoryIndex, elementIndex, newText, newBestOption, newImportance, newShouldBeDone) => {
         if (elementIndex === undefined) {
             setCurrentElements(prevElements => {
                 const updatedElements = prevElements.habbits.map((category, index) => {
@@ -141,41 +141,27 @@ const TrackedHabbitsSetter = ({ trackedHabbitsFromDb, newCategorySubmited, newCa
                 return { ...prevElements, habbits: updatedElements };
             });
         } else {
-            if (newBestOption && newText == undefined) {
-                setCurrentElements(prevElements => {
-                    const updatedElements = prevElements.habbits.map((category, index) => {
-                        if (index === categoryIndex) {
-                            const updatedCategoryElements = category.elements.map((element, elIndex) => {
-                                if (elIndex === elementIndex) {
-                                    return { ...element, target: newBestOption };
-                                }
-                                return element;
-                            });
-                            return { ...category, elements: updatedCategoryElements };
-                        }
-                        return category;
-                    });
-                    return { ...prevElements, habbits: updatedElements };
+            setCurrentElements(prevElements => {
+                const updatedElements = prevElements.habbits.map((category, index) => {
+                    if (index === categoryIndex) {
+                        const updatedCategoryElements = category.elements.map((element, elIndex) => {
+                            if (elIndex === elementIndex) {
+                                return {
+                                    ...element,
+                                    text: newText !== undefined ? newText : element.text,
+                                    target: newBestOption !== undefined ? newBestOption : element.target,
+                                    importance: newImportance !== undefined ? newImportance : element.importance,
+                                    shouldBeDone: newShouldBeDone !== undefined ? newShouldBeDone : element.shouldBeDone
+                                };
+                            }
+                            return element;
+                        });
+                        return { ...category, elements: updatedCategoryElements };
+                    }
+                    return category;
                 });
-
-            } else {
-                setCurrentElements(prevElements => {
-                    const updatedElements = prevElements.habbits.map((category, index) => {
-                        if (index === categoryIndex) {
-                            const updatedCategoryElements = category.elements.map((element, elIndex) => {
-                                if (elIndex === elementIndex) {
-                                    return { ...element, text: newText };
-                                }
-                                return element;
-                            });
-                            return { ...category, elements: updatedCategoryElements };
-                        }
-                        return category;
-                    });
-                    return { ...prevElements, habbits: updatedElements };
-                });
-            }
-
+                return { ...prevElements, habbits: updatedElements };
+            });
         }
     };
 
@@ -412,22 +398,22 @@ const TrackedHabbitsSetter = ({ trackedHabbitsFromDb, newCategorySubmited, newCa
              
                 return (
                     <div key={elementIndex} className="flex gap-2  items-center font-normal group ">
-                        <h2 className="focus:outline-none border-none" onBlur={(e) => {
+                        <h2 className="focus:outline-none border-none " onBlur={(e) => {
                             handleEditChange(categoryIndex, elementIndex, e.target.textContent);
                             handleEditEnd(categoryIndex, elementIndex);
                         }} contentEditable={editableElements[`${categoryIndex}-${elementIndex}`] || false}  > {element.text} </h2>
                         <Checkbox checked={defaultFieldValue !== null ? defaultFieldValue : false} onCheckedChange={(checked) =>
                             handleDailyEntryChange(categoryIndex, elementIndex, "checkList", checked)
                         } className="w-4 h-4" type="checkbox" />
-                        {!showElementEditingTextIcons && <MdOutlineEdit onClick={() => { handleEditStart(categoryIndex, elementIndex); }} className=" hidden group-hover:block ease-in-out duration-300 hover:text-green-500 active:opacity-60 justify-self-end mb-1" size={18} />}
+                        {!showElementEditingTextIcons && <MdOutlineEdit onClick={() => { handleEditStart(categoryIndex, elementIndex); console.log("checklist name editing started") }} className=" block lg:hidden lg:group-hover:block ease-in-out duration-300 hover:text-green-500 active:opacity-60 justify-self-end mb-1" size={18} />}
                         {editableElements[`${categoryIndex}-${elementIndex}`] == true &&
                             <MdDone onClick={(e) => {
                                 handleEditEnd(categoryIndex, elementIndex);
                             }} size={18} className=" hover:text-green-500 ease-in-out duration-300" />
                         }
                         <DeleteHabbitAlert habbitName={element.text} handleDeleteTrackedHabbit={handleDeleteTrackedHabbit} categoryIndex={categoryIndex} elementIndex={elementIndex} />
-
-                    </div>
+                        <HabbitSettings importanceFromDb={ element.importance ?element.importance : 0.75 } type={element.type} habbitName={element.text} shouldBeDoneFromDb={element.shouldBeDone ? element.shouldBeDone : true} handleEditChange={handleEditChange} categoryIndex={categoryIndex} elementIndex={elementIndex} />
+                        </div>
                 )
 
 
@@ -437,7 +423,6 @@ const TrackedHabbitsSetter = ({ trackedHabbitsFromDb, newCategorySubmited, newCa
 
 
                
-                console.log( `default value is  ${defaultFieldValue} for ${element.text}`)
                 return (
                     <div key={elementIndex} className="flex flex-col gap-2">
                         <div className="flex gap-2 items-center group font-normal">
@@ -450,9 +435,9 @@ const TrackedHabbitsSetter = ({ trackedHabbitsFromDb, newCategorySubmited, newCa
                             </div>
                             <input value={defaultFieldValue !== null && defaultFieldValue} onChange={(e) =>
                                 handleDailyEntryChange(categoryIndex, elementIndex, "numberInput", e.target.value, element.target)
-                            } style={{ borderRadius: "6px" }} className="text-neutral-950 focus:outline-none border-none rounded-lg lg:p-1 w-[10%] h-6 text-center" type="number" />
+                            } style={{ borderRadius: "6px" }} className="hover:bg-neutral-500 border-white border-[1px] bg-transparent lg:p-1  lg:w-[10%] w-[20%] text-center h-6 focus:outline-none" type="number" />
                             {!showElementEditingTextIcons && <>
-                                <MdOutlineEdit onClick={() => { handleEditStart(categoryIndex, elementIndex); }} className=" hidden group-hover:block ease-in-out duration-300 hover:text-green-500 active:opacity-60 justify-self-end mb-1" size={18} />
+                                <MdOutlineEdit onClick={() => { handleEditStart(categoryIndex, elementIndex); }} className=" block lg:hidden lg:group-hover:block ease-in-out duration-300 hover:text-green-500 active:opacity-60 justify-self-end mb-1" size={18} />
                             </>}
                             {editableElements[`${categoryIndex}-${elementIndex}`] == true &&
                                 <MdDone onClick={(e) => {
@@ -461,11 +446,10 @@ const TrackedHabbitsSetter = ({ trackedHabbitsFromDb, newCategorySubmited, newCa
                             }
 
                             <DeleteHabbitAlert habbitName={element.text} handleDeleteTrackedHabbit={handleDeleteTrackedHabbit} categoryIndex={categoryIndex} elementIndex={elementIndex} />
+                            <HabbitSettings importanceFromDb={ element.importance ?element.importance : 0.75 } type={element.type} habbitName={element.text} bestOptionFromDb={element.target} handleEditChange={handleEditChange} categoryIndex={categoryIndex} elementIndex={elementIndex} />
 
                         </div>
-                        {editableElements[`${categoryIndex}-${elementIndex}`] == true &&
-                            <SelectBestOptionDropDown bestOptionFromDb={element.target} handleEditChange={handleEditChange} categoryIndex={categoryIndex} elementIndex={elementIndex} />
-                        }
+                       
                     </div>
 
                 )
@@ -484,13 +468,14 @@ const TrackedHabbitsSetter = ({ trackedHabbitsFromDb, newCategorySubmited, newCa
                         handleEditChange(categoryIndex, elementIndex, e.target.textContent);
                         handleEditEnd(categoryIndex, elementIndex);
                     }} className="flex gap-2 focus:outline-none border-none" contentEditable={editableElements[`${categoryIndex}-${elementIndex}`] || false}  >   {element.text}
-                        {!showElementEditingTextIcons && <MdOutlineEdit onClick={() => { handleEditStart(categoryIndex, elementIndex); }} className=" hidden group-hover:block ease-in-out duration-300 hover:text-green-500 active:opacity-60 justify-self-end mb-1" size={18} />}
+                        {!showElementEditingTextIcons && <MdOutlineEdit onClick={() => { handleEditStart(categoryIndex, elementIndex); }} className=" block lg:hidden lg:group-hover:block ease-in-out duration-300 hover:text-green-500 active:opacity-60 justify-self-end mb-1" size={18} />}
                         {editableElements[`${categoryIndex}-${elementIndex}`] == true &&
                             <MdDone onClick={(e) => {
                                 handleEditEnd(categoryIndex, elementIndex);
                             }} size={18} className=" hover:text-green-500 ease-in-out duration-300" />
                         }
                         <DeleteHabbitAlert habbitName={element.text} handleDeleteTrackedHabbit={handleDeleteTrackedHabbit} categoryIndex={categoryIndex} elementIndex={elementIndex} />
+
                     </h2>
                     <textarea value={defaultFieldValue !== null && defaultFieldValue} onChange={(e) =>
                         handleDailyEntryChange(categoryIndex, elementIndex, "textArea", e.target.value)
@@ -512,21 +497,21 @@ const TrackedHabbitsSetter = ({ trackedHabbitsFromDb, newCategorySubmited, newCa
                 return (
                     <div key={elementIndex} className="flex flex-col gap-2"  >
 
-                        <div className="flex gap-2 group">
-                            <h2 className="focus:outline-none border-none" onBlur={(e) => {
+                        <div className="flex lg:gap-2 gap-1  group">
+                            <h2 className="focus:outline-none border-none m-[6px]  lg:mt-1" onBlur={(e) => {
                                 handleEditChange(categoryIndex, elementIndex, e.target.textContent);
                                 handleEditEnd(categoryIndex, elementIndex);
                             }} contentEditable={editableElements[`${categoryIndex}-${elementIndex}`] || false}  >   {element.text} </h2>
 
                             <DropdownMenu>
-                                <DropdownMenuTrigger className="flex gap-2 items-center bg-neutral-600 px-2 rounded-xl">
+                                <DropdownMenuTrigger className="flex gap-2 items-center bg-neutral-600 lg:px-2 px-0.5  rounded-xl">
                                     {selectedItem[`${categoryIndex}-${elementIndex}`] || selectedItem.defaultText}
                                     <RiArrowDropDownLine size={30} />
                                 </DropdownMenuTrigger>
 
-                                <DropdownMenuContent className=" flex flex-col gap-1  shadow-lg rounded-xl p-2 shadow-neutral-950 border-none bg-neutral-600  ">
+                                <DropdownMenuContent className=" flex flex-col gap-1  shadow-lg rounded-xl lg:p-2 p-1 shadow-neutral-950 border-none bg-neutral-600  ">
 
-                                    {element.options && element.options.map((o, index) => <p key={index} style={{ borderRadius: "5px" }} className="hover:bg-neutral-500 p-1 group flex gap-2 items-center justify-between"
+                                    {element.options && element.options.map((o, index) => <p key={index} style={{ borderRadius: "5px" }} className="hover:bg-neutral-500 p-1 group text-xs lg:text-sm flex gap-2 items-center justify-between"
                                         onClick={(e) => {
                                             e.stopPropagation()
                                             handleDailyEntryChange(categoryIndex, elementIndex, "select", o, element.target);
@@ -535,9 +520,9 @@ const TrackedHabbitsSetter = ({ trackedHabbitsFromDb, newCategorySubmited, newCa
                                         < MdDeleteForever onClick={(e) => {
                                             e.stopPropagation()
                                             handleDeleteOption(categoryIndex, elementIndex, o)
-                                        }} size={20} className=" opacity-0 group-hover:opacity-100 ease-in-out  duration-300 text-neutral-300 hover:text-red-700" />  </p>)}
+                                        }} size={20} className=" lg:opacity-0 lg:group-hover:opacity-100 opacity-100 ease-in-out  duration-300 text-neutral-300 hover:text-red-700" />  </p>)}
 
-                                    <p onClick={() => { setShowNewOption(true) }} style={{ borderRadius: "5px" }} className="hover:bg-neutral-500 p-1 flex gap-2 items-center">Add An Option <IoAdd size={20} /> </p>
+                                    <p onClick={() => { setShowNewOption(true) }} style={{ borderRadius: "5px" }} className="hover:bg-neutral-500 p-1 flex gap-2 items-center text-xs lg:text-sm ">Add An Option <IoAdd size={20} /> </p>
 
                                     {showNewOption && <div className="flex gap-2 items-center justify-between group"> <input style={{ borderRadius: "5px" }} className="hover:bg-neutral-500 bg-neutral-600  p-1 focus:border-none focus:outline-none" placeholder={newOptionName} contentEditable="true" onChange={(e) => { setNewOptionName(e.target.value) }}></input>
 
@@ -549,15 +534,15 @@ const TrackedHabbitsSetter = ({ trackedHabbitsFromDb, newCategorySubmited, newCa
                             {editableElements[`${categoryIndex}-${elementIndex}`] == true &&
                                 <MdDone onClick={(e) => {
                                     handleEditEnd(categoryIndex, elementIndex);
-                                }} size={18} className=" hover:text-green-500 ease-in-out duration-300" />
+                                }} size={35} className=" hover:text-green-500 ease-in-out duration-300 justify-self-center self-center lg:!size-[18px]" />
                             }
-                            {!showElementEditingTextIcons && <MdOutlineEdit onClick={() => { handleEditStart(categoryIndex, elementIndex); }} className=" hidden group-hover:block ease-in-out duration-300 hover:text-green-500 active:opacity-60 justify-self-end mb-1" size={18} />}
+                            {!showElementEditingTextIcons && <MdOutlineEdit onClick={() => { handleEditStart(categoryIndex, elementIndex);}} className=" block lg:hidden lg:group-hover:block ease-in-out duration-300 hover:text-green-500 active:opacity-60 self-center mb-1 lg:mt-1 lg:!size-[18px]" size={35} />}
                             <DeleteHabbitAlert habbitName={element.text} handleDeleteTrackedHabbit={handleDeleteTrackedHabbit} categoryIndex={categoryIndex} elementIndex={elementIndex} />
+                            <HabbitSettings importanceFromDb={ element.importance ?element.importance : 0.75 } options={element.options && element.options} type={element.type} habbitName={element.text} bestOptionFromDb={element.target} handleEditChange={handleEditChange} categoryIndex={categoryIndex} elementIndex={elementIndex} />
+
                         </div>
 
-                        {editableElements[`${categoryIndex}-${elementIndex}`] == true &&
-                            <SelectBestOptionDropDown bestOptionFromDb={element.target} handleEditChange={handleEditChange} categoryIndex={categoryIndex} elementIndex={elementIndex} options={element.options && element.options} />
-                        }
+                       
                     </div>
                 )
 
@@ -585,7 +570,7 @@ const TrackedHabbitsSetter = ({ trackedHabbitsFromDb, newCategorySubmited, newCa
         <div>
             {currentElements && currentElements.habbits ? (
                 currentElements.habbits.map((category, categoryIndex) => (
-                    <div className="flex flex-col gap-2 item" key={categoryIndex}>
+                    <div className="flex flex-col lg:gap-4 gap-4 item" key={categoryIndex}>
                         <h2 onBlur={(e) => {
                             if (editableElements[`${categoryIndex}-category`]) {
                                 handleEditChange(categoryIndex, undefined, e.target.textContent);
@@ -596,14 +581,14 @@ const TrackedHabbitsSetter = ({ trackedHabbitsFromDb, newCategorySubmited, newCa
                             className="lg:text-2xl text-xl font-semibold flex gap-2 group items-center pt-6"
                         >
                             {category.categoryName}
-                            < SelectTrackingTypeDropdown setAddedNewElement={setAddedNewElement} categoryIndex={categoryIndex} triggerElement={<IoAdd size={20} className=" hidden active:opacity-60 group-hover:block hover:text-green-500 ease-in-out duration-300" />} ></SelectTrackingTypeDropdown>
+                            < SelectTrackingTypeDropdown setAddedNewElement={setAddedNewElement} categoryIndex={categoryIndex} triggerElement={<IoAdd size={20} className=" lg:hidden active:opacity-60 block lg:group-hover:block hover:text-green-500 ease-in-out duration-300" />} ></SelectTrackingTypeDropdown>
 
-                            <MdOutlineEdit onClick={() => { handleEditStart(categoryIndex) }} size={20} className=" hidden active:opacity-60 group-hover:block hover:text-green-500 ease-in-out duration-300" />
+                            <MdOutlineEdit onClick={() => { handleEditStart(categoryIndex) }} size={20} className=" lg:hidden active:opacity-60 block lg:group-hover:block hover:text-green-500 ease-in-out duration-300" />
 
                             <DeleteHabbitAlert habbitName={category.categoryName} handleDeleteTrackedHabbit={handleDeleteTrackedHabbit} categoryIndex={categoryIndex} elementIndex={undefined} />
 
                         </h2>
-                        <div className="flex flex-col gap-4">
+                        <div className="flex flex-col lg:gap-5 gap-8 text-xs md:text-sm lg:text-sm ease-in-out duration-1000">
                             {category.elements.map((element, elementIndex) =>
                                 renderFunction(element, categoryIndex, elementIndex)
                             )}

@@ -228,4 +228,6 @@ li[role="checkbox"][aria-checked="true"]::before {
   z-index: 70;
 }
 
-
+.recharts-responsive-container{
+  @apply !h-[175px] lg:!h-auto md:!h-auto
+}

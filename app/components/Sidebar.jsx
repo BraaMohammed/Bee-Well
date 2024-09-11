@@ -1,10 +1,10 @@
 "use client"
-import { BsStars } from "react-icons/bs";
+/*import { BsStars } from "react-icons/bs";
 import { FaArchive } from "react-icons/fa";
 import { FaTrash } from "react-icons/fa";
 import { LiaDumbbellSolid } from "react-icons/lia";
 import { MdLabelImportantOutline } from "react-icons/md";
-import { FaRegNoteSticky } from "react-icons/fa6";
+import { FaRegNoteSticky } from "react-icons/fa6";*/
 import Button from "./Button";
 import { useSession } from "next-auth/react"
 import { IoIosAddCircleOutline } from "react-icons/io";
@@ -19,7 +19,11 @@ import { useRouter } from "next/navigation";
 import SidebarMobile from "./SidebarMobile";
 import dynamic from 'next/dynamic';
 const EditorTwo = dynamic(() => import("@/app/components/blocknoteEditor/BlockNoteEditor"), { ssr: false });
-
+import { CalendarCheck } from "lucide-react";
+import { Archive } from "lucide-react";
+import { Trash2 } from "lucide-react";
+import { Bookmark } from "lucide-react";
+import { NotebookPen } from "lucide-react";
 
 
 const Sidebar = ({ refreshFunction }) => {
@@ -74,11 +78,11 @@ const Sidebar = ({ refreshFunction }) => {
             </div>
 
 
-            <p onClick={() => { router.push("/") }} className="flex gap-2 p-2 rounded-xl  hover:bg-neutral-950 ease-in-out duration-200 text-sm " ><FaRegNoteSticky size={23} />My Notes</p>
+            <p onClick={() => { router.push("/") }} className="flex gap-2 p-2 rounded-xl  hover:bg-neutral-950 ease-in-out duration-200 text-sm " ><NotebookPen size={23} />My Notes</p>
 
             <div onClick={() => { setLabelIsClicked(!labelIsClicked) }} className="flex flex-col gap-2 p-2 rounded-xl  hover:bg-neutral-950 ease-in-out duration-200 text-sm group" >
 
-                <p className=" flex  gap-2 ">  <MdLabelImportantOutline size={24} /> My Labels <RiArrowDropDownLine className="hidden group-hover:block" size={25} /></p>
+                <p className=" flex  gap-2 ">  <Bookmark size={24} /> My Labels <RiArrowDropDownLine className="hidden group-hover:block" size={25} /></p>
 
                 <div className=" flex flex-col gap-1">
                     {labelIsClicked && labels.filter(label => label.name !== "archived" && label.name !== "deleted").map(label => 
@@ -89,11 +93,11 @@ const Sidebar = ({ refreshFunction }) => {
                     }} className=" text-sm hover:bg-neutral-600 rounded-[5px] text-center" key={label._id}>{label.name}</p>)}
                 </div>
             </div>
-            <p onClick={() => { router.push("/habbitTracker") }} className="flex gap-2 p-2 rounded-xl  hover:bg-neutral-950 ease-in-out duration-200 text-sm " ><LiaDumbbellSolid size={24} />Habit Tracker</p>
+            <p onClick={() => { router.push("/habbitTracker") }} className="flex gap-2 p-2 rounded-xl  hover:bg-neutral-950 ease-in-out duration-200 text-sm " ><CalendarCheck size={24} />Habit Tracker</p>
 
-            <p onClick={()=>{ ;router.push('/notes/archived')}} className="flex gap-2 p-2 rounded-xl  hover:bg-neutral-950 ease-in-out duration-200 text-sm " ><FaArchive size={22} />Archieves</p>
+            <p onClick={()=>{ ;router.push('/notes/archived')}} className="flex gap-2 p-2 rounded-xl  hover:bg-neutral-950 ease-in-out duration-200 text-sm " ><Archive size={22} />Archieves</p>
 
-            <p onClick={()=>{ ;router.push('/notes/deleted')}} className="flex gap-2 p-2 rounded-xl  hover:bg-neutral-950 ease-in-out duration-200 text-sm " ><FaTrash size={22} />Deleted Notes</p>
+            <p onClick={()=>{ ;router.push('/notes/deleted')}} className="flex gap-2 p-2 rounded-xl  hover:bg-neutral-950 ease-in-out duration-200 text-sm " ><Trash2 size={22} />Deleted Notes</p>
 
 
             <div className="user panel flex flex-col gap-4 items-center">

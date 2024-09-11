@@ -20,18 +20,18 @@ import { useEffect, useState } from "react"
 
 
 const chartData = [
-  { month: "January", desktop: 186, mobile: 80, percentage: 47 },
-  { month: "February", desktop: 305, mobile: 200, percentage: 85 },
-  { month: "March", desktop: 237, mobile: 120, percentage: 62 },
-  { month: "April", desktop: 73, mobile: 190, percentage: 29 },
-  { month: "May", desktop: 209, mobile: 130, percentage: 74 },
-  { month: "June", desktop: 214, mobile: 140, percentage: 55 },
-  { month: "July", desktop: 250, mobile: 160, percentage: 91 },
-  { month: "August", desktop: 220, mobile: 180, percentage: 36 },
-  { month: "September", desktop: 195, mobile: 150, percentage: 78 },
-  { month: "October", desktop: 280, mobile: 170, percentage: 49 },
-  { month: "November", desktop: 320, mobile: 190, percentage: 66 },
-  { month: "December", desktop: 275, mobile: 210, percentage: 82 }
+  { month: "dumb data , your data is loading", desktop: 186, mobile: 80, percentage: 47 },
+  { month: "dumb data , your data is loading", desktop: 305, mobile: 200, percentage: 85 },
+  { month: "dumb data , your data is loading", desktop: 237, mobile: 120, percentage: 62 },
+  { month: "dumb data , your data is loading", desktop: 73, mobile: 190, percentage: 29 },
+  { month: "dumb data , your data is loading", desktop: 209, mobile: 130, percentage: 74 },
+  { month: "dumb data , your data is loading", desktop: 214, mobile: 140, percentage: 55 },
+  { month: "dumb data , your data is loading", desktop: 250, mobile: 160, percentage: 91 },
+  { month: "dumb data , your data is loading", desktop: 220, mobile: 180, percentage: 36 },
+  { month: "dumb data , your data is loading", desktop: 195, mobile: 150, percentage: 78 },
+  { month: "dumb data , your data is loading", desktop: 280, mobile: 170, percentage: 49 },
+  { month: "dumb data , your data is loading", desktop: 320, mobile: 190, percentage: 66 },
+  { month: "dumb data , your data is loading", desktop: 275, mobile: 210, percentage: 82 }
 ];
 
 const chartConfig = {

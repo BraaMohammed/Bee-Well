@@ -10,50 +10,49 @@ import {
 import { format } from "date-fns"
 
 
-const CalendarPicker = ({ dailyEntriesFromDb ,  onSelectDay , selectedDay  }) => {
+const CalendarPicker = ({ dailyEntriesFromDb, onSelectDay, selectedDay }) => {
   const [daysRecorded, setDaysRecorded] = useState([]);
- 
-  
-  const handleAddingRecorderDays = (day)=>{
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleAddingRecorderDays = (day) => {
     setDaysRecorded((prev) => {
       if (!prev.includes(day)) {
         return [...prev, day];
       }
       return prev;
     });
-  }
+  };
 
-  useEffect(
-    ()=>{
-      if(dailyEntriesFromDb){
-        for (let day of dailyEntriesFromDb) {
-          handleAddingRecorderDays(day.date);
-        }
+  useEffect(() => {
+    if (dailyEntriesFromDb) {
+      for (let day of dailyEntriesFromDb) {
+        handleAddingRecorderDays(day.date);
       }
     }
-    , [dailyEntriesFromDb]
-  )
-
+  }, [dailyEntriesFromDb]);
 
   const checkDisabled = (date) => {
-    const dateStr = format(date, "PPPP")
+    const dateStr = format(date, 'PPPP');
     return !daysRecorded.includes(dateStr);
   };
-  
 
   const handleDayPickedFromCalender = (day) => {
-    onSelectDay(format(day, "PPPP"));
-};
+    onSelectDay(format(day, 'PPPP'));
+    setIsMenuOpen(false); // Close the menu after selecting a date
+  };
 
   return (
     <div>
-      <DropdownMenu>
+      <DropdownMenu open={isMenuOpen} onOpenChange={setIsMenuOpen}>
         <DropdownMenuTrigger>
-          <VscCalendar size={30} className='hover:translate-y-2 hover:text-neutral-500 ease-in-out duration-300' />
+          <VscCalendar
+            size={30}
+            className="hover:translate-y-2 hover:text-neutral-500 ease-in-out duration-300"
+          />
         </DropdownMenuTrigger>
         <DropdownMenuContent className="appearance-none bg-transparent border-none outline-none shadow-none ">
           <Calendar
-           selected={selectedDay}
+            selected={selectedDay}
             disabled={checkDisabled}
             onSelect={handleDayPickedFromCalender}
             mode="single"

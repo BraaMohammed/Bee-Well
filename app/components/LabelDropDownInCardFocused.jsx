@@ -22,6 +22,8 @@ import {
 import deleteLabel from '../actions/deleteLabel';
 import { AlertDialogAction } from '@/components/ui/alert-dialog';
 import { AlertDialogCancel } from '@/components/ui/alert-dialog';
+import { useToast } from '@/components/ui/use-toast';
+
 
 
 const LabelDropDownInCardFocused = ({ setCurrentLabel, labelFromDb, id , refreshFunction }) => {
@@ -32,6 +34,8 @@ const LabelDropDownInCardFocused = ({ setCurrentLabel, labelFromDb, id , refresh
     const [newLabelName, setNewLabelName] = useState("") // state for the new label name 
     const [newLabelSubmited, setNewLabelSubmited] = useState(false) // state changed when the submit button is clicked so we can refetch the labels 
     // const [showDeletingAlert , setShowDeletingAlert] = useState(false)
+    const { toast } = useToast()
+
     const fetchLabels = async () => {
         try {
             const res = await getLabels()
@@ -62,10 +66,15 @@ const LabelDropDownInCardFocused = ({ setCurrentLabel, labelFromDb, id , refresh
                     {labels.filter(label => label.name !== "deleted").map(label => (
                         <DropdownMenuItem className="  hover:opacity-60 ease-in-out duration-300 flex gap-2 justify-between" key={label._id} >
                             <p onClick={(e) => {
-                                e.stopPropagation()
                                 setSelectedLabel(label.name)
                                 setCurrentLabel(label.name) 
-                                refreshFunction(prev => !prev)
+                                if(label.name== "archived" || label.name== "deleted"){
+                                    toast({
+                                        description: `the note have been moved to ${label.name}`,
+                                      })
+                                }
+                                e.stopPropagation()
+
 
                             }}>{label.name}</p>
                             <AlertDialog>
