@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from 'react';
 
-const PWAInstallPrompt = () => {
+const PwaInstallPrompt = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isInstallPromptVisible, setInstallPromptVisible] = useState(false);
 
@@ -50,6 +50,6 @@ const PWAInstallPrompt = () => {
   );
 };
 
-export default PWAInstallPrompt;
+export default PwaInstallPrompt;
 
 
