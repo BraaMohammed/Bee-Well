@@ -161,7 +161,6 @@ export default function App({ getEditorState ,  intialContentFocused ,  setCurre
         dark: darkRedTheme,
       };
        
-     console.log(...getDefaultReactSlashMenuItems(editor))
 
 
     // Renders the editor instance using a React component.

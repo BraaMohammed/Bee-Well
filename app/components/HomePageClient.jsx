@@ -8,7 +8,8 @@ import { useSession } from 'next-auth/react'
 import React from 'react'
 import Input from './Input'
 import NoteCardSkeleton from './NoteCardSkeleton'
-import PWAInstallPrompt from './PwaInstallPrompt'
+import PWAInstallPrompt from './PWAInstallPrompt'
+
 
 const HomePageClient = ({ labelId }) => {
     const [notes, setNotes] = useState([]);

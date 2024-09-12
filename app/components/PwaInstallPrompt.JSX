@@ -1,8 +1,11 @@
+"use client"
 import { useEffect, useState } from 'react';
 
 const PWAInstallPrompt = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isInstallPromptVisible, setInstallPromptVisible] = useState(false);
+
+  console.log('component loadedd brooooooooooo')
 
   useEffect(() => {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
