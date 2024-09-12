@@ -8,8 +8,8 @@ import { useSession } from 'next-auth/react'
 import React from 'react'
 import Input from './Input'
 import NoteCardSkeleton from './NoteCardSkeleton'
-import PwaInstallPrompt from './PwaInstallPrompt'
-
+//import PwaMobile from '@/app/components/PwaMobile'
+import PwaMobile from './PwaMobile'
 
 const HomePageClient = ({ labelId }) => {
     const [notes, setNotes] = useState([]);
@@ -101,7 +101,7 @@ const HomePageClient = ({ labelId }) => {
 
     return (
         <div className="bg-neutral-300 flex lg:gap-x-4">
-            <PwaInstallPrompt/>
+            <PwaMobile/>
             <Sidebar refreshFunction={setTiggerRefresh} />
             <div className="lg:ml-[15vw] flex flex-col items-center w-full pt-10 gap-0">
                 <div className=" lg:pt-12 pt-2 flex flex-col md:flex-row gap-4 items-center">
