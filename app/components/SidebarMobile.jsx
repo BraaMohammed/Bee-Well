@@ -102,6 +102,10 @@ const SidebarMobile = ({userPhoto , refreshFunction , labels}) => {
       </DropdownMenu>
 
       <button onClick={() => setRenderNewNote(true)} className='fixed bottom-28 bg-green-600 rounded-2xl left-10 p-4 shadow-lg shadow-neutral-800 active:bg-green-500 ease-in-out duration-300'>
+      {renderNewNote && createPortal(
+                <CardFocuesdTwo refreshFunction={refreshFunction} onClose={handleClose} isNewNote={true} />,
+                document.body
+            )}
         <Plus/>
       </button>
     </div>
