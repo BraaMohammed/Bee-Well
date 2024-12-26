@@ -77,17 +77,4 @@ export function CarouselHabbitCards({ trackedHabbitsFromDb, setTiggerRefresh, da
     { id: 1, date: '2024-07-15T00:00:00.000+00:00' }
 ];
 
-
-const createNewDailyEntry = async (date) => {
-    try {
-        const res = await createDailyEntry({ dateFromClient: date });
-        console.log(res);
-    } catch (err) {
-        console.error('Error creating daily entry:', err);
-    }
-};
-
-for (let day of arr) {
-    createNewDailyEntry(day.date);
-}
 */
