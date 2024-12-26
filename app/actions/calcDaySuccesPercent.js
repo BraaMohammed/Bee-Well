@@ -1,4 +1,4 @@
-'use server'
+'use client'
 
 function calculateDailyRating(dailyEntry, trackedHabbits) {
   let totalScore = 0;
