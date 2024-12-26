@@ -1,7 +1,12 @@
 'use client'
 
+
 function calculateDailyRating(dailyEntry, trackedHabbits) {
+
+  
   let totalScore = 0;
+
+
   let totalWeight = 0;
 
   console.log(trackedHabbits);
