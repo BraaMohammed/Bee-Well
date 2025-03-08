@@ -18,7 +18,7 @@ import {
 import HabbitPicker from "./HabbitPicker"
 import { useEffect, useState } from "react"
 import IntervalPicker from "./IntervalPicker"
-
+import { useRef } from "react"
 
 
 const chartData = [
@@ -39,6 +39,8 @@ const chartConfig = {
     icon: Activity,
   },
 }
+
+
 const SelectedHabbitsAnalytics = ({ dailyEntriesFromDb, trackedHabbitsFromDb }) => {
 
   const [selectedHabbitsAnalytics, setSelectedHabbitsAnalytics] = useState("")
@@ -47,6 +49,7 @@ const SelectedHabbitsAnalytics = ({ dailyEntriesFromDb, trackedHabbitsFromDb }) 
   const [currentPlotData, setCurrentPlotData] = useState([])
   const [currentInterval, setCurrentInterval] = useState(3)
 
+  const isFirstRender = useRef(true)
 
 
 
@@ -74,11 +77,15 @@ const SelectedHabbitsAnalytics = ({ dailyEntriesFromDb, trackedHabbitsFromDb }) 
 
 
   const plotingFunction = (arr) => {
+     console.log(arr)
     if (Array.isArray(arr)) {
       arr.forEach(el => {
         switch (el.elementType) {
           case "checkList":
             setCurrentPlotData(prev => {
+                if(prev.length > 30){
+                  return prev
+                }
               const dateExists = prev.some(p => p.date === el.date);
               if (!dateExists) {
                 return [...prev, { date: el.date, score: el.userInput ? 100 : 0, displayValue: el.userInput ? "100%" : "0%" }];
@@ -89,6 +96,9 @@ const SelectedHabbitsAnalytics = ({ dailyEntriesFromDb, trackedHabbitsFromDb }) 
             break;
           case "select":
             setCurrentPlotData(prev => {
+              if(prev.length > 30){
+                return prev
+              }
               const dateExists = prev.some(p => p.date === el.date);
               if (!dateExists) {
                 const completed = el.elementType === "checkList" ? el.userInput : el.target;
@@ -105,6 +115,9 @@ const SelectedHabbitsAnalytics = ({ dailyEntriesFromDb, trackedHabbitsFromDb }) 
           case "numberInput":
             const userValue = parseFloat(el.userInput);
             setCurrentPlotData(prev => {
+              if(prev.length > 30){
+                return prev
+              }
               return [...prev, {
                 date: el.date,
                 score: isNaN(userValue) ? 0 : userValue,
@@ -120,42 +133,57 @@ const SelectedHabbitsAnalytics = ({ dailyEntriesFromDb, trackedHabbitsFromDb }) 
 
   const handleAddingMissingDay = (arr) => {
     if (dailyEntriesFromDb) {
+      // Calculate the date 31 days ago
+      const today = new Date();
+      const thirtyOneDaysAgo = new Date();
+      thirtyOneDaysAgo.setDate(today.getDate() - 31);
+  
       // Sort the daily entries by date
       const arrangedArray = dailyEntriesFromDb.sort((a, b) => {
         const dateA = new Date(a.date.replace(/(st|nd|rd|th),/, ','));
         const dateB = new Date(b.date.replace(/(st|nd|rd|th),/, ','));
         return dateB - dateA;
       });
-
-      // Create an array of dates from arrangedArray
+  
+      // Create an array of dates from arrangedArray (only for last 31 days)
       let daysArr = [];
       arrangedArray.forEach(d => {
-        daysArr.push(d.date);
-      });
-      // console.log(daysArr)
-
-      // Create a set of dates from arr for quick lookup
-      const existingDates = new Set(arr.map(a => a.date));
-
-      // Iterate over daysArr to find and insert missing dates
-      daysArr.forEach(d => {
-        if (!existingDates.has(d)) {
-          setCurrentPlotData(prev => { return [...prev, { date: d, score: 0 }] })
+        const entryDate = new Date(d.date.replace(/(st|nd|rd|th),/, ','));
+        if (entryDate >= thirtyOneDaysAgo) {
+          daysArr.push(d.date);
         }
       });
-
-      // Optional: Sort arr if needed
-      setCurrentPlotData(prev => {
-        return prev.sort((a, b) => {
-          const dateA = new Date(a.date.replace(/(st|nd|rd|th),/, ','));
-          const dateB = new Date(b.date.replace(/(st|nd|rd|th),/, ','));
-          return dateB - dateA;
-        });
-      })
-
+  
+      // Create a set of dates from arr for quick lookup
+      const existingDates = new Set(arr.map(a => a.date));
+  
+      // Create an array to collect all missing days
+      let updatedData = [...arr];
+      
+      // Iterate over daysArr to find and add missing dates
+      daysArr.forEach(d => {
+        if (!existingDates.has(d)) {
+          updatedData.push({ date: d, score: 0, displayValue: "0%" });
+        }
+      });
+      
+      // Sort and filter to only include last 31 days
+      updatedData = updatedData.sort((a, b) => {
+        const dateA = new Date(a.date.replace(/(st|nd|rd|th),/, ','));
+        const dateB = new Date(b.date.replace(/(st|nd|rd|th),/, ','));
+        return dateB - dateA;
+      });
+      
+      // Filter to only include entries from last 31 days
+      updatedData = updatedData.filter(item => {
+        const itemDate = new Date(item.date.replace(/(st|nd|rd|th),/, ','));
+        return itemDate >= thirtyOneDaysAgo;
+      });
+      
+      // Set the state just once with all updates
+      setCurrentPlotData(updatedData);
     }
   };
-
 
   useEffect(
     () => {
@@ -178,12 +206,11 @@ const SelectedHabbitsAnalytics = ({ dailyEntriesFromDb, trackedHabbitsFromDb }) 
   )
 
   useEffect(() => {
-    if (currentPlotData.length > 0) {
+    if (currentPlotData.length > 0 && isFirstRender.current) {
+      isFirstRender.current = false
       handleAddingMissingDay(currentPlotData)
     }
-
   }, [currentPlotData])
-
 
   function cleanAndFormatDate(value) {
     if (value) {
