@@ -1,12 +1,10 @@
 "use server"
 import { authOptions } from "../../lib/authOptions"
 import { getServerSession } from "next-auth"
-import HomePageClient from "../../components/HomePageClient"
 import { redirect } from "next/navigation"
 import dbConnect from "@/app/lib/dbConnect"
 import Label from "@/app/lib/models/Label"
-
-
+import HomePageClient from "@/components/my-components/notes/HomePageClient"
 export default async function archivedNotes(){
     const session = await getServerSession(authOptions);
     if (session == null) {
