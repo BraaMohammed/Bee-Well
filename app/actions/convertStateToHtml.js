@@ -47,6 +47,8 @@ export function convertStateToHtml(stateJson) {
         return '';
     }
   }
-
+  if (!state || !state.root || !state.root.children) {
+    return '';
+  }
   return state.root.children.map(child => nodeToHtml(child)).join('');
 }

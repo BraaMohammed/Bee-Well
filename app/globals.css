@@ -40,109 +40,6 @@ body {
   box-sizing: border-box;
 }
 
-.editor-shell{
-  width: 100%;
-  margin-right: auto;
-  margin-left: auto;
-}
-
-
-
-
-.toolbar{
-  
-  display: flex;
-  flex-wrap: wrap;
-  height: 130px !important;
-  gap: 5px;
-  z-index: 35;
-  border-radius: 10px;
-  justify-content: center;
-}
-
-.ContentEditable__root{
-  background-color: transparent;
-}
-
-.toolbar * {
-  z-index: 60;
-}
-
-.color-picker-wrapper {
-  z-index: 60;
-}
-
-.editor-container {
-  background-color: red; /* working */
-}
-
-.dropdown {
-  position: relative; /* Add position relative */
-  z-index: 70 !important; /* Keep your z-index */
-}
-
-
-.color-picker-wrapper {
-  z-index: 60 !important;
-}
-
-
-body .dropdown  , .character-style-popup ,.link-editor {
-  z-index: 70 !important;
-}
-
-.editor-container{
-  background-color: transparent;
-}
-
-.editor-shell .editor-container {
-  background-color: transparent !important;
-  width: 100%;
-
-}
-
-.color-picker-wrapper span {
- color: black;
-}
-
-
-.Modal__content input{
-  color: black;
-}
-
-
-.Modal__content button{
-  background-color: rgb(64 64 64 );
-}
-
-.editor-container img{
-  max-width: 100% !important;
-}
-
-.toolbar button.toolbar-item{
-  align-items: center;
-}
-
-.toolbar div{
-  display: flex;
-  align-items: center;
-}
-
-.toolbar select{
-  display: flex;
-  align-items: center;
-}
-
-.chevron-down{
-  align-self: center;
-}
-
-
-.ContentEditable__root iframe {
-  max-width: 100%;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
 
 
 /*chatgpt code for list and bullets style */
@@ -230,4 +127,143 @@ li[role="checkbox"][aria-checked="true"]::before {
 
 .recharts-responsive-container{
   @apply !h-[175px] lg:!h-auto md:!h-auto
+}
+
+
+/*
+
+
+
+
+
+
+
+.editor-shell{
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+
+
+
+.toolbar{
+  
+  display: flex;
+  flex-wrap: wrap;
+  height: 130px !important;
+  gap: 5px;
+  z-index: 35;
+  border-radius: 10px;
+  justify-content: center;
+}
+
+.ContentEditable__root{
+  background-color: transparent;
+}
+
+.toolbar * {
+  z-index: 60;
+}
+
+.color-picker-wrapper {
+  z-index: 60;
+}
+
+.editor-container {
+  background-color: red; 
+}
+
+.dropdown {
+  position: relative; 
+  z-index: 70 !important; 
+}
+
+
+.color-picker-wrapper {
+  z-index: 60 !important;
+}
+
+
+body .dropdown  , .character-style-popup ,.link-editor {
+  z-index: 70 !important;
+}
+
+.editor-container{
+  background-color: transparent;
+}
+
+.editor-shell .editor-container {
+  background-color: transparent !important;
+  width: 100%;
+
+}
+
+.color-picker-wrapper span {
+ color: black;
+}
+
+
+.Modal__content input{
+  color: black;
+}
+
+
+.Modal__content button{
+  background-color: rgb(64 64 64 );
+}
+
+.editor-container img{
+  max-width: 100% !important;
+}
+
+.toolbar button.toolbar-item{
+  align-items: center;
+}
+
+.toolbar div{
+  display: flex;
+  align-items: center;
+}
+
+.toolbar select{
+  display: flex;
+  align-items: center;
+}
+
+.chevron-down{
+  align-self: center;
+}
+
+
+.ContentEditable__root iframe {
+  max-width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+*/
+
+/* BlockNote Editor Styles */
+.bn-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.bn-editor {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible !important;
+}
+
+.bn-editor [role="textbox"] {
+  width: 100% !important;
+}
+
+/* Ensure editor content is visible */
+.ContentEditable__root {
+  background-color: transparent;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 100px !important;
 }

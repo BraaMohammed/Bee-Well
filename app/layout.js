@@ -1,9 +1,8 @@
 
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import SessionWrapper from "./components/SessionWrapper";
 import { Toaster } from "@/components/ui/toaster"
-
+import SessionWrapper from "@/components/my-components/SessionWrapper";
 const APP_NAME = "Bee Well";
 const APP_DEFAULT_TITLE = "Bee Well";
 const APP_TITLE_TEMPLATE = "%s - Bee Well";

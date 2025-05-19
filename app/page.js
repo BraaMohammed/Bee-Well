@@ -1,18 +1,12 @@
-//import Sidebar from "./components/Sidebar";
-//import Input from "./components/Input";
-//import SidebarMobile from "./components/SidebarMobile";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./lib/authOptions";
 import { redirect } from 'next/navigation'
-//import { getServerSideProps } from "next/dist/build/templates/pages";
-import HomePageClient from "./components/HomePageClient";
-
+import HomePageClient from "@/components/my-components/notes/HomePageClient";
 export default async function Home() {
   const session = await getServerSession(authOptions);
   if (session == null) {
     redirect('/signin');
   }
-   
 
   return (
     <HomePageClient/>
