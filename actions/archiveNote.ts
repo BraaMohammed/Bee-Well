@@ -29,6 +29,7 @@ export async function archiveNote(id: string): Promise<ArchiveNoteResult> {
         if (!existingLabel) {
             const { data: newLabel, error: createError } = await supabase
                 .from('labels')
+                //@ts-ignore
                 .insert({
                     name: 'archived',
                     user_id: userId,
@@ -44,6 +45,8 @@ export async function archiveNote(id: string): Promise<ArchiveNoteResult> {
         // Update the note to have the archived label
         const { error: updateError } = await supabase
             .from('notes')
+                            //@ts-ignore
+
             .update({ labelname: 'archived' })
             .eq('id', id)
             .eq('user_id', userId);

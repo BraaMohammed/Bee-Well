@@ -12,6 +12,8 @@ export async function deleteLabel(labelName: string) {
         // First, update any notes that have this label to remove the label
         const { error: updateError } = await supabase
             .from('notes')
+                            //@ts-ignore
+
             .update({ labelname: '' })
             .eq('user_id', session.user.id)
             .eq('labelname', labelName);

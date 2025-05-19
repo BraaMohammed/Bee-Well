@@ -85,7 +85,8 @@ export function JournalDialog({ entry, date, isOpen, onClose, onEntrySaved, temp
             if (shouldUseTemplateInstead && templateContent) {
               console.log("Using provided template content from props (overriding placeholder)");
               newBlocks = JSON.parse(JSON.stringify(templateContent)); // Deep copy
-              newBlocks = newBlocks.map(block => ({
+              if(newBlocks)
+              newBlocks = newBlocks?.map(block => ({
                 ...block,
                 id: "template-" + Date.now() + "-" + Math.random().toString(36).substring(2, 9)
               }));
@@ -123,8 +124,9 @@ export function JournalDialog({ entry, date, isOpen, onClose, onEntrySaved, temp
 
               if (shouldUseTemplateInsteadFromFetched && templateContent) {
                 console.log("Using provided template content from props (overriding fetched placeholder)");
-                newBlocks = JSON.parse(JSON.stringify(templateContent)); // Deep copy
-                newBlocks = newBlocks.map(block => ({
+                newBlocks = JSON.parse(JSON.stringify(templateContent));
+                if(newBlocks) // Deep copy
+                newBlocks = newBlocks?.map(block => ({
                   ...block,
                   id: "template-" + Date.now() + "-" + Math.random().toString(36).substring(2, 9)
                 }));
@@ -139,7 +141,8 @@ export function JournalDialog({ entry, date, isOpen, onClose, onEntrySaved, temp
               if (templateContent && Array.isArray(templateContent) && templateContent.length > 0) {
                 console.log("Using provided template content from props for new entry");
                 newBlocks = JSON.parse(JSON.stringify(templateContent));
-                newBlocks = newBlocks.map(block => ({
+                if(newBlocks) // Deep copy
+                newBlocks = newBlocks?.map(block => ({
                   ...block,
                   id: "template-" + Date.now() + "-" + Math.random().toString(36).substring(2, 9)
                 }));

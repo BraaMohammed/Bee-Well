@@ -195,7 +195,7 @@ export default function JournalPageClient() {
                                         onYearChange={setCurrentYear}
                                     />
                                 </div>
-                                <TemplateEditor template={template || undefined} onTemplateSaved={handleTemplateSaved} className="w-full sm:w-auto" /> {/* Full width button on mobile */}
+                                <TemplateEditor template={template || undefined} onTemplateSaved={handleTemplateSaved}  /> {/* Full width button on mobile */}
                             </div>
                         </div>
                         {error && (

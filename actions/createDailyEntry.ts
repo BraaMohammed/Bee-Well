@@ -48,6 +48,8 @@ export async function createDailyEntry({ completed, date, habbitid, value }: Cre
             // Create new entry
             const { data: newEntry, error } = await supabase
                 .from('habbit_entry')
+                                //@ts-ignore
+
                 .insert({
                     completed,
                     date,

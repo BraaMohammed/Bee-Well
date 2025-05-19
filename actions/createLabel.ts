@@ -21,6 +21,8 @@ export async function createLabel({ id, labelName, color }: CreateLabelParams): 
 
         const { data: label, error } = await supabase
             .from('labels')
+                            //@ts-ignore
+
             .insert({
                 id: id || crypto.randomUUID(),
                 name: labelName,

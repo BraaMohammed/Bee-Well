@@ -129,8 +129,8 @@ export function TemplateEditor({ template, onSave, onTemplateSaved }: TemplateEd
                   getEditorState={setContent} 
                   intialContentFocused={content}
                   isNewNote={false}
-                  setCurrentHtmlNoteContent={(html) => {/* Template doesn't need HTML content */}}
-                  setHtmlContentForNewNotes={(html) => {/* Template doesn't need HTML content */}}
+                  setCurrentHtmlNoteContent={(html:string) => {/* Template doesn't need HTML content */}}
+                  setHtmlContentForNewNotes={(html:string) => {/* Template doesn't need HTML content */}}
                 />
             )}
           </div>

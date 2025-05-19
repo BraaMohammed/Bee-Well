@@ -49829,7 +49829,7 @@ const entries = [
 
 
 
-export default async function importEntries() {
+/*export default async function importEntries() {
   for (const entry of entries) {
     // Map fields to match Supabase schema
     const insertObj = {
@@ -49852,3 +49852,4 @@ export default async function importEntries() {
   }
   console.log('Import finished');
 }
+*/

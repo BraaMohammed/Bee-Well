@@ -33,8 +33,9 @@ export async function saveNote({
         if (isNewNote) {
             const { data: note, error } = await supabase
                 .from('notes')
+                                //@ts-ignore
+
                 .insert({
-            //@ts-ignore
                     heading: heading || '',
                     content,
                     user_id: session.user.id,
