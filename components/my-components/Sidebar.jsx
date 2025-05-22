@@ -62,7 +62,7 @@ const Sidebar = ({ refreshFunction }) => {
 
 
     return (
-        <div>
+        <div className="shadow-2xl shadow-neutral-400">
         <div className=" hidden bg-neutral-600 lg:flex flex-col w-[15vw] max-h-full h-screen fixed left-0 top-0 gap-0 justify-between p-6 pt-1 ">
              
             <img src="/logo.png" alt="logo" className=" size-36 max-w-36 self-center drop-shadow-2xl mt-2  -mb-2 shadow-white " />

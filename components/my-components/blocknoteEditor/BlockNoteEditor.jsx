@@ -89,7 +89,7 @@ export default function App({ getEditorState ,  intialContentFocused ,  setCurre
         const content = editor.topLevelBlocks;
         console.log(content)
         const filteredContent = content.filter(block => 
-          (block.content && block.content.length > 0) || block.type === "image" || block.type === "video" || block.type === "file" || block.type === "audio" || block.type === "YoutubeEmbed"
+          (block.content && block.content.length > 0 && block) || block?.type === "image" || block?.type === "video" || block?.type === "file" || block?.type === "audio" || block?.type === "YoutubeEmbed"
         );
         console.log(filteredContent)
         getEditorState(filteredContent) 

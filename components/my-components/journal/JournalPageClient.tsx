@@ -7,17 +7,15 @@ import { getJournalEntriesByYear } from '@/app/actions/getAllJournalEntries';
 import { JournalActivityChart } from '@/components/my-components/journal/JournalActivityChart';
 import { JournalCard } from '@/components/my-components/journal/JournalCard';
 import { TemplateEditor } from '@/components/my-components/journal/TemplateEditor';
-import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import Sidebar from '@/components/my-components/Sidebar';
 import SidebarMobile from '@/components/my-components/SidebarMobile';
 import {
-    Select,
-    SelectTrigger,
-    SelectValue,
-    SelectContent,
-    SelectItem
-} from '@/components/ui/select';
+    Carousel,
+    CarouselContent,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/components/ui/carousel"
 import { useSession } from "next-auth/react";
 import getLabels from "@/app/actions/getLabels";
 import CalendarCardSkeleton from '@/components/my-components/habbitTracker/CalendarCardSkeleton';
@@ -182,7 +180,7 @@ export default function JournalPageClient() {
                 <div className="flex flex-col md:flex-row gap-4 md:gap-8"> {/* Flex-col for mobile, row for md and up */}
                     <div className="flex flex-col gap-2 w-full">
                         <div className="flex flex-col md:flex-row items-start md:items-center justify-between w-full gap-4 md:gap-0"> {/* Flex-col for mobile, row for md and up */}
-                           <div className="w-full md:w-auto"> {/* Full width on mobile for text */}
+                            <div className="w-full md:w-auto"> {/* Full width on mobile for text */}
                                 <h1 className="lg:text-2xl text-xl font-semibold flex gap-2 items-center">My Journal</h1>
                                 <p className="text-sm md:text-base">Journaling is a silent conversation with your soul — each word a step toward clarity, growth</p> {/* Adjusted text size for mobile */}
                             </div>
@@ -195,7 +193,7 @@ export default function JournalPageClient() {
                                         onYearChange={setCurrentYear}
                                     />
                                 </div>
-                                <TemplateEditor template={template || undefined} onTemplateSaved={handleTemplateSaved}  /> {/* Full width button on mobile */}
+                                <TemplateEditor template={template || undefined} onTemplateSaved={handleTemplateSaved} /> {/* Full width button on mobile */}
                             </div>
                         </div>
                         {error && (
@@ -210,24 +208,43 @@ export default function JournalPageClient() {
                 <div className="mt-2 mb-4">
                     <h2 className="text-2xl font-semibold mb-2">Entries</h2>
                     {datesForYear.length > 0 ? (
-                        <div className="flex overflow-x-auto gap-4  md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-x-visible py-2 lg:max-w-fit">
-                            {datesForYear.map(date => {
-                                const entry = entriesByDate.get(date.toISOString().split('T')[0]);
-                                return (
-                                    <JournalCard
-                                        key={date.toISOString()}
-                                        entry={entry}
-                                        date={date}
-                                        templateContent={template?.content}
-                                        onSave={handleEntrySaved}
-                                    />
-                                );
-                            })}
-                        </div>
+                        <Carousel
+                            className="w-full max-w-xs self-start"
+                            opts={{
+                                align: "start",
+                                dragFree: true,
+                                containScroll: false,
+                                loop: false,
+                                skipSnaps: false,
+                                inViewThreshold: 0,
+                                slidesToScroll: 1,
+                                duration: 0,
+                                startIndex: 0,
+                                watchDrag: true,
+                                axis: "x",
+                            }}
+                        >
+                            <CarouselContent className='w-fit gap-4'>
+                                {datesForYear.map(date => {
+                                    const entry = entriesByDate.get(date.toISOString().split('T')[0]);
+                                    return (
+                                        <JournalCard
+                                            key={date.toISOString()}
+                                            entry={entry}
+                                            date={date}
+                                            templateContent={template?.content}
+                                            onSave={handleEntrySaved}
+                                        />
+                                    );
+                                })}
+                            </CarouselContent>
+                          
+                        </Carousel>
                     ) : (
                         <p className="text-center text-gray-400">No entries found for {currentYear}.</p>
                     )}
-                </div>                {/* Analytics Section */}
+                </div>
+                {/* Analytics Section */}
                 <div className="w-full">
                     {stats && <JournalActivityChart writtenDates={writtenDatesForChart} entries={entries} />}
                 </div>
@@ -235,3 +252,12 @@ export default function JournalPageClient() {
         </div>
     );
 }
+
+
+/*
+
+  <CarouselPrevious className="w-10 h-10 active:bg-neutral-400 hover:bg-neutral-400 shadow-lg ease-in-out duration-300 shadow-neutral-900 rounded-xl disabled:opacity-0 text-neutral-950" />
+                            <CarouselNext className="w-10 h-10 active:bg-neutral-400 hover:bg-neutral-400 shadow-lg ease-in-out duration-300 shadow-neutral-900 rounded-xl disabled:opacity-0 text-neutral-950" />
+
+
+*/

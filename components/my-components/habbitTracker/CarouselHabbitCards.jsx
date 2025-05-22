@@ -25,8 +25,22 @@ export function CarouselHabbitCards({ trackedHabbitsFromDb, setTiggerRefresh, da
   )
 
   return (
-    <Carousel className="w-full max-w-xs self-start  ">
-      <CarouselContent className=" w-full ">
+    <Carousel 
+     opts={{
+                                align: "start",
+                                dragFree: true,
+                                containScroll: false,
+                                loop: false,
+                                skipSnaps: false,
+                                inViewThreshold: 0,
+                                slidesToScroll: 1,
+                                duration: 0,
+                                startIndex: 0,
+                                watchDrag: true,
+                                axis: "x",
+                            }}
+    className="w-full max-w-xs self-start  ">
+      <CarouselContent className=" w-fit ">
         {dailyEntries.sort((a, b) => {
           const dateA = new Date(a.date.replace(/(st|nd|rd|th),/, ','));
           const dateB = new Date(b.date.replace(/(st|nd|rd|th),/, ','));
@@ -35,12 +49,18 @@ export function CarouselHabbitCards({ trackedHabbitsFromDb, setTiggerRefresh, da
           <FocusedHabbitCard setCarouselRefresh={setCarouselRefresh} setTiggerRefresh={setTiggerRefresh} trackedHabbitsFromDb={trackedHabbitsFromDb} key={a._id} id={a._id} dateFromDb={a.date} entryFromDb={a.entries} />
         ))}
       </CarouselContent>
-      <CarouselPrevious className=" w-10 h-10 active:bg-neutral-400 hover:bg-neutral-400 shadow-lg ease-in-out duration-300 shadow-neutral-900 rounded-xl disabled:opacity-0 text-neutral-950 " />
-      <CarouselNext className=" w-10 h-10 active:bg-neutral-400 hover:bg-neutral-400 shadow-lg ease-in-out duration-300 shadow-neutral-900 rounded-xl disabled:opacity-0 text-neutral-950" />
+  
     </Carousel>
   )
 }
 
+
+/*
+    <CarouselPrevious className=" w-10 h-10 active:bg-neutral-400 hover:bg-neutral-400 shadow-lg ease-in-out duration-300 shadow-neutral-900 rounded-xl disabled:opacity-0 text-neutral-950 " />
+      <CarouselNext className=" w-10 h-10 active:bg-neutral-400 hover:bg-neutral-400 shadow-lg ease-in-out duration-300 shadow-neutral-900 rounded-xl disabled:opacity-0 text-neutral-950" />
+
+
+*/
 
 
 
