@@ -209,6 +209,19 @@ export default function JournalPageClient() {
                     <h2 className="text-2xl font-semibold mb-2">Entries</h2>
                     {datesForYear.length > 0 ? (
                         <Carousel
+                            tabIndex={0}
+                            onKeyDownCapture={(e) => {
+                                // 1. if the key isn’t Left/Right, do nothing
+                                if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return
+
+                                // 2. only preventDefault if the wrapper itself is focused
+                                //    i.e. e.target === e.currentTarget
+                                //    any child (like your editor) will have e.target != e.currentTarget
+                                if (e.target === e.currentTarget) {
+                                    e.preventDefault()
+                                    e.stopPropagation()
+                                }
+                            }}
                             className="w-full max-w-xs self-start"
                             opts={{
                                 align: "start",
@@ -224,7 +237,8 @@ export default function JournalPageClient() {
                                 axis: "x",
                             }}
                         >
-                            <CarouselContent className='w-fit gap-4'>
+                            <CarouselContent
+                                className='w-fit gap-4'>
                                 {datesForYear.map(date => {
                                     const entry = entriesByDate.get(date.toISOString().split('T')[0]);
                                     return (
@@ -238,7 +252,7 @@ export default function JournalPageClient() {
                                     );
                                 })}
                             </CarouselContent>
-                          
+
                         </Carousel>
                     ) : (
                         <p className="text-center text-gray-400">No entries found for {currentYear}.</p>
