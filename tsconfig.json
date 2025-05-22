@@ -118,7 +118,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "lib/script/importNotesToSupabase.js", "components/ui/carousel.jsx"  ],
+, "lib/script/importNotesToSupabase.js", "components/ui/carousel.jsx", "components/my-components/blocknoteEditor/BlockNoteEditor.jsx", "components/my-components/blocknoteEditor/BlockNoteEditor.jsx"  ],
   "exclude": [
     "node_modules"
   ]

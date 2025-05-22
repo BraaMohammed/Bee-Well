@@ -15,6 +15,21 @@ import { BlockNoteEditor as BlockNoteEditorType, Block } from '@blocknote/core';
 
 const BlockNoteEditor = dynamic(() => import("@/components/my-components/blocknoteEditor/BlockNoteEditor"), { ssr: false });
 
+const validateBlock = (block: any): boolean => {
+  if (!block || typeof block !== 'object') return false;
+  
+  // Check required block properties
+  if (!block.type || !block.content || !Array.isArray(block.content)) return false;
+  
+  // Validate block props
+  if (!block.props || typeof block.props !== 'object') return false;
+  
+  // Validate content items
+  return block.content.every((item: any) => 
+    item && typeof item === 'object' && item.type && typeof item.type === 'string'
+  );
+};
+
 const PLACEHOLDER_TEXT = "Here is a new note. Add your honest thoughts and best ideas here.";
 
 // Helper function to convert blocks to HTML (client-side)
@@ -68,12 +83,12 @@ export function JournalDialog({ entry, date, isOpen, onClose, onEntrySaved, temp
             if (
               Array.isArray(existingContent) &&
               existingContent.length === 1 &&
-              existingContent[0].type === "paragraph" &&
-              existingContent[0].content &&
+              existingContent[0]?.type === "paragraph" &&
+              existingContent[0]?.content &&
               Array.isArray(existingContent[0].content) &&
-              existingContent[0].content.length === 1 &&
-              existingContent[0].content[0].type === "text" &&
-              existingContent[0].content[0].text === PLACEHOLDER_TEXT
+              existingContent[0]?.content.length === 1 &&
+              existingContent[0]?.content[0].type === "text" &&
+              existingContent[0]?.content[0].text === PLACEHOLDER_TEXT
             ) {
               // Now check if a valid templateContent is available
               if (templateContent && Array.isArray(templateContent) && templateContent.length > 0) {
@@ -109,12 +124,12 @@ export function JournalDialog({ entry, date, isOpen, onClose, onEntrySaved, temp
               if (
                 Array.isArray(fetchedContent) &&
                 fetchedContent.length === 1 &&
-                fetchedContent[0].type === "paragraph" &&
-                fetchedContent[0].content &&
+                fetchedContent[0]?.type === "paragraph" &&
+                fetchedContent[0]?.content &&
                 Array.isArray(fetchedContent[0].content) &&
-                fetchedContent[0].content.length === 1 &&
-                fetchedContent[0].content[0].type === "text" &&
-                fetchedContent[0].content[0].text === PLACEHOLDER_TEXT
+                fetchedContent[0]?.content.length === 1 &&
+                fetchedContent[0]?.content[0].type === "text" &&
+                fetchedContent[0]?.content[0].text === PLACEHOLDER_TEXT
               ) {
                 if (templateContent && Array.isArray(templateContent) && templateContent.length > 0) {
                   console.log("Fetched entry is placeholder and template is available. Prioritizing template.");
@@ -140,13 +155,47 @@ export function JournalDialog({ entry, date, isOpen, onClose, onEntrySaved, temp
               console.log("No existing or fetched entry found, attempting to use template content:", JSON.stringify(templateContent));
               if (templateContent && Array.isArray(templateContent) && templateContent.length > 0) {
                 console.log("Using provided template content from props for new entry");
-                newBlocks = JSON.parse(JSON.stringify(templateContent));
-                if(newBlocks) // Deep copy
-                newBlocks = newBlocks?.map(block => ({
-                  ...block,
-                  id: "template-" + Date.now() + "-" + Math.random().toString(36).substring(2, 9)
-                }));
-                console.log("Final blocks to use (from template for new entry):", JSON.stringify(newBlocks));
+                // Validate template content before using it
+                const validTemplateContent = templateContent.filter(block => 
+                  block && 
+                  typeof block === 'object' && 
+                  block.type && 
+                  block.content && 
+                  Array.isArray(block.content)
+                );
+                
+                if (validTemplateContent.length > 0) {
+                  newBlocks = JSON.parse(JSON.stringify(validTemplateContent));
+                  if(newBlocks) {
+                    newBlocks = newBlocks.map(block => ({
+                      ...block,
+                      id: "template-" + Date.now() + "-" + Math.random().toString(36).substring(2, 9)
+                    }));
+                  }
+                  console.log("Final blocks to use (from template for new entry):", JSON.stringify(newBlocks));
+                } else {
+                  // Fall back to default if template content is invalid
+                  console.log("Template content was invalid, using fallback");
+                  newBlocks = [
+                    {
+                      id: "fallback-block-" + Date.now(),
+                      type: "paragraph",
+                      props: {
+                        textColor: "default",
+                        backgroundColor: "default",
+                        textAlignment: "left"
+                      },
+                      content: [
+                        {
+                          type: "text",
+                          text: PLACEHOLDER_TEXT, // Use defined placeholder text
+                          styles: {}
+                        }
+                      ],
+                      children: []
+                    }
+                  ];
+                }
               } else {
                 console.log("No valid template content, using fallback for new entry");
                 newBlocks = [
@@ -212,11 +261,44 @@ export function JournalDialog({ entry, date, isOpen, onClose, onEntrySaved, temp
     if (isDirty && initialContentLoaded) await handleSave();
     onClose();
   };
-  
-  const handleEditorStateUpdate = useCallback((newBlocksFromEditor: Block[]) => {
-    if (initialContentLoaded) {
-        setContent(newBlocksFromEditor);
-        setIsDirty(true);
+    const handleEditorStateUpdate = useCallback((newBlocksFromEditor: Block[]) => {
+    if (initialContentLoaded && Array.isArray(newBlocksFromEditor)) {
+      try {
+        // More thorough validation of blocks
+        const validBlocks = newBlocksFromEditor.filter(block => {
+          if (!block || typeof block !== 'object') return false;
+          
+          // Ensure all required properties exist
+          const hasRequiredProps = block.type 
+            && block.content 
+            && Array.isArray(block.content)
+            && block.props
+            && typeof block.props === 'object';
+          
+          if (!hasRequiredProps) return false;
+          
+          // Validate content items
+          let hasValidContent = false;
+          if (Array.isArray(block.content)) {
+            hasValidContent = block.content.every((item: any) => 
+              item && typeof item === 'object' && item.type && typeof item.type === 'string'
+            );
+          } else {
+            hasValidContent = false;
+          }
+          
+          return hasValidContent;
+        });
+
+        if (validBlocks.length > 0) {
+          setContent(validBlocks);
+          setIsDirty(true);
+        } else {
+          console.warn('No valid blocks found in editor update');
+        }
+      } catch (error) {
+        console.error('Error validating editor blocks:', error);
+      }
     }
   }, [initialContentLoaded]);
 
@@ -270,13 +352,26 @@ export function JournalDialog({ entry, date, isOpen, onClose, onEntrySaved, temp
                 <div className="flex items-center justify-center h-full">
                     <p>Loading entry...</p>
                 </div>
-            ) : (
-                <BlockNoteEditor
+            ) : (                <BlockNoteEditor
                   getEditorState={handleEditorStateUpdate} 
-                  intialContentFocused={content} // Pass Block[] directly
-                  isNewNote={isNewEntry} // Pass the new state here
-                  setCurrentHtmlNoteContent={handleSetCurrentHtml} // Provide the dummy function
-                  setHtmlContentForNewNotes={handleSetHtmlForNewNotes} // Provide the dummy function
+                  intialContentFocused={content || [{
+                    id: "initial-" + Date.now(),
+                    type: "paragraph",
+                    props: {
+                      textColor: "default",
+                      backgroundColor: "default",
+                      textAlignment: "left"
+                    },
+                    content: [{
+                      type: "text",
+                      text: "",
+                      styles: {}
+                    }],
+                    children: []
+                  }]} 
+                  isNewNote={isNewEntry}
+                  setCurrentHtmlNoteContent={handleSetCurrentHtml}
+                  setHtmlContentForNewNotes={handleSetHtmlForNewNotes}
                 />
             )}
           </div>

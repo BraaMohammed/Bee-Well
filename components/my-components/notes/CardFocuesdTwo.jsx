@@ -104,18 +104,14 @@ const CardFocuesdTwo = ({ setCurrentHtmlNoteContent, onClose, isNewNote, intialC
 
 
   return (
-    <div onClick={() => {
+    <div onClick={async () => {
       if (newNote) {
-        //add deboounced submit here
         toast({
           description: "new note have been created !.",
         })
-
       }
-
       setNewNote(false)
-      //  refreshFunction(prev => !prev)
-      debouncedSubmitToDb()
+      await submitToDb();
       if(currentLabel == "archived" || currentLabel == "deleted"){
         refreshFunction(prev => !prev)
       }
@@ -123,20 +119,14 @@ const CardFocuesdTwo = ({ setCurrentHtmlNoteContent, onClose, isNewNote, intialC
     }} className=" fixed inset-0 bg-slate-600 bg-opacity-50 flex justify-center items-center min-h-svh z-30 ease-in-out duration-300   ">
       <div onClick={(e) => e.stopPropagation()} style={{ backgroundColor: backgroundColor }} className=' md:max-w-[635px] lg:w-[1100px]  max-w-[500px] lg:max-h-[700px] max-h-[550px]  flex flex-col gap-4 mb-4 p-6 rounded-xl mt-6 mx-4 z-30 overflow-y-auto overflow-x-clip scrollbar-webkit ease-in-out duration-300 '>
         <div className=' flex items-center justify-between '  >
-          <CiSquareRemove onClick={() => {
+          <CiSquareRemove onClick={async () => {
             if (newNote) {
-              //add deboounced submit here
-              debouncedSubmitToDb()
               toast({
                 description: "new note have been created !.",
               })
-
             }
             setNewNote(false)
-            // refreshFunction(prev => !prev)
-           
-            debouncedSubmitToDb()
-
+            await submitToDb();
             onClose()
             if(labelChanged){
               refreshFunction(prev => !prev)

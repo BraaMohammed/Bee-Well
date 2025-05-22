@@ -113,29 +113,33 @@ const CardFocusedDialog = ({
     }
   }, [headingContent])
 
-  const handleClose = () => {
-    if (newNote) {
-      debouncedSubmitToDb()
-      toast({
-        description: "New note has been created!",
-      })
-    }
-    setNewNote(false)
-    debouncedSubmitToDb()
-    if(currentLabel === "archived" || currentLabel === "deleted"){
-      refreshFunction(prev => !prev)
-    }
-    if(labelChanged) {
-      refreshFunction(prev => !prev)
-    }
-    document.body.style.overflow = 'auto'; // Reset scroll lock
-    onOpenChange(false)
+ const handleClose = async () => {
+  await submitToDb()
+  toast({
+    description: newNote
+      ? "New note has been created!"
+      : "Note changes saved!",
+  })
+  setNewNote(false)
+  if (currentLabel === "archived" || currentLabel === "deleted") {
+    refreshFunction(prev => !prev)
   }
+  if (labelChanged) {
+    refreshFunction(prev => !prev)
+  }
+  document.body.style.overflow = 'auto'
+  onOpenChange(false)
+}
+
+
+
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => {
+    <Dialog open={open} onOpenChange={async (isOpen) => {
       if (!isOpen) {
         document.body.style.overflow = 'auto';
+        await handleClose();
+        return;
       }
       onOpenChange(isOpen);
     }}>
