@@ -35,7 +35,7 @@ import BlockNoteErrorBoundary from './BlockNoteErrorBoundary';
 
 // Define types based on the schema
 type MySchema = typeof schema;
-type MyBlock = Block<MySchema["blockSchema"], MySchema["inlineContentSchema"], MySchema["styleSchema"]>;
+export type MyBlock = Block<MySchema["blockSchema"], MySchema["inlineContentSchema"], MySchema["styleSchema"]>;
 type MyPartialBlock = PartialBlock<MySchema["blockSchema"], MySchema["inlineContentSchema"], MySchema["styleSchema"]>;
 type MyEditor = BlockNoteEditor<MySchema["blockSchema"], MySchema["inlineContentSchema"], MySchema["styleSchema"]>;
 

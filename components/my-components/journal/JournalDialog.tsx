@@ -12,7 +12,7 @@ import { saveJournalEntry } from '@/app/actions/saveJournalEntry';
 import { getJournalEntryByDate } from '@/app/actions/getJournalEntry'; // Add this
 // Import BlockNote core types and a temporary editor for HTML conversion
 import { BlockNoteEditor as BlockNoteEditorType, Block } from '@blocknote/core';
-
+import { MyBlock } from '@/components/my-components/blocknoteEditor/BlockNoteEditor';
 const BlockNoteEditor = dynamic(() => import("@/components/my-components/blocknoteEditor/BlockNoteEditor"), { ssr: false });
 
 const validateBlock = (block: any): boolean => {
@@ -261,7 +261,7 @@ export function JournalDialog({ entry, date, isOpen, onClose, onEntrySaved, temp
     if (isDirty && initialContentLoaded) await handleSave();
     onClose();
   };
-    const handleEditorStateUpdate = useCallback((newBlocksFromEditor: Block[]) => {
+    const handleEditorStateUpdate = useCallback((newBlocksFromEditor: MyBlock[]) => {
     if (initialContentLoaded && Array.isArray(newBlocksFromEditor)) {
       try {
         // More thorough validation of blocks
@@ -291,7 +291,7 @@ export function JournalDialog({ entry, date, isOpen, onClose, onEntrySaved, temp
         });
 
         if (validBlocks.length > 0) {
-          setContent(validBlocks);
+          setContent(validBlocks as Block[]);
           setIsDirty(true);
         } else {
           console.warn('No valid blocks found in editor update');
