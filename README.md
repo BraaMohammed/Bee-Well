@@ -5,12 +5,12 @@
 # Bee-Well: Personal Productivity & Self-Improvement SaaS
 
 <p align="center">
-  <img src="https://yydxbfiibfjsxowspgiq.supabase.co/storage/v1/object/public/bee-well/Screenshot%202025-08-02%20233742.png" alt="Bee-Well application dashboard" width="800"/>
+  <img src="https://yydxbfiibfjsxowspgiq.supabase.co/storage/v1/object/public/bee-well/Screenshot%202025-08-02%20233819.png" alt="Bee-Well application dashboard" width="800"/>
 </p>
 
 ### A comprehensive tool for personal productivity featuring an advanced habit tracker, a Notion-style block editor, and an automated daily journal.
 
-**Live App:** [https://YOUR_LIVE_BEEWELL_URL](https://YOUR_LIVE_BEEWELL_URL)
+**Live App:** ((https://bee-well.vercel.app/))
 
 ---
 
@@ -35,8 +35,11 @@ Specifically, building Bee-Well taught me the importance of:
 * **Automated Daily Journal:** Prompts and templates to encourage consistent self-reflection.
 
 <p align="center">
-  <img src="https://yydxbfiibfjsxowspgiq.supabase.co/storage/v1/object/public/bee-well/Screenshot%202025-08-02%20233754.png" alt="Habit tracker screenshot" width="48%"/>
-  <img src="https://yydxbfiibfjsxowspgiq.supabase.co/storage/v1/object/public/bee-well/Screenshot%202025-08-02%20233810.png" alt="Notes editor screenshot" width="48%"/>
+  <img src="https://yydxbfiibfjsxowspgiq.supabase.co/storage/v1/object/public/bee-well/Screenshot%202025-08-02%20233754.png" alt="Habit tracker screenshot" width="25%"/>
+  <img src="https://yydxbfiibfjsxowspgiq.supabase.co/storage/v1/object/public/bee-well/Screenshot%202025-08-02%20233810.png" alt="Notes editor screenshot" width="25%"/>
+  <img src="https://yydxbfiibfjsxowspgiq.supabase.co/storage/v1/object/public/bee-well/Screenshot%202025-08-02%20233819.png" alt="Notes editor screenshot" width="25%"/>
+  <img src="https://yydxbfiibfjsxowspgiq.supabase.co/storage/v1/object/public/bee-well/Screenshot%202025-08-02%20233830.png" alt="Notes editor screenshot" width="25%"/>
+
 </p>
 
 ---
