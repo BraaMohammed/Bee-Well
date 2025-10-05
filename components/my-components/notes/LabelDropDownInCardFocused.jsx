@@ -16,10 +16,10 @@ import {
     AlertDialogContent,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import getLabels from '@/app/actions/getLabels';
-import deleteLabel from '@/app/actions/deleteLabel';
-import createLabel from '@/app/actions/createLabel';
+import { getLabels } from '@/actions/getLabels';
+import { deleteLabel } from '@/actions/deleteLabel';
 import { useToast } from '@/hooks/use-toast';
+import { createLabel } from '@/actions/createLabel';
 const LabelDropDownInCardFocused = ({ setCurrentLabel, labelFromDb, id , refreshFunction }) => {
 
     const [labels, setLabels] = useState([]) //the labels we get from the db 

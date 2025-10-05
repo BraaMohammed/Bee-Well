@@ -17,8 +17,11 @@ import { Trash2 } from "lucide-react";
 import { Bookmark } from "lucide-react";
 import { NotebookPen } from "lucide-react";
 import CardFocuesdTwo from "./notes/CardFocuesdTwo";
-import getLabels from "@/app/actions/getLabels";
+import { getLabels } from "@/actions/getLabels";
+
 import { NotebookText } from "lucide-react";
+
+
 const Sidebar = ({ refreshFunction }) => {
 
     const { data: session, status } = useSession()
@@ -105,12 +108,9 @@ const Sidebar = ({ refreshFunction }) => {
             </div>
 
 
-            {renderNewNote && createPortal(
-                <CardFocuesdTwo refreshFunction={refreshFunction} onClose={handleClose} isNewNote={true} />,
-                document.body
-            )}
+           
         </div>
-        <SidebarMobile labels={labels} refreshFunction={refreshFunction} userPhoto={userPhoto} />
+        <SidebarMobile labels={null} refreshFunction={refreshFunction} userPhoto={userPhoto} />
         </div>
 
     )
@@ -118,7 +118,12 @@ const Sidebar = ({ refreshFunction }) => {
 
 export default Sidebar
 
-
+/*
+ {renderNewNote && createPortal(
+                <CardFocuesdTwo refreshFunction={refreshFunction} onClose={handleClose} isNewNote={true} />,
+                document.body
+            )}
+*/
 
 //                <CardFocuesdTwo refreshFunction={refreshFunction} onClose={handleClose} isNewNote={true} />,
 

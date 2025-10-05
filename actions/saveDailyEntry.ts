@@ -1,39 +1,99 @@
 'use server'
-import { supabase } from '@/lib/supabase/supabase';
-import { TablesUpdate } from '@/types/supabase';
-import type { Database } from "../types/supabase";
 
-export type SaveDailyEntryResult = Database["public"]["Tables"]["habbit_entry"]["Row"];
+import { supabase } from '@/lib/supabase/supabase'
+import { dayEntry } from '@/types/new-habit-tracker'
 
-interface SaveDailyEntryParams {
-    id: string;
-    completed: boolean;
-    date: string;
-    habbitid: string;
-    value?: string | null;
-}
+export async function saveDailyEntry(dailyEntry: dayEntry): Promise<{ 
+  success: boolean; 
+  data?: dayEntry; 
+  error?: string 
+}> {
 
-export async function saveDailyEntry({ id, completed, date, habbitid, value }: SaveDailyEntryParams): Promise<SaveDailyEntryResult> {
-    try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-            throw new Error('You must be logged in to save daily entries');
-        }
-        const { data: updatedEntry, error } = await supabase
-            .from('habbit_entry')
-            .update({
-                completed,
-                date,
-                habbitid,
-                value
-            })
-            .eq('id', id)
-            .select()
-            .single();
-        if (error) throw error;
-        return updatedEntry;
-    } catch (error) {
-        console.error('Error in saveDailyEntry:', error);
-        throw error;
+
+  console.log('Saving daily entry:', dailyEntry)
+
+  
+  try {
+    if (!dailyEntry.userId) {
+      return { success: false, error: 'User ID is required' }
     }
+
+    if (!dailyEntry.date) {
+      return { success: false, error: 'Date is required' }
+    }
+
+    // Validate date format (YYYY-MM-DD)
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/
+    if (!dateRegex.test(dailyEntry.date)) {
+      return { success: false, error: 'Date must be in YYYY-MM-DD format' }
+    }
+
+    if (!dailyEntry.habits || dailyEntry.habits.length === 0) {
+      return { success: false, error: 'Habits data is required' }
+    }
+
+    // Check if entry already exists for this user and date
+    const { data: existingEntry } = await supabase
+      .from('daily_entries')
+      .select('id')
+      .eq('user_id', dailyEntry.userId)
+      .eq('date', dailyEntry.date)
+      .single()
+
+    const entryData = {
+      user_id: dailyEntry.userId,
+      date: dailyEntry.date,
+      entry: dailyEntry.habits,
+      updated_at: new Date().toISOString()
+    }
+
+    let result
+
+    if (existingEntry) {
+      // Update existing entry
+      result = await supabase
+        .from('daily_entries')
+        .update(entryData)
+        .eq('user_id', dailyEntry.userId)
+        .eq('date', dailyEntry.date)
+        .select()
+        .single()
+    } else {
+      // Create new entry
+      result = await supabase
+        .from('daily_entries')
+        .insert({
+          ...entryData,
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single()
+    }
+
+    if (result.error) {
+      return { success: false, error: result.error.message }
+    }
+
+    if (!result.data) {
+      return { success: false, error: 'Failed to save daily entry' }
+    }
+
+    // Return the saved entry in the expected format
+    const savedEntry: dayEntry = {
+      id: result.data.id,
+      date: result.data.date,
+      userId: result.data.user_id,
+      habits: result.data.entry as dayEntry['habits'],
+      createdAt: result.data.created_at || undefined,
+      updatedAt: result.data.updated_at || undefined
+    }
+
+    return { success: true, data: savedEntry }
+  } catch (error) {
+    console.error('Error saving daily entry:', error)
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error occurred' 
+    }
+  }
 }

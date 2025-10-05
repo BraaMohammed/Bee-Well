@@ -104,7 +104,7 @@
     ],
     "noEmit": true,
     "incremental": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "plugins": [
@@ -118,7 +118,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "lib/script/importNotesToSupabase.js", "components/ui/carousel.jsx", "components/my-components/blocknoteEditor/BlockNoteEditor.tsx", "components/my-components/blocknoteEditor/BlockNoteEditor.tsx"  ],
+, "z-deprecated/script/importNotesToSupabase.js", "components/ui/carousel.jsx", "components/my-components/blocknoteEditor/BlockNoteEditor.tsx", "components/my-components/blocknoteEditor/BlockNoteEditor.tsx"  ],
   "exclude": [
     "node_modules"
   ]

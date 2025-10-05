@@ -1,23 +1,17 @@
 "use server"
-import { authOptions } from "../../lib/authOptions"
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 import HomePageClient from "@/components/my-components/notes/HomePageClient"
+import { getNotes } from "@/actions/getNotes";
 export default async function LabelNotes({params}) {
-    const session = await getServerSession(authOptions);
-    if (session == null) {
-      redirect('/signin');
-    }
-    const { labelId } = params;
-
-    const labelIdString = labelId.toString()
   
+    const { labelId } = params;
+    const labelIdString = labelId.toString();
 
-    console.log(labelIdString)
+    // Fetch notes using Supabase action
+    const notes = await getNotes({ labelName: labelIdString });
 
- 
-   return(
-    <HomePageClient labelId={labelIdString}/>
-   )     
-
+    return(
+      <HomePageClient labelId={labelIdString} initialNotes={notes} />
+    )     
 }

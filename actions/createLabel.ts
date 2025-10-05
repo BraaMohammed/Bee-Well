@@ -27,7 +27,7 @@ export async function createLabel({ id, labelName, color }: CreateLabelParams): 
                 id: id || crypto.randomUUID(),
                 name: labelName,
                 color,
-                user_id: session.user.id
+                userId: session.user.id
             })
             .select()
             .single();

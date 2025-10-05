@@ -9,8 +9,8 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { Button } from "@/components/ui/button";
 import dynamic from 'next/dynamic';
-import { saveJournalTemplate } from '@/app/actions/saveJournalTemplate';
-import { getJournalTemplate } from '@/app/actions/getJournalTemplate';
+import { saveJournalTemplate } from '@/actions/saveJournalTemplate';
+import { getJournalTemplate } from '@/actions/getJournalTemplate';
 
 const BlockNoteEditor = dynamic(() => import("@/components/my-components/blocknoteEditor/BlockNoteEditor"), { ssr: false });
 

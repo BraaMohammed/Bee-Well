@@ -3,10 +3,13 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster"
 import SessionWrapper from "@/components/my-components/SessionWrapper";
-const APP_NAME = "Bee Well";
-const APP_DEFAULT_TITLE = "Bee Well";
-const APP_TITLE_TEMPLATE = "%s - Bee Well";
-const APP_DESCRIPTION = "created by mind flow ai ";
+import { ReactQueryClientProvider } from "@/components/my-components/ReactQueryProvider";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import NewSidebar from "@/components/my-components/newSidebar";
+const APP_NAME = "Clear";
+const APP_DEFAULT_TITLE = "Clear";
+const APP_TITLE_TEMPLATE = "%s - Clear";
+const APP_DESCRIPTION = "created by braa mohammed ";
 
 export const metadata = {
   applicationName: APP_NAME,
@@ -48,23 +51,29 @@ export const viewport = {
   themeColor: "#FFFFFF",
 };
 
-const inter = Poppins({ subsets: ["latin"] , weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'] });
+const inter = Poppins({ subsets: ["latin"], weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'] });
 
-/*export const metadata = {
-  title: "Bee Well",
-  description: "Devolped By Mind Flow Ai",
-};*/
+
 
 export default function RootLayout({ children }) {
-  
   return (
-    <SessionWrapper>
     <html lang="en">
-      
-      <body className={inter.className}>{children}
-        <Toaster/>
+      <body className={inter.className}>
+        <SessionWrapper>
+          <SidebarProvider>
+            <ReactQueryClientProvider>
+              <NewSidebar />
+              <main className="flex-1 w-full bg-neutral-300 relative">
+                <div className="absolute top-4 left-4 z-10">
+                  <SidebarTrigger />
+                </div>
+                {children}
+              </main>
+              <Toaster />
+            </ReactQueryClientProvider>
+          </SidebarProvider>
+        </SessionWrapper>
       </body>
     </html>
-    </SessionWrapper>
   );
 }

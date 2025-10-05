@@ -1,6 +1,8 @@
 'use server'
+import { authOptions } from "@/lib/authOptions";
 import { supabase } from "../lib/supabase/supabase";
 import type { Database } from "../types/supabase";
+import { getServerSession } from "next-auth";
 
 export type GetLabelsResult = Database["public"]["Tables"]["labels"]["Row"][];
 
@@ -8,8 +10,8 @@ export async function getLabels(): Promise<GetLabelsResult> {
     try {
         
         // Get the current user session
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
+        const session = await getServerSession(authOptions);
+        if (!session || !session.user?.id) {
             throw new Error('You must be logged in to get labels');
         }
 
@@ -17,7 +19,7 @@ export async function getLabels(): Promise<GetLabelsResult> {
         const { data: labels, error } = await supabase
             .from('labels')
             .select('*')
-            .eq('user_id', session.user.id)
+            .eq('userId', session.user.id)
             .order('name', { ascending: true });
 
         if (error) throw error;

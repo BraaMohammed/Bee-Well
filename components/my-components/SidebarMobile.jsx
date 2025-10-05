@@ -52,7 +52,7 @@ const SidebarMobile = ({userPhoto , refreshFunction , labels}) => {
 
   return (
     <div className='fixed z-30 bottom-0 w-full overflow-x-scroll bg-neutral-600 h-24 flex items-center justify-between gap-2 px-2 lg:hidden'>
-      <div onClick={() => handleClick("/habbitTracker", "habits")} className={`flex flex-col items-center p-2 rounded-xl ease-in-out duration-300 ${isActive("habits")}`}>
+      <div onClick={() => handleClick("/habit-test", "habits")} className={`flex flex-col items-center p-2 rounded-xl ease-in-out duration-300 ${isActive("habits")}`}>
         <CalendarCheck size={40} className='p-2 rounded-xl' />
         <span className="text-white text-[10px]">Habits</span>
       </div>

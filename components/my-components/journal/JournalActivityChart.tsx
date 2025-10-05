@@ -6,16 +6,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { addDays, format, isSameDay, subDays } from 'date-fns';
+import { format, isSameDay, subDays } from 'date-fns';
 import { cn } from "@/lib/utils";
 
 interface JournalActivityChartProps {
   writtenDates: Date[];
   entries?: any[]; // Array of journal entries for content checking
+  template?: any; // Journal template to compare against
   className?: string;
 }
 
-export function JournalActivityChart({ writtenDates, entries = [], className }: JournalActivityChartProps) {
+export function JournalActivityChart({ writtenDates, entries = [], template, className }: JournalActivityChartProps) {
   const today = new Date();
   const [hoveredDate, setHoveredDate] = useState<Date | null>(null);
   
@@ -30,6 +31,42 @@ export function JournalActivityChart({ writtenDates, entries = [], className }: 
     });
     return map;
   }, [entries]);
+
+  // Helper function to check if entry content is significantly different from template
+  const isContentDifferentFromTemplate = useCallback((entryContent: any[], templateContent?: any[]): boolean => {
+    if (!templateContent || templateContent.length === 0) {
+      // If no template, consider any non-empty content as different
+      return entryContent && entryContent.length > 0 && 
+             entryContent.some(block => 
+               block.content && 
+               Array.isArray(block.content) && 
+               block.content.some((item: any) => 
+                 item.text && item.text.trim().length > 0
+               )
+             );
+    }
+
+    if (!entryContent || entryContent.length === 0) return false;
+
+    // Extract text content from blocks for comparison
+    const extractTextContent = (blocks: any[]): string => {
+      return blocks.map(block => {
+        if (block.content && Array.isArray(block.content)) {
+          return block.content.map((item: any) => item.text || '').join(' ');
+        }
+        return '';
+      }).join(' ').trim();
+    };
+
+    const entryText = extractTextContent(entryContent);
+    const templateText = extractTextContent(templateContent);
+
+    // Consider content different if:
+    // 1. Entry has significantly more text than template (user added content)
+    // 2. Entry text is substantially different from template text
+    return entryText.length > templateText.length * 1.1 || // 10% more content
+           (entryText.length > 0 && entryText !== templateText);
+  }, []);
 
   // Generate last 365 days
   const days = useMemo(() => {
@@ -64,64 +101,48 @@ export function JournalActivityChart({ writtenDates, entries = [], className }: 
     const matchingDate = writtenDates.find(d => isSameDay(d, date));
     
     if (matchingDate) {
-      // If we have a matching date, check if the entry has non-empty content
+      // If we have a matching date, check if the entry content differs from template
       const dateStr = matchingDate.toISOString().split('T')[0];
       const entry = entriesByDate.get(dateStr);
       
-      // Entry is considered non-empty if it has content with at least one block with text
-      const hasContent = entry && 
-                         entry.content && 
-                         Array.isArray(entry.content) && 
-                         entry.content.some((block: any) => {
-                            // Check if block has content with text
-                            return block.content && 
-                                   Array.isArray(block.content) && 
-                                   block.content.some((item: any) => 
-                                     item.text && item.text.trim().length > 0
-                                   );
-                         });
-      
-      return hasContent ? 4 : 0; // Only mark as active if there's actual content
+      if (entry && entry.content && Array.isArray(entry.content)) {
+        // Check if the entry content is different from the template
+        const isDifferent = isContentDifferentFromTemplate(entry.content, template?.content);
+        return isDifferent ? 4 : 0;
+      }
     }
     
-    return 0; // No entry found for this date
-  }, [writtenDates, entriesByDate]);
+    return 0; // No entry found for this date or entry is same as template
+  }, [writtenDates, entriesByDate, template, isContentDifferentFromTemplate]);
   // Get tooltip text for a date
   const getTooltipText = useCallback((date: Date): string => {
-    // Check for a matching date with non-empty content, using the same logic as getActivityLevel
     const matchingDate = writtenDates.find(d => isSameDay(d, date));
     
     if (matchingDate) {
       const dateStr = matchingDate.toISOString().split('T')[0];
       const entry = entriesByDate.get(dateStr);
       
-      const hasContent = entry && 
-                         entry.content && 
-                         Array.isArray(entry.content) && 
-                         entry.content.some((block: any) => {
-                            return block.content && 
-                                   Array.isArray(block.content) && 
-                                   block.content.some((item: any) => 
-                                     item.text && item.text.trim().length > 0
-                                   );
-                         });
+      if (entry && entry.content && Array.isArray(entry.content)) {
+        const isDifferent = isContentDifferentFromTemplate(entry.content, template?.content);
+        return `${format(date, 'MMM d, yyyy')}: ${isDifferent ? 'Journal written' : 'No changes from template'}`;
+      }
       
-      return `${format(date, 'MMM d, yyyy')}: ${hasContent ? 'Wrote entry' : 'Empty entry'}`;
+      return `${format(date, 'MMM d, yyyy')}: Empty entry`;
     }
     
     return `${format(date, 'MMM d, yyyy')}: No entry`;
-  }, [writtenDates, entriesByDate]);
+  }, [writtenDates, entriesByDate, template, isContentDifferentFromTemplate]);
 
   return (
-    <Card className={cn("bg-neutral-700 border-none  shadow-2xl z-10 shadow-neutral-700 hover:shadow-neutral-100 ease-in-out duration-500 rounded-2xl p-6 flex flex-col items-center w-full", className)}>
-      <CardHeader className="w-full text-white">
-        <CardTitle className="text-lg font-bold">Journal Activity</CardTitle>
-        <CardDescription className="text-neutral-200">Your writing activity over the past year</CardDescription>
+    <Card className={cn("bg-neutral-600 border-none shadow-xl shadow-neutral-600 rounded-xl p-6 flex flex-col items-center w-full", className)}>
+      <CardHeader className="w-full text-neutral-200 pb-4">
+        <CardTitle className="text-xl font-semibold mb-2">Journal Activity</CardTitle>
+        <CardDescription className="text-neutral-300 text-sm">Your meaningful writing activity over the past year</CardDescription>
       </CardHeader>      <CardContent className="w-full">
         <div className="w-full overflow-x-auto">
           <div className="flex flex-col gap-2 w-full min-w-[700px]"> {/* Added min-w-[700px] or appropriate width */}
             {/* Month labels */}
-            <div className="flex justify-between text-xs text-neutral-300 pl-8">
+            <div className="flex justify-between text-xs font-medium text-neutral-300 pl-8 mb-3">
               {Array.from({ length: 12 }, (_, i) => {
                 const date = subDays(today, 365 - (i * 30));
                 return (
@@ -132,7 +153,7 @@ export function JournalActivityChart({ writtenDates, entries = [], className }: 
               })}
             </div>            <div className="flex w-full">
               {/* Day of week labels */}
-              <div className="flex flex-col justify-around text-xs mr-2 text-neutral-400 w-8">
+              <div className="flex flex-col justify-around text-xs mr-2 text-neutral-300 w-8 font-medium">
                 <span>Mon</span>
                 <span>Wed</span>
                 <span>Fri</span>
@@ -146,10 +167,10 @@ export function JournalActivityChart({ writtenDates, entries = [], className }: 
                         <div
                           key={day.toISOString()}
                           className={cn(
-                            "w-3 h-3 rounded-[4px] transition-colors duration-200 border border-neutral-800",
+                            "w-3 h-3 rounded-sm border cursor-pointer",
                             {
-                              "bg-neutral-800 hover:bg-neutral-600": activityLevel === 0,
-                              "bg-green-700 hover:bg-green-600": activityLevel === 4,
+                              "bg-neutral-700 border-neutral-600": activityLevel === 0,
+                              "bg-green-300 border-green-300 shadow-sm": activityLevel === 4,
                             }
                           )}
                           onMouseEnter={() => setHoveredDate(day)}
@@ -166,7 +187,7 @@ export function JournalActivityChart({ writtenDates, entries = [], className }: 
             {/* Tooltip */}
             {hoveredDate && (
               <div 
-                className="absolute bg-neutral-900 text-white px-3 py-1 rounded-md text-xs shadow-lg z-50 mt-2"
+                className="absolute bg-neutral-800 text-neutral-200 px-3 py-2 rounded-md text-xs shadow-lg z-50 mt-2"
                 style={{
                   transform: 'translateY(-100%)',
                   pointerEvents: 'none'
@@ -177,10 +198,12 @@ export function JournalActivityChart({ writtenDates, entries = [], className }: 
             )}
 
             {/* Legend */}
-            <div className="flex items-center gap-2 text-xs mt-4 text-neutral-300">
+            <div className="flex items-center justify-center gap-2 text-xs mt-4 text-neutral-300">
               <span>Less</span>
-              <div className="w-3 h-3 rounded-[4px] bg-neutral-800 border border-neutral-700" />
-              <div className="w-3 h-3 rounded-[4px] bg-green-700 border border-green-800" />
+              <div className="flex items-center gap-1">
+                <div className="w-3 h-3 rounded-sm bg-neutral-700 border border-neutral-600" />
+                <div className="w-3 h-3 rounded-sm bg-green-300 border border-green-300" />
+              </div>
               <span>More</span>
             </div>
           </div>

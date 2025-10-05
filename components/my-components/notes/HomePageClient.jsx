@@ -7,81 +7,54 @@ import React from 'react'
 import Input from './Input'
 import NoteCardSkeleton from './NoteCardSkeleton'
 import Sidebar from '@/components/my-components/Sidebar'
+import { getNotes } from "@/actions/getNotes";
 
-const HomePageClient = ({ labelId }) => {
-    const [notes, setNotes] = useState([]);
-    const [originalNotes, setOriginalNotes] = useState([]);
+const HomePageClient = ({ labelId, initialNotes = [] }) => {
+    const [notes, setNotes] = useState(initialNotes);
+    const [originalNotes, setOriginalNotes] = useState(initialNotes);
     const { data: session, status } = useSession()
     const [tiggerRefresh, setTiggerRefresh] = useState(false)
     const [searchQuery, setSearchQuery] = useState(undefined)
-    const [loading, setLoading] = useState(true);
-    const [isInitialFetch, setIsInitialFetch] = useState(true);
+    const [loading, setLoading] = useState(initialNotes.length === 0);
+    const [isInitialFetch, setIsInitialFetch] = useState(initialNotes.length === 0);
 
     let userName
     if (session) {
         userName = session.user.name
     }
 
+    // Only fetch notes if initialNotes is empty (e.g., client navigation or refresh)
     const fetchNotes = async () => {
         setLoading(true);
         try {
+            let fetchedNotes = [];
             if (labelId) {
-                const response = await fetch(`/api/getnotes?labelId=${encodeURIComponent(labelId)}`, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                if (response.ok) {
-                    const fetchedNotes = await response.json();
-                    setNotes(fetchedNotes);
-                    setOriginalNotes(fetchedNotes);
-                    console.log('we got the notes from the db' , fetchedNotes )
-                    setLoading(false)
-                    setIsInitialFetch(false);
-
-                } else {
-                    console.error('Failed to fetch notes:', response.status, response.statusText);
-                }
+                fetchedNotes = await getNotes({ labelName: labelId });
             } else {
-                const response = await fetch('/api/getnotes', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                });
-                if (response.ok) {
-                    const fetchedNotes = await response.json();
-                    setNotes(fetchedNotes);
-                    setOriginalNotes(fetchedNotes);
-                    console.log('we got the notes from the db' , fetchedNotes )
-                    setLoading(false)
-                    setIsInitialFetch(false);
-
-                } else {
-                    console.error('Failed to fetch notes:', response.status, response.statusText);
-                }
+                fetchedNotes = await getNotes();
             }
+            setNotes(fetchedNotes);
+            setOriginalNotes(fetchedNotes);
+            setLoading(false);
+            setIsInitialFetch(false);
         } catch (error) {
             console.error('Error fetching notes:', error);
         }
     };
 
-
-
-
     useEffect(() => {
-        fetchNotes()
-        if (tiggerRefresh) {
-            setTiggerRefresh(false);
+        if (initialNotes.length === 0 || tiggerRefresh) {
+            fetchNotes();
+            if (tiggerRefresh) {
+                setTiggerRefresh(false);
+            }
         }
     }, [tiggerRefresh]);
-
 
     useEffect(
         () => {
             if (searchQuery !== undefined) {
-                const filteredNotes = originalNotes.filter(note => note.heading.includes(searchQuery) || note.content.includes(searchQuery))
+                const filteredNotes = originalNotes.filter(note => (note.heading || "").includes(searchQuery) || (note.content || "").includes(searchQuery))
                 setNotes(filteredNotes);
             }
             else {
@@ -91,17 +64,10 @@ const HomePageClient = ({ labelId }) => {
         }, [searchQuery, originalNotes]
     )
 
-
-
-
-
-
     return (
-        <div className="bg-neutral-300 flex lg:gap-x-4">
-           
-            <Sidebar refreshFunction={setTiggerRefresh} />
-            <div className="lg:ml-[15vw] flex flex-col items-center w-full pt-10 gap-0">
-                <div className=" lg:pt-12 pt-2 flex flex-col md:flex-row gap-4 items-center">
+        <div className="min-h-screen w-full pt-12 px-6 lg:px-0 pb-8">
+            <div className="flex flex-1 flex-col justify-start gap-8 text-neutral-950  max-w-[95rem] mx-auto">
+                <div className=" lg:pt-12 pt-2 flex flex-col md:flex-row gap-4 items-center w-full justify-center items-center">
                     <p className="text-green-700 text-lg p-2 text-center">Welcome Back {userName} Search For A Note Here</p>
                     <Input captureChange={setSearchQuery} />
                 </div>

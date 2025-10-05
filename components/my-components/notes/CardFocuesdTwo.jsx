@@ -5,9 +5,9 @@ import LabelDropDownInCardFocused from './LabelDropDownInCardFocused';
 import SettingsDropDownInCardFocused from './SettingsDropDownInCardFocused';
 import dynamic from 'next/dynamic';
 const EditorTwo = dynamic(() => import("@/components/my-components/blocknoteEditor/BlockNoteEditor"), { ssr: false });
-import saveNote from '@/app/actions/saveNote';
 import { useToast } from '@/hooks/use-toast';
-
+import { saveNote } from '@/actions/saveNote';
+import { deleteLabel } from '@/actions/deleteLabel';
 const CardFocuesdTwo = ({ setCurrentHtmlNoteContent, onClose, isNewNote, intialContentFocused, id,
   headingContentFromTheDb, refreshFunction, labelFromDb, backgroundColorFromDb, dateFromDb, setCurrentHeading, currentHtmlContent , setCardBackgroundColor , setCurrentCardLabel }) => {
 

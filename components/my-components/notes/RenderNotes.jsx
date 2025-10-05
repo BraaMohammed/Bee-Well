@@ -24,13 +24,13 @@ const RenderNotes = ({notes , refreshFunction}) => {
             {currentNotesFromDb.map(note => (
                 <Card 
                     refreshFunction={refreshFunction}
-                    id={note._id} 
-                    key={note._id} 
+                    id={note.id} 
+                    key={note.id} 
                     headingContentFromTheDb={note.heading} 
                     intialContentFocused={note.content} 
-                    labelFromDb={note.label}
+                    labelFromDb={note.labelName}
                     backgroundColorFromDb={note.backgroundColor}
-                    dateFromDb= {note.created_at}
+                    dateFromDb={note.created_at}
                     htmlIntialContent={note.htmlContent}
                 />
             ))}

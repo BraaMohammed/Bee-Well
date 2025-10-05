@@ -159,7 +159,6 @@ export const authOptions: NextAuthOptions = {
     },
 
     async jwt({ token, user, account }) {
-      console.log("JWT callback - token:", token, "user ID:", user?.id);
       const customToken = token as CustomToken;
       
       if (user) {
@@ -181,7 +180,7 @@ export const authOptions: NextAuthOptions = {
                 
               if (dbUser?.id && isValidUUID(dbUser.id)) {
                 customToken.id = dbUser.id;
-                console.log("Found correct UUID from database:", dbUser.id);
+            //    console.log("Found correct UUID from database:", dbUser.id);
               } else if (dbUser) {
                 console.error("Database returned invalid UUID format:", dbUser.id);
               }
@@ -203,16 +202,15 @@ export const authOptions: NextAuthOptions = {
     },
 
     async session({ session, token }) {
-      console.log("Session callback - token:", token);
       const customToken = token as CustomToken;
       
       if (session.user) {
         // Only use the ID if it's a valid UUID
         if (isValidUUID(customToken.id)) {
           session.user.id = customToken.id;
-          console.log("Set session user ID to UUID:", session.user.id);
+        //  console.log("Set session user ID to UUID:", session.user.id);
         } else {
-          console.warn("Token has invalid UUID:", customToken.id);
+          //console.warn("Token has invalid UUID:", customToken.id);
           
           // If we have an email, do one last attempt to find the user by email
           if (session.user.email) {

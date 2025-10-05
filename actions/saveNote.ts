@@ -1,7 +1,8 @@
 'use server'
 import { supabase } from "../lib/supabase/supabase";
-import { TablesInsert, TablesUpdate } from '../types/supabase';
 import type { Database } from "../types/supabase";
+import { authOptions } from "@/lib/authOptions";
+import { getServerSession } from "next-auth";
 
 export type SaveNoteResult = Database["public"]["Tables"]["notes"]["Row"];
 
@@ -25,9 +26,9 @@ export async function saveNote({
     htmlContent
 }: SaveNoteParams): Promise<SaveNoteResult> {
     try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-            throw new Error('You must be logged in to save a note');
+        const session = await getServerSession(authOptions);
+        if (!session || !session.user?.id) {
+            throw new Error('You must be logged in to get labels');
         }
 
         if (isNewNote) {

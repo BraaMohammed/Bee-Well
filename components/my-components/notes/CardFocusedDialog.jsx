@@ -1,7 +1,5 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { convertStateToHtml } from '@/app/actions/convertStateToHtml'
-import saveNote from '@/app/actions/saveNote'
 import dynamic from 'next/dynamic'
 import LabelDropDownInCardFocused from './LabelDropDownInCardFocused'
 import { IoMdClose } from 'react-icons/io'
@@ -9,12 +7,13 @@ import { Maximize2, Minimize2 } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog"
 import SettingsDropDownInCardFocused from './SettingsDropDownInCardFocused'
 import { useToast } from '@/hooks/use-toast'
 import { cn } from "@/lib/utils"
+import { deleteLabel } from '@/actions/deleteLabel';
+import { saveNote } from '@/actions/saveNote';
+import { convertStateToHtml } from '@/z-deprecated/actions/convertStateToHtml'
 const EditorTwo = dynamic(() => import("@/components/my-components/blocknoteEditor/BlockNoteEditor"), { ssr: false })
 
 const CardFocusedDialog = ({ 

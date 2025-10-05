@@ -130,6 +130,29 @@ li[role="checkbox"][aria-checked="true"]::before {
 }
 
 
+@layer base {
+  :root {
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  .dark {
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
 /*
 
 
@@ -266,4 +289,64 @@ body .dropdown  , .character-style-popup ,.link-editor {
   width: 100% !important;
   height: auto !important;
   min-height: 100px !important;
+}
+
+@layer base {
+  :root {
+    --sidebar-background: 240 5.9% 25%; /* neutral-600 equivalent */
+    --sidebar-foreground: 0 0% 100%; /* white text */
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 15%; /* darker for hover states */
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 240 5.9% 35%; /* slightly lighter border */
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  .dark {
+    --sidebar-background: 240 5.9% 25%; /* neutral-600 equivalent */
+    --sidebar-foreground: 0 0% 100%; /* white text */
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 5.9% 35%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom sidebar styling */
+.sidebar-menu-item {
+  list-style: none !important;
+}
+
+/* Remove all list styling from sidebar */
+[data-sidebar] ul,
+[data-sidebar] li {
+  list-style: none !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* Custom scrollbar for sidebar content */
+[data-sidebar] .sidebar-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+[data-sidebar] .sidebar-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-sidebar] .sidebar-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+[data-sidebar] .sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }

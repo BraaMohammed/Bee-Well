@@ -1,24 +1,20 @@
 "use client";
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { JournalEntry, JournalTemplate, JournalStats } from '@/types/journalRelatedTypes';
-import { getJournalTemplate } from '@/app/actions/getJournalTemplate';
-import { getJournalStats } from '@/app/actions/getJournalStats';
-import { getJournalEntriesByYear } from '@/app/actions/getAllJournalEntries';
+import { getJournalTemplate } from '@/actions/getJournalTemplate';
+import { getJournalStats } from '@/actions/getJournalStats';
+import { getJournalEntriesByYear } from '@/actions/getAllJournalEntries';
 import { JournalActivityChart } from '@/components/my-components/journal/JournalActivityChart';
 import { JournalCard } from '@/components/my-components/journal/JournalCard';
 import { TemplateEditor } from '@/components/my-components/journal/TemplateEditor';
 import { useToast } from '@/hooks/use-toast';
-import Sidebar from '@/components/my-components/Sidebar';
-import SidebarMobile from '@/components/my-components/SidebarMobile';
 import {
     Carousel,
     CarouselContent,
-    CarouselNext,
-    CarouselPrevious,
+    CarouselItem,
 } from "@/components/ui/carousel"
 import { useSession } from "next-auth/react";
-import getLabels from "@/app/actions/getLabels";
-import CalendarCardSkeleton from '@/components/my-components/habbitTracker/CalendarCardSkeleton';
+import CalendarCardSkeleton from '@/z-deprecated/habbitTracker/CalendarCardSkeleton';
 import YearPicker from './YearPicker';
 
 export default function JournalPageClient() {
@@ -61,15 +57,7 @@ export default function JournalPageClient() {
         fetchData(currentYear);
     }, [currentYear, fetchData]);
 
-    useEffect(() => {
-        async function fetchLabels() {
-            try {
-                const res = await getLabels();
-                setLabels(JSON.parse(res));
-            } catch { }
-        }
-        fetchLabels();
-    }, [refreshFlag]);
+  
 
     useEffect(() => {
         if (session && session.user && session.user.image) setUserPhoto(session.user.image as string);
@@ -130,10 +118,8 @@ export default function JournalPageClient() {
 
     if (isLoading) {
         return (
-            <div className="flex flex-col bg-neutral-300  h-screen">
-                <Sidebar refreshFunction={refreshFunction} />
-                <SidebarMobile userPhoto={userPhoto} refreshFunction={refreshFunction} labels={labels} />
-                <div className="lg:ml-[15vw] flex-1 flex flex-col p-4 md:p-8 lg:p-24 justify-start gap-8 scrollbar-thin overflow-x-hidden overflow-y-auto">
+            <div className="min-h-screen w-full pt-12 px-6 lg:px-0 pb-8 overflow-x-hidden bg-neutral-300">
+                <div className="flex-1 flex flex-col justify-start gap-8 scrollbar-thin overflow-x-hidden overflow-y-auto max-w-[88rem] mx-auto">
                     {/* Top Section Skeleton */}
                     <div className="flex flex-col gap-2 w-full">
                         <div className="flex items-center justify-between w-full">
@@ -164,7 +150,7 @@ export default function JournalPageClient() {
                         </div>
                     </div>                    {/* Analytics Section - Rendered even during loading */}
                     <div className="w-full">
-                        <JournalActivityChart writtenDates={[]} entries={[]} />
+                        <JournalActivityChart writtenDates={[]} entries={[]} template={null} />
                     </div>
                 </div>
             </div>
@@ -172,10 +158,8 @@ export default function JournalPageClient() {
     }
 
     return (
-        <div className="flex flex-col bg-neutral-300 lg:h-screen min-h-[150vh]">
-            <Sidebar refreshFunction={refreshFunction} />
-            <SidebarMobile userPhoto={userPhoto} refreshFunction={refreshFunction} labels={labels} />
-            <div className="lg:ml-[15vw] flex flex-1 flex-col p-4 md:p-8 lg:p-24 justify-start gap-8 scrollbar-thin overflow-x-hidden overflow-y-auto text-neutral-950">
+        <div className="min-h-screen w-full pt-12 px-6 lg:px-0 pb-8 overflow-x-hidden bg-neutral-300">
+            <div className="flex flex-1 flex-col justify-start gap-8 scrollbar-thin overflow-x-hidden overflow-y-auto text-neutral-950 max-w-[95rem] mx-auto">
                 {/* Top Section */}
                 <div className="flex flex-col md:flex-row gap-4 md:gap-8"> {/* Flex-col for mobile, row for md and up */}
                     <div className="flex flex-col gap-2 w-full">
@@ -205,7 +189,7 @@ export default function JournalPageClient() {
                     </div>
                 </div>
                 {/* Journal Cards Carousel */}
-                <div className="mt-2 mb-4">
+                <div className="mt-2 mb-4 px-6">
                     <h2 className="text-2xl font-semibold mb-2">Entries</h2>
                     {datesForYear.length > 0 ? (
                         <Carousel
@@ -222,7 +206,7 @@ export default function JournalPageClient() {
                                     e.stopPropagation()
                                 }
                             }}
-                            className="w-full max-w-xs self-start"
+                            className="w-max"
                             opts={{
                                 align: "start",
                                 dragFree: true,
@@ -238,17 +222,20 @@ export default function JournalPageClient() {
                             }}
                         >
                             <CarouselContent
-                                className='w-fit gap-4'>
+                                className='w-fit'>
                                 {datesForYear.map(date => {
                                     const entry = entriesByDate.get(date.toISOString().split('T')[0]);
                                     return (
-                                        <JournalCard
-                                            key={date.toISOString()}
-                                            entry={entry}
-                                            date={date}
-                                            templateContent={template?.content}
-                                            onSave={handleEntrySaved}
-                                        />
+                                        <CarouselItem key={date.toISOString()} className="pl-2 basis-auto">
+                                            <div className="p-1 ">
+                                                <JournalCard
+                                                    entry={entry}
+                                                    date={date}
+                                                    templateContent={template?.content}
+                                                    onSave={handleEntrySaved}
+                                                />
+                                            </div>
+                                        </CarouselItem>
                                     );
                                 })}
                             </CarouselContent>
@@ -259,8 +246,8 @@ export default function JournalPageClient() {
                     )}
                 </div>
                 {/* Analytics Section */}
-                <div className="w-full">
-                    {stats && <JournalActivityChart writtenDates={writtenDatesForChart} entries={entries} />}
+                <div className="w-full px-6 pb-20">
+                    {stats && <JournalActivityChart writtenDates={writtenDatesForChart} entries={entries} template={template} />}
                 </div>
             </div>
         </div>

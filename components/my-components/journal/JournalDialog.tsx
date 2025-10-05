@@ -5,12 +5,9 @@ import {
 } from "@/components/ui/dialog";
 import { JournalEntry } from '@/types/journalRelatedTypes';
 import { format } from 'date-fns';
-import { SlOptions } from "react-icons/sl";
-import { IoMdClose } from "react-icons/io";
 import dynamic from 'next/dynamic';
-import { saveJournalEntry } from '@/app/actions/saveJournalEntry';
-import { getJournalEntryByDate } from '@/app/actions/getJournalEntry'; // Add this
-// Import BlockNote core types and a temporary editor for HTML conversion
+import { saveJournalEntry } from '@/actions/saveJournalEntry';
+import { getJournalEntryByDate } from '@/actions/getJournalEntry';
 import { BlockNoteEditor as BlockNoteEditorType, Block } from '@blocknote/core';
 import { MyBlock } from '@/components/my-components/blocknoteEditor/BlockNoteEditor';
 const BlockNoteEditor = dynamic(() => import("@/components/my-components/blocknoteEditor/BlockNoteEditor"), { ssr: false });

@@ -15,7 +15,7 @@ export async function deleteLabel(labelName: string) {
                             //@ts-ignore
 
             .update({ labelname: '' })
-            .eq('user_id', session.user.id)
+            .eq('userId', session.user.id)
             .eq('labelname', labelName);
 
         if (updateError) throw updateError;
@@ -24,7 +24,7 @@ export async function deleteLabel(labelName: string) {
         const { error: deleteError } = await supabase
             .from('labels')
             .delete()
-            .eq('user_id', session.user.id)
+            .eq('userId', session.user.id)
             .eq('name', labelName);
 
         if (deleteError) throw deleteError;

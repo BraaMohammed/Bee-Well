@@ -17,25 +17,29 @@ export async function getNotes({ labelName }: GetNotesParams = {}): Promise<GetN
   if (!session || !session.user?.id) {
     throw new Error("You must be logged in to get notes");
   }
+  console.log("Session user ID: from getNotes", session.user.id);
   try {
     if (labelName) {
-      const { data: notes, error } = await supabase
-        .from("notes")
-        .select("*")
-        .eq("user_id", session.user.id)
-        .eq("labelname", labelName);
-      if (error) throw error;
+      const { data: notes, error } = await supabase.from("notes").select("*").eq('userId', session.user.id).eq("labelName", labelName);
+      if (error) {
+        console.error("Supabase error getting notes:", error);
+        throw error;
+      }
       return notes;
     } else {
       const { data: notes, error } = await supabase
         .from("notes")
         .select("*")
-        .eq("user_id", session.user.id)
-        .not("labelname", "in", "(archived,deleted)");
-      if (error) throw error;
+        .eq("userId", session.user.id)
+        .not("labelName", "in", "(archived,deleted)");
+      if (error) {
+        console.error("Supabase error getting notes:", error);
+        throw error;
+      }
       return notes;
     }
   } catch (error) {
+    console.error("Error retrieving notes:", error);
     throw new Error("Error retrieving notes");
   }
 }

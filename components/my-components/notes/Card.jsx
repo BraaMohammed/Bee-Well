@@ -4,10 +4,11 @@ import CardFocuesdTwo from "./CardFocuesdTwo";
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { IoMdClose } from "react-icons/io";
-import saveNote from "@/app/actions/saveNote";
 import { useToast } from "@/hooks/use-toast";
 import addTailwindClasses from "@/z-deprecated/experemental/addTailwindClasses";
 import CardFocusedDialog from "./CardFocusedDialog";
+import { saveNote } from "@/actions/saveNote";
+
 
 const Card = ({ headingContentFromTheDb, intialContentFocused, id, refreshFunction, labelFromDb, backgroundColorFromDb, dateFromDb, htmlIntialContent }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -52,7 +53,7 @@ const Card = ({ headingContentFromTheDb, intialContentFocused, id, refreshFuncti
   return (
     <>
       <div onClick={handleClick} style={{ backgroundColor: cardBackgroundColor }} className="max-w-80 min-w-80 flex gap-8 flex-col rounded-xl justify-center py-8 px-4 hover:opacity-60 ease-in-out duration-500 drop-shadow-2xl hover:drop-shadow-2xl">
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center text-white">
           <CiEdit size={40} className="hover:text-green-300 ease-in-out duration-200 active:opacity-40" /> 
           <IoMdClose 
             onClick={(e) => {
@@ -66,10 +67,10 @@ const Card = ({ headingContentFromTheDb, intialContentFocused, id, refreshFuncti
             className="hover:opacity-70 hover:text-red-600 ease-in-out duration-200 active:opacity-40"
           />
         </div>
-        <h1 className="font-semibold break-words text-2xl md:text-2xl">
+        <h1 className="font-semibold break-words text-2xl text-white md:text-2xl">
           {currentHeading.replace(/&nbsp;/g, "")}
         </h1>
-        <div className="overflow-hidden max-h-44 text-sm">
+        <div className="overflow-hidden max-h-44 text-sm text-white">
           {processedHtmlContent}
         </div>
         <div className="flex justify-between text-white">

@@ -18,7 +18,7 @@ export async function archiveNote(id: string): Promise<ArchiveNoteResult> {
             .from('labels')
             .select()
             .eq('name', 'archived')
-            .eq('user_id', userId)
+            .eq('userId', userId)
             .single();
 
         if (labelError && labelError.code !== 'PGNF') {
@@ -32,7 +32,7 @@ export async function archiveNote(id: string): Promise<ArchiveNoteResult> {
                 //@ts-ignore
                 .insert({
                     name: 'archived',
-                    user_id: userId,
+                    userId: userId,
                     color: '#888888',
                     id: crypto.randomUUID()
                 })
@@ -49,7 +49,7 @@ export async function archiveNote(id: string): Promise<ArchiveNoteResult> {
 
             .update({ labelname: 'archived' })
             .eq('id', id)
-            .eq('user_id', userId);
+            .eq('userId', userId);
 
         if (updateError) throw updateError;
 
