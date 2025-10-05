@@ -1,6 +1,6 @@
 "use client"
 
-import Button from "./Button";
+import Button from "../components/my-components/Button";
 import { useSession } from "next-auth/react"
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { useState } from "react";
@@ -16,7 +16,7 @@ import { Archive } from "lucide-react";
 import { Trash2 } from "lucide-react";
 import { Bookmark } from "lucide-react";
 import { NotebookPen } from "lucide-react";
-import CardFocuesdTwo from "./notes/CardFocuesdTwo";
+import CardFocuesdTwo from "../components/my-components/notes/CardFocuesdTwo";
 import { getLabels } from "@/actions/getLabels";
 
 import { NotebookText } from "lucide-react";

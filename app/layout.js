@@ -6,10 +6,10 @@ import SessionWrapper from "@/components/my-components/SessionWrapper";
 import { ReactQueryClientProvider } from "@/components/my-components/ReactQueryProvider";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import NewSidebar from "@/components/my-components/newSidebar";
-const APP_NAME = "Clear";
-const APP_DEFAULT_TITLE = "Clear";
-const APP_TITLE_TEMPLATE = "%s - Clear";
-const APP_DESCRIPTION = "created by braa mohammed ";
+const APP_NAME = "Bee Well";
+const APP_DEFAULT_TITLE = "Bee Well";
+const APP_TITLE_TEMPLATE = "%s - Bee Well";
+const APP_DESCRIPTION = "A productivity app to help you stay organized and focused. Take notes and journal, and track habits all in one place. all with ai that helps you be more productive and mindful.";
 
 export const metadata = {
   applicationName: APP_NAME,

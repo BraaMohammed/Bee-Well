@@ -2,7 +2,7 @@
 import React from 'react'
 import { useState } from 'react'
 import { useEffect } from 'react'
-import Sidebar from '../../components/my-components/Sidebar'
+import Sidebar from '../Sidebar'
 import { CarouselHabbitCards } from './CarouselHabbitCards'
 import CalendarPicker from './CalendarPicker'
 import getTrackedHabbit from '@/app/actions/getTrackedHabbit'

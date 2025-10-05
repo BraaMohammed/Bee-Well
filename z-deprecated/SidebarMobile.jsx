@@ -1,6 +1,6 @@
 'use client'
 import React from 'react'
-import CardFocuesdTwo from './notes/CardFocuesdTwo';
+import CardFocuesdTwo from '../components/my-components/notes/CardFocuesdTwo';
 import { Plus } from 'lucide-react';
 import { useRouter } from "next/navigation";
 import Image from 'next/image';
@@ -11,7 +11,7 @@ import {
     DropdownMenuContent,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import Button from './Button';
+import Button from '../components/my-components/Button';
 import { CalendarCheck } from "lucide-react";
 import { Archive } from "lucide-react";
 import { Trash2 } from "lucide-react";

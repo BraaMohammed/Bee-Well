@@ -29,7 +29,7 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import { getLabels, GetLabelsResult } from "@/actions/getLabels";
 import Button from "./Button";
 import { useIsMobile } from "@/hooks/use-mobile";
-import SidebarMobile from "./SidebarMobile";
+import SidebarMobile from "../../z-deprecated/SidebarMobile";
 import CardFocusedDialog from "./notes/CardFocusedDialog";
 import RecentChatsDropdown from "./RecentChatsDropdown";
 
@@ -109,18 +109,20 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
         <SidebarHeader className="p-6 pt-6 pb-8 flex flex-col items-center justify-center space-y-0.5">
           <div className="relative">
             <Image 
-              src="/logo-new.png" 
+              src="/logo.png" 
               alt="logo" 
-              width={125} 
-              height={125} 
+              width={150} 
+              height={150} 
               quality={100}
               className="filter brightness-110" 
-              style={{filter: 'brightness(1.1) drop-shadow(0 25px 25px rgba(0, 0, 0, 0.5)) drop-shadow(0 10px 10px rgba(0, 0, 0, 0.3))'}}
+             // style={{filter: 'brightness(1.1) drop-shadow(0 25px 25px rgba(0, 0, 0, 0.5)) drop-shadow(0 10px 10px rgba(0, 0, 0, 0.3))'}}
             />
           </div>
-          <h1 className="text-3xl font-bold tracking-wide bg-gradient-to-r from-white to-emerald-500 bg-clip-text text-transparent" >
-            Clear
+        {/*
+         <h1 className="text-3xl font-bold tracking-wide bg-gradient-to-r from-white to-emerald-500 bg-clip-text text-transparent" >
+            Bee Well
           </h1>  
+         */} 
           </SidebarHeader>
 
         <SidebarContent className="px-4 flex-1 overflow-y-auto">

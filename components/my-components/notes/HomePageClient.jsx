@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react'
 import React from 'react'
 import Input from './Input'
 import NoteCardSkeleton from './NoteCardSkeleton'
-import Sidebar from '@/components/my-components/Sidebar'
+import Sidebar from '@/z-deprecated/Sidebar'
 import { getNotes } from "@/actions/getNotes";
 
 const HomePageClient = ({ labelId, initialNotes = [] }) => {

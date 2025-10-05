@@ -1,5 +1,5 @@
 "use client"
-import Sidebar from "@/components/my-components/Sidebar"
+import Sidebar from "@/z-deprecated/Sidebar"
 import UserMessage from "@/my-components/ai/UserMessage"
 import AiMessage from "@/my-components/ai/AiMessage"
 import MessageInput from "@/my-components/ai/MessageInput"
