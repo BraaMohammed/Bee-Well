@@ -48,8 +48,8 @@ const page = () => {
                             <span>enter your password</span>
                             <input type='password' value={password} onChange={(e) => setPassword(e.target.value)} className=' rounded-lg p-2 text-neutral-800'></input>
                         </div>
-                        <button disabled={isLoading} type='submit' className=' bg-green-700 rounded-lg w-full h-12 font-normal text-xl hover:opacity-75 active:opacity-60 ease-in-out duration-300 disabled:bg-green-900 '>Continue To The App</button>
-                        <button disabled={isLoading} type='button' onClick={googleSignIn} className=' bg-neutral-200 text-neutral-800 p-6  rounded-lg w-full h-8 font-normal text-xl hover:opacity-75 active:opacity-60 ease-in-out duration-300 flex justify-center items-center gap-2 disabled:bg-neutral-500'>Sign In With Google Acount <FaGoogle /> </button>
+                        <button disabled={isLoading} type='submit' className=' bg-green-700 w-full h-12 font-normal text-xl hover:opacity-75 active:opacity-60 ease-in-out duration-300 disabled:bg-green-900 rounded-xl '>Continue To The App</button>
+                        <button disabled={isLoading} type='button' onClick={googleSignIn} className=' bg-neutral-200 text-neutral-800 p-6  w-full h-8 font-normal text-xl hover:opacity-75 active:opacity-60 ease-in-out duration-300 flex justify-center items-center gap-2 disabled:bg-neutral-500 rounded-xl'>Sign In With Google Acount <FaGoogle /> </button>
                         <span className=' self-center'>dont have an acount ?<span onClick={()=>{router.push('/signup')}} className=' font-bold hover:opacity-75 active:opacity-60 ease-in-out duration-300 '>Sign Up</span></span>
                     </form>
                 </div>

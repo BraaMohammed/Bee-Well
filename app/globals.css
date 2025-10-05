@@ -40,109 +40,6 @@ body {
   box-sizing: border-box;
 }
 
-.editor-shell{
-  width: 100%;
-  margin-right: auto;
-  margin-left: auto;
-}
-
-
-
-
-.toolbar{
-  
-  display: flex;
-  flex-wrap: wrap;
-  height: 130px !important;
-  gap: 5px;
-  z-index: 35;
-  border-radius: 10px;
-  justify-content: center;
-}
-
-.ContentEditable__root{
-  background-color: transparent;
-}
-
-.toolbar * {
-  z-index: 60;
-}
-
-.color-picker-wrapper {
-  z-index: 60;
-}
-
-.editor-container {
-  background-color: red; /* working */
-}
-
-.dropdown {
-  position: relative; /* Add position relative */
-  z-index: 70 !important; /* Keep your z-index */
-}
-
-
-.color-picker-wrapper {
-  z-index: 60 !important;
-}
-
-
-body .dropdown  , .character-style-popup ,.link-editor {
-  z-index: 70 !important;
-}
-
-.editor-container{
-  background-color: transparent;
-}
-
-.editor-shell .editor-container {
-  background-color: transparent !important;
-  width: 100%;
-
-}
-
-.color-picker-wrapper span {
- color: black;
-}
-
-
-.Modal__content input{
-  color: black;
-}
-
-
-.Modal__content button{
-  background-color: rgb(64 64 64 );
-}
-
-.editor-container img{
-  max-width: 100% !important;
-}
-
-.toolbar button.toolbar-item{
-  align-items: center;
-}
-
-.toolbar div{
-  display: flex;
-  align-items: center;
-}
-
-.toolbar select{
-  display: flex;
-  align-items: center;
-}
-
-.chevron-down{
-  align-self: center;
-}
-
-
-.ContentEditable__root iframe {
-  max-width: 100%;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
 
 
 /*chatgpt code for list and bullets style */
@@ -230,4 +127,226 @@ li[role="checkbox"][aria-checked="true"]::before {
 
 .recharts-responsive-container{
   @apply !h-[175px] lg:!h-auto md:!h-auto
+}
+
+
+@layer base {
+  :root {
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  .dark {
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+/*
+
+
+
+
+
+
+
+.editor-shell{
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+
+
+
+.toolbar{
+  
+  display: flex;
+  flex-wrap: wrap;
+  height: 130px !important;
+  gap: 5px;
+  z-index: 35;
+  border-radius: 10px;
+  justify-content: center;
+}
+
+.ContentEditable__root{
+  background-color: transparent;
+}
+
+.toolbar * {
+  z-index: 60;
+}
+
+.color-picker-wrapper {
+  z-index: 60;
+}
+
+.editor-container {
+  background-color: red; 
+}
+
+.dropdown {
+  position: relative; 
+  z-index: 70 !important; 
+}
+
+
+.color-picker-wrapper {
+  z-index: 60 !important;
+}
+
+
+body .dropdown  , .character-style-popup ,.link-editor {
+  z-index: 70 !important;
+}
+
+.editor-container{
+  background-color: transparent;
+}
+
+.editor-shell .editor-container {
+  background-color: transparent !important;
+  width: 100%;
+
+}
+
+.color-picker-wrapper span {
+ color: black;
+}
+
+
+.Modal__content input{
+  color: black;
+}
+
+
+.Modal__content button{
+  background-color: rgb(64 64 64 );
+}
+
+.editor-container img{
+  max-width: 100% !important;
+}
+
+.toolbar button.toolbar-item{
+  align-items: center;
+}
+
+.toolbar div{
+  display: flex;
+  align-items: center;
+}
+
+.toolbar select{
+  display: flex;
+  align-items: center;
+}
+
+.chevron-down{
+  align-self: center;
+}
+
+
+.ContentEditable__root iframe {
+  max-width: 100%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+*/
+
+/* BlockNote Editor Styles */
+.bn-container {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.bn-editor {
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible !important;
+}
+
+.bn-editor [role="textbox"] {
+  width: 100% !important;
+}
+
+/* Ensure editor content is visible */
+.ContentEditable__root {
+  background-color: transparent;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 100px !important;
+}
+
+@layer base {
+  :root {
+    --sidebar-background: 240 5.9% 25%; /* neutral-600 equivalent */
+    --sidebar-foreground: 0 0% 100%; /* white text */
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 15%; /* darker for hover states */
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 240 5.9% 35%; /* slightly lighter border */
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  .dark {
+    --sidebar-background: 240 5.9% 25%; /* neutral-600 equivalent */
+    --sidebar-foreground: 0 0% 100%; /* white text */
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 5.9% 35%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Custom sidebar styling */
+.sidebar-menu-item {
+  list-style: none !important;
+}
+
+/* Remove all list styling from sidebar */
+[data-sidebar] ul,
+[data-sidebar] li {
+  list-style: none !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+}
+
+/* Custom scrollbar for sidebar content */
+[data-sidebar] .sidebar-content::-webkit-scrollbar {
+  width: 4px;
+}
+
+[data-sidebar] .sidebar-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+[data-sidebar] .sidebar-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+[data-sidebar] .sidebar-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
 }

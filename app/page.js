@@ -1,18 +1,12 @@
-//import Sidebar from "./components/Sidebar";
-//import Input from "./components/Input";
-//import SidebarMobile from "./components/SidebarMobile";
 import { getServerSession } from "next-auth";
-import { authOptions } from "./lib/authOptions";
+import { authOptions } from "@/lib/authOptions";
 import { redirect } from 'next/navigation'
-//import { getServerSideProps } from "next/dist/build/templates/pages";
-import HomePageClient from "./components/HomePageClient";
-
+import HomePageClient from "@/components/my-components/notes/HomePageClient";
 export default async function Home() {
   const session = await getServerSession(authOptions);
   if (session == null) {
     redirect('/signin');
   }
-   
 
   return (
     <HomePageClient/>
@@ -22,38 +16,6 @@ export default async function Home() {
 
 
 
-
-//<div className="flex flex-wrap h-full w-full gap-6 px-8 py-14 items-center">
-//        {/* You can map through the notes here and render them */}
-//      {notes.map(note => (
-//      <Card id={note._id} key={note._id} headingContentFromTheDb={note.heading} intialContentFocused={note.content}/>
-//  ))}
-//<div>
-
-
-
-
-/*
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
-  let notes = [];
-
-  try {
-    const response = await fetch(`${baseUrl}/api/getnotes`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    });
-
-    if (response.ok) {
-      notes = await response.json();
-    } else {
-      console.error('Failed to fetch notes:', response.status, response.statusText);
-    }
-  } catch (error) {
-    console.error('Error fetching notes:', error);
-  }
-*/
 
 
 
