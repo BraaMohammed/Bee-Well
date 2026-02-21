@@ -228,13 +228,7 @@ const CardFocuesdTwo = ({ setCurrentHtmlNoteContent, onClose, isNewNote, intialC
 
 
 
-  useEffect(
-    () => {
-      if (editorState && !newNote) {
-        setCurrentHtmlNoteContent(convertStateToHtml(editorState))
-      }
-    }, [editorState]
-  )
+  // HTML for card preview is updated by BlockNoteEditor's onChange (blocksToHTMLLossy)
 
   useEffect(
     ()=>{

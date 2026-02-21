@@ -14,7 +14,7 @@ import {
     CarouselItem,
 } from "@/components/ui/carousel"
 import { useSession } from "next-auth/react";
-import CalendarCardSkeleton from '@/z-deprecated/habbitTracker/CalendarCardSkeleton';
+import JournalCardSkeleton from './JournalCardSkeleton';
 import YearPicker from './YearPicker';
 
 export default function JournalPageClient() {
@@ -141,12 +141,12 @@ export default function JournalPageClient() {
                     <div className="mt-2 mb-4">
                         <h2 className="text-2xl font-semibold mb-2">Entries</h2>
                         <div className="flex gap-4">
-                            <CalendarCardSkeleton isVisible={true} />
-                            <CalendarCardSkeleton isVisible={true} />
-                            <CalendarCardSkeleton isVisible={true} />
-                            <CalendarCardSkeleton isVisible={true} />
-                            <CalendarCardSkeleton isVisible={true} />
-                            <CalendarCardSkeleton isVisible={true} />
+                            <JournalCardSkeleton isVisible={true} />
+                            <JournalCardSkeleton isVisible={true} />
+                            <JournalCardSkeleton isVisible={true} />
+                            <JournalCardSkeleton isVisible={true} />
+                            <JournalCardSkeleton isVisible={true} />
+                            <JournalCardSkeleton isVisible={true} />
                         </div>
                     </div>                    {/* Analytics Section - Rendered even during loading */}
                     <div className="w-full">

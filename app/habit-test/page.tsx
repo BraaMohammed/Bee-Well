@@ -5,12 +5,10 @@ import { dayEntry } from '@/types/new-habit-tracker'
 import { useDailyEntries } from '@/hooks/useHabitData'
 import { useLocalHabitData } from '@/hooks/useLocalHabitData'
 import { useSession } from 'next-auth/react'
-import Sidebar from '@/z-deprecated/Sidebar'
 import { DayEntriesCarousel } from '@/components/new-habit-tracker'
 import TotalSuccessAnalytics from '@/components/new-habit-tracker/analytics/TotalSuccessAnalytics'
 import SelectedHabbitsAnalytics from '@/components/new-habit-tracker/analytics/SelectedHabbitsAnalytics'
 import SelectedDayAnalytics from '@/components/new-habit-tracker/analytics/SelectedDayAnalytics'
-import NewSidebar from '@/components/my-components/newSidebar'
 
 const page = () => {
   const { data: session, status } = useSession()

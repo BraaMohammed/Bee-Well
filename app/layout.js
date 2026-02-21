@@ -4,8 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster"
 import SessionWrapper from "@/components/my-components/SessionWrapper";
 import { ReactQueryClientProvider } from "@/components/my-components/ReactQueryProvider";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import NewSidebar from "@/components/my-components/newSidebar";
+import AppShell from "@/components/my-components/AppShell";
 const APP_NAME = "Bee Well";
 const APP_DEFAULT_TITLE = "Bee Well";
 const APP_TITLE_TEMPLATE = "%s - Bee Well";
@@ -60,18 +59,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <SessionWrapper>
-          <SidebarProvider>
-            <ReactQueryClientProvider>
-              <NewSidebar />
-              <main className="flex-1 w-full bg-neutral-300 relative">
-                <div className="absolute top-4 left-4 z-10">
-                  <SidebarTrigger />
-                </div>
-                {children}
-              </main>
-              <Toaster />
-            </ReactQueryClientProvider>
-          </SidebarProvider>
+          <ReactQueryClientProvider>
+            <AppShell>{children}</AppShell>
+            <Toaster />
+          </ReactQueryClientProvider>
         </SessionWrapper>
       </body>
     </html>

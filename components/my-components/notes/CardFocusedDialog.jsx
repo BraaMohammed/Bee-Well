@@ -13,7 +13,6 @@ import { useToast } from '@/hooks/use-toast'
 import { cn } from "@/lib/utils"
 import { deleteLabel } from '@/actions/deleteLabel';
 import { saveNote } from '@/actions/saveNote';
-import { convertStateToHtml } from '@/z-deprecated/actions/convertStateToHtml'
 const EditorTwo = dynamic(() => import("@/components/my-components/blocknoteEditor/BlockNoteEditor"), { ssr: false })
 
 const CardFocusedDialog = ({ 
@@ -100,11 +99,7 @@ const CardFocusedDialog = ({
     }
   }, [currentLabel])
 
-  useEffect(() => {
-    if (editorState && !newNote) {
-      setCurrentHtmlNoteContent(convertStateToHtml(editorState))
-    }
-  }, [editorState])
+  // HTML for card preview is updated by BlockNoteEditor's onChange (blocksToHTMLLossy)
 
   useEffect(() => {
     if (headingContent && !newNote) {

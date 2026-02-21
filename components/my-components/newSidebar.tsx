@@ -28,8 +28,6 @@ import { useRouter, usePathname } from "next/navigation";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { getLabels, GetLabelsResult } from "@/actions/getLabels";
 import Button from "./Button";
-import { useIsMobile } from "@/hooks/use-mobile";
-import SidebarMobile from "../../z-deprecated/SidebarMobile";
 import CardFocusedDialog from "./notes/CardFocusedDialog";
 import RecentChatsDropdown from "./RecentChatsDropdown";
 
@@ -73,7 +71,6 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
   const [refreshTrigger, setRefreshTrigger] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const isMobile = useIsMobile();
 
   let userName = session?.user?.name;
   let userPhoto = session?.user?.image;
@@ -96,11 +93,6 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
       refreshFunction();
     }
   };
-
-  // Show mobile sidebar on mobile devices
-  if (isMobile) {
-    return <SidebarMobile userPhoto={userPhoto} refreshFunction={refreshFunction || (() => {})} labels={labels} />;
-  }
 
   return (
     <>

@@ -1,7 +1,7 @@
 'use server'
 import { supabase } from "../lib/supabase/supabase";
 import { getServerSession } from "next-auth";
-import { authOptions } from '../lib/authOptions';
+import { authOptions } from '@/lib/authOptions';
 import type { Database } from "../types/supabase";
 
 export type CreateLabelResult = Database["public"]["Tables"]["labels"]["Row"];
