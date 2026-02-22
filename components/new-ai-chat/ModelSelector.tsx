@@ -1,4 +1,4 @@
-import { Brain, Cpu, Sparkles } from 'lucide-react';
+import { Zap, HardDrive, ChevronDown } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAIChatStore } from '@/stores/aiChatStore';
 
@@ -15,9 +15,9 @@ export default function ModelSelector() {
 
   const getProviderIcon = (provider: string) => {
     switch (provider) {
-      case 'google': return <Sparkles className="h-4 w-4 round" />;
-      case 'ollama': return <Cpu className="h-4 w-4 round" />;
-      default: return <Sparkles className="h-4 w-4 round" />;
+      case 'google': return <Zap className="h-3.5 w-3.5" strokeWidth={2.5} />;
+      case 'ollama': return <HardDrive className="h-3.5 w-3.5" strokeWidth={2.5} />;
+      default: return <Zap className="h-3.5 w-3.5" strokeWidth={2.5} />;
     }
   };
 
@@ -36,20 +36,21 @@ export default function ModelSelector() {
         value={`${selectedProvider}:${selectedModel}`} 
         onValueChange={handleModelChange}
       >
-        <SelectTrigger className="h-8 border-0 bg-stone-100/50 hover:bg-stone-100 focus:ring-0 focus:ring-offset-0 px-3 text-stone-600 rounded-lg transition-colors gap-2 w-auto">
+        <SelectTrigger className="h-9 border-0 bg-stone-100 hover:bg-stone-200/60 focus:ring-0 focus:ring-offset-0 px-3 pl-3.5 text-stone-600 rounded-full transition-all gap-2 w-auto shadow-sm ring-1 ring-stone-200/50">
           <div className="flex items-center gap-2">
-            <div className={`flex items-center justify-center w-4 h-4 rounded text-xs ${selectedProvider === 'google' ? 'text-blue-600' : 'text-emerald-600'}`}>
+            <div className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] ${selectedProvider === 'google' ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'}`}>
               {getProviderIcon(selectedProvider)}
             </div>
-            <span className="font-medium text-xs truncate max-w-[100px]">
+            <span className="font-semibold text-xs truncate max-w-[120px] tracking-tight">
               {currentModels.find(m => m.id === selectedModel)?.name || selectedModel}
             </span>
+            <ChevronDown className="h-3 w-3 text-stone-400 opacity-50" strokeWidth={2.5} />
           </div>
         </SelectTrigger>
-        <SelectContent className="bg-white/95 backdrop-blur-xl border-stone-100 shadow-xl rounded-xl p-1 min-w-[240px]" align="start">
+        <SelectContent className="bg-white/95 backdrop-blur-xl border-stone-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] rounded-2xl p-2 min-w-[260px] ml-2" align="start">
           
-          <div className="px-3 py-2 text-xs font-bold text-stone-400 uppercase tracking-wider mb-1">
-            Google Gemini
+          <div className="px-3 py-2 text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">
+            Cloud (Gemini)
           </div>
           {allModelOptions.filter(m => m.provider === 'google').map((model) => (
             <SelectItem 
@@ -58,12 +59,12 @@ export default function ModelSelector() {
               className="rounded-xl text-stone-700 focus:bg-stone-50 focus:text-stone-900 cursor-pointer p-2 mb-1 last:mb-0"
             >
               <div className="flex items-center gap-3">
-                <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
-                  <Sparkles className="h-3.5 w-3.5" />
+                <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg ring-1 ring-blue-100">
+                  <Zap className="h-3.5 w-3.5" strokeWidth={2.5} />
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="font-medium text-sm">{model.name}</span>
-                  {model.description && <span className="text-[10px] text-stone-400">{model.description}</span>}
+                  <span className="font-semibold text-xs">{model.name}</span>
+                  {model.description && <span className="text-[10px] text-stone-400 font-medium">{model.description}</span>}
                 </div>
               </div>
             </SelectItem>
@@ -71,8 +72,8 @@ export default function ModelSelector() {
           
           {ollamaModels.length > 0 && (
             <>
-              <div className="px-3 py-2 text-xs font-bold text-stone-400 uppercase tracking-wider mb-1 mt-2 border-t border-stone-100 pt-3">
-                Ollama (Local)
+              <div className="px-3 py-2 text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1 mt-2 border-t border-stone-100 pt-3">
+                Local (Ollama)
               </div>
               {allModelOptions.filter(m => m.provider === 'ollama').map((model) => (
                 <SelectItem 
@@ -81,12 +82,12 @@ export default function ModelSelector() {
                   className="rounded-xl text-stone-700 focus:bg-stone-50 focus:text-stone-900 cursor-pointer p-2 mb-1 last:mb-0"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="p-1.5 bg-emerald-50 text-emerald-600 rounded-lg">
-                      <Cpu className="h-3.5 w-3.5" />
+                    <div className="p-1.5 bg-orange-50 text-orange-600 rounded-lg ring-1 ring-orange-100">
+                      <HardDrive className="h-3.5 w-3.5" strokeWidth={2.5} />
                     </div>
                     <div className="flex flex-col text-left">
-                      <span className="font-medium text-sm">{model.name}</span>
-                      {model.description && <span className="text-[10px] text-stone-400">{model.description}</span>}
+                      <span className="font-semibold text-xs">{model.name}</span>
+                      {model.description && <span className="text-[10px] text-stone-400 font-medium">{model.description}</span>}
                     </div>
                   </div>
                 </SelectItem>

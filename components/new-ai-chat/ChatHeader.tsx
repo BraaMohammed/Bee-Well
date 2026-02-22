@@ -15,12 +15,12 @@ export default function ChatHeader() {
   };
 
   return (
-    <div className="px-6 py-4 flex-shrink-0 z-20">
+    <div className="px-6 py-4 flex-shrink-0 z-250">
       <div className="max-w-4xl mx-auto flex items-center justify-between">
         <div className="flex items-center gap-2">
            {/* Mobile menu trigger could go here */}
-          <h1 className="text-xl font-serif font-medium !text-stone-800 tracking-tight">
-            Bee-Well <span className="text-emerald-600 italic">AI</span>
+          <h1 className="text-xl font-serif font-semibold text-stone-900 tracking-tight">
+            Bee-Well <span className="text-emerald-600 font-bold italic ml-0.5">AI</span>
           </h1>
         </div>
         

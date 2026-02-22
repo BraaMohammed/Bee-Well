@@ -64,15 +64,17 @@ export default function AIChatPage() {
   return (
     <div className="h-screen bg-[#FAFAF9] text-stone-900 flex flex-col relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute inset-0 bg-[url('/assets/noise.png')] opacity-[0.03] pointer-events-none mix-blend-multiply"></div>
-      <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-white to-transparent pointer-events-none z-10"></div>
+      <div className="absolute inset-0 bg-[url('/assets/noise.png')] opacity-[0.03] pointer-events-none mix-blend-multiply z-0"></div>
       
       {/* Main chat area - full width */}
-      <div className="flex-1 flex flex-col min-h-0 z-0 relative">
+      <div className="flex-1 flex flex-col min-h-0 z-10 relative">
         <ChatHeader />
 
         {/* Chat messages area */}
-        <div className="flex-1 overflow-y-auto scroll-smooth">
+        <div className="flex-1 overflow-y-auto scroll-smooth relative">
+          {/* Top gradient inside the scroll area so header stays crisp */}
+          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#FAFAF9] to-transparent pointer-events-none z-10"></div>
+          
           {messages.length === 0 ? (
             <WelcomeScreen />
           ) : (
