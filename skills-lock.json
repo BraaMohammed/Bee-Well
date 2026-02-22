@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "skills": {
+    "anthropics-frontend-design": {
+      "source": "smithery/ai",
+      "sourceType": "well-known",
+      "computedHash": "20272c29770acae46e2fe1531911fb06cc5521802bac0605a97146109e56cd4a"
+    },
+    "anthropics-theme-factory": {
+      "source": "smithery/ai",
+      "sourceType": "well-known",
+      "computedHash": "13a3851da15276a201034dd75bb20381aa032fd10e56a7139c9f37af22181dd3"
+    }
+  }
+}

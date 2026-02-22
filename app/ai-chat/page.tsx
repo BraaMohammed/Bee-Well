@@ -62,13 +62,17 @@ export default function AIChatPage() {
   }, [messages, currentChatId, updateCurrentChatMessages]);
 
   return (
-    <div className="h-screen bg-neutral-300 text-neutral-900 flex flex-col">
+    <div className="h-screen bg-[#FAFAF9] text-stone-900 flex flex-col relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 bg-[url('/assets/noise.png')] opacity-[0.03] pointer-events-none mix-blend-multiply"></div>
+      <div className="absolute top-0 left-0 right-0 h-64 bg-gradient-to-b from-white to-transparent pointer-events-none z-10"></div>
+      
       {/* Main chat area - full width */}
-      <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0 z-0 relative">
         <ChatHeader />
 
         {/* Chat messages area */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto scroll-smooth">
           {messages.length === 0 ? (
             <WelcomeScreen />
           ) : (

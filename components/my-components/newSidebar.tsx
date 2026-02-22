@@ -6,7 +6,6 @@ import {
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -17,9 +16,7 @@ import { CalendarCheck } from "lucide-react";
 import { Archive } from "lucide-react";
 import { Trash2 } from "lucide-react";
 import { Bookmark } from "lucide-react";
-import { NotebookPen } from "lucide-react";
 import { NotebookText } from "lucide-react";
-import { MessageCircle } from "lucide-react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import Image from "next/image";
 import { useSession } from "next-auth/react";

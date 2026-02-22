@@ -1,4 +1,4 @@
-import { Settings } from 'lucide-react';
+import { SlidersHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import AISettings from './AISettings';
 
@@ -6,11 +6,12 @@ export default function SettingsButton() {
   return (
     <AISettings>
       <Button
-        variant="outline"
-        size="sm"
-        className="bg-gradient-to-r from-neutral-700 rounded-xl px-4 py-6 to-neutral-600 border-0 text-white hover:from-neutral-600 hover:to-neutral-500 shadow-lg transition-all duration-200"
+        variant="ghost"
+        size="icon"
+        className="h-10 w-10 rounded-xl text-stone-500 hover:text-stone-800 hover:bg-stone-100 transition-all"
+        title="Settings"
       >
-        <Settings className="h-4 w-4" />
+        <SlidersHorizontal className="h-5 w-5" strokeWidth={1.5} />
       </Button>
     </AISettings>
   );
