@@ -1,4 +1,6 @@
-import { Zap, HardDrive, ChevronDown } from 'lucide-react';
+import { Zap, ChevronDown } from 'lucide-react';
+import { FcGoogle } from "react-icons/fc";
+import { SiOllama } from "react-icons/si";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAIChatStore } from '@/stores/aiChatStore';
 
@@ -15,8 +17,8 @@ export default function ModelSelector() {
 
   const getProviderIcon = (provider: string) => {
     switch (provider) {
-      case 'google': return <Zap className="h-3.5 w-3.5" strokeWidth={2.5} />;
-      case 'ollama': return <HardDrive className="h-3.5 w-3.5" strokeWidth={2.5} />;
+      case 'google': return <FcGoogle className="h-3.5 w-3.5" />;
+      case 'ollama': return <SiOllama className="h-3.5 w-3.5" />;
       default: return <Zap className="h-3.5 w-3.5" strokeWidth={2.5} />;
     }
   };
@@ -60,7 +62,7 @@ export default function ModelSelector() {
             >
               <div className="flex items-center gap-3">
                 <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg ring-1 ring-blue-100">
-                  <Zap className="h-3.5 w-3.5" strokeWidth={2.5} />
+                  <FcGoogle className="h-3.5 w-3.5" />
                 </div>
                 <div className="flex flex-col text-left">
                   <span className="font-semibold text-xs">{model.name}</span>
@@ -83,7 +85,7 @@ export default function ModelSelector() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="p-1.5 bg-orange-50 text-orange-600 rounded-lg ring-1 ring-orange-100">
-                      <HardDrive className="h-3.5 w-3.5" strokeWidth={2.5} />
+                      <SiOllama className="h-3.5 w-3.5" />
                     </div>
                     <div className="flex flex-col text-left">
                       <span className="font-semibold text-xs">{model.name}</span>

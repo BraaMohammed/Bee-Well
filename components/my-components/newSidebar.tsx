@@ -229,24 +229,28 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
         </SidebarContent>
 
         {/* Footer with User Info */}
-        <SidebarFooter className="p-3 border-t border-neutral-500/30 flex flex-col justify-center items-center">
-          <div className="flex flex-col gap-2 items-center w-full">
-            <div className="flex items-center gap-2 w-full justify-center">
+        <SidebarFooter className="p-4 border-t border-neutral-500/20 flex flex-col items-center justify-center">
+          <div className="flex flex-col gap-3 items-center w-full max-w-xs">
+            <div className="flex items-center gap-3 justify-center w-full">
               <div className="relative">
                 <Image 
                   src={userPhoto || "/don.jpg"} 
                   alt="User Photo" 
-                  width={36} 
-                  height={36} 
-                  className="size-9 rounded-full object-cover ring-2 ring-white/20 shadow-lg transition-all duration-300 hover:ring-white/40" 
+                  width={40} 
+                  height={40} 
+                  className="rounded-full object-cover ring-2 ring-white/20 shadow-lg transition-all duration-300 hover:ring-white/40" 
                 />
               </div>
-              <div className="flex-1">
-                <p className="text-xs font-medium text-white/90">{userName}</p>
+              <div>
+                <p className="text-sm font-semibold text-white">{userName || 'Guest'}</p>
               </div>
             </div>
-            <div className="w-full">
-              <Button text="Sign Out" icon="signOut" color="bg-neutral-800 hover:bg-neutral-700 border border-neutral-600/30" />
+            <div className="w-full flex justify-center">
+              <Button 
+                text="Sign Out" 
+                icon="signOut" 
+                color="bg-neutral-800 hover:bg-neutral-700 border border-neutral-600/30 text-white" 
+              />
             </div>
           </div>
         </SidebarFooter>
