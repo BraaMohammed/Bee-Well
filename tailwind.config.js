@@ -45,49 +45,45 @@ module.exports = withUt( {
   				foreground: 'hsl(var(--destructive-foreground))'
   			},
   			muted: {
-  				DEFAULT: 'hsl(var(--muted))',
-  				foreground: 'hsl(var(--muted-foreground))'
-  			},
-  			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
-  			},
-  			popover: {
-  				DEFAULT: 'hsl(var(--popover))',
-  				foreground: 'hsl(var(--popover-foreground))'
-  			},
-  			card: {
-  				DEFAULT: 'hsl(var(--card))',
-  				foreground: 'hsl(var(--card-foreground))'
-  			},
-  			sidebar: {
-  				DEFAULT: 'hsl(var(--sidebar-background))',
-  				foreground: 'hsl(var(--sidebar-foreground))',
-  				primary: 'hsl(var(--sidebar-primary))',
-  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-  				accent: 'hsl(var(--sidebar-accent))',
-  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-  				border: 'hsl(var(--sidebar-border))',
-  				ring: 'hsl(var(--sidebar-ring))'
-  			}
-  		},
-  		borderRadius: {
-  			lg: 'var(--radius)',
-  			md: 'calc(var(--radius) - 2px)',
-  			sm: 'calc(var(--radius) - 4px)'
-  		},
-  		keyframes: {
-  			'accordion-down': {
-  				from: {
-  					height: '0'
-  				},
-  				to: {
-  					height: 'var(--radix-accordion-content-height)'
-  				}
-  			},
-  			'accordion-up': {
-  				from: {
-  					height: 'var(--radix-accordion-content-height)'
+					background: 'hsl(var(--background))', // main app background (off-white/light grey)
+					foreground: 'hsl(var(--foreground))',
+					primary: {
+						DEFAULT: 'hsl(var(--primary))', // main background
+						foreground: 'hsl(var(--primary-foreground))'
+					},
+					sidebar: {
+						DEFAULT: 'hsl(var(--sidebar-background))', // sidebar background (dark neutral)
+						foreground: 'hsl(var(--sidebar-foreground))',
+						primary: 'hsl(var(--sidebar-primary))',
+						'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+						accent: 'hsl(var(--sidebar-accent))',
+						'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+						border: 'hsl(var(--sidebar-border))',
+						ring: 'hsl(var(--sidebar-ring))'
+					},
+					accent: {
+						DEFAULT: 'hsl(var(--accent))', // green accent (for buttons/highlights)
+						foreground: 'hsl(var(--accent-foreground))'
+					},
+					secondary: {
+						DEFAULT: 'hsl(var(--secondary))', // new secondary color (e.g. amber, sage, warm grey)
+						foreground: 'hsl(var(--secondary-foreground))'
+					},
+					muted: {
+						DEFAULT: 'hsl(var(--muted))', // for disabled/muted states
+						foreground: 'hsl(var(--muted-foreground))'
+					},
+					shade: {
+						DEFAULT: 'hsl(var(--shade))', // for hover/active overlays
+						foreground: 'hsl(var(--shade-foreground))'
+					},
+					card: {
+						DEFAULT: 'hsl(var(--card))',
+						foreground: 'hsl(var(--card-foreground))'
+					},
+					popover: {
+						DEFAULT: 'hsl(var(--popover))',
+						foreground: 'hsl(var(--popover-foreground))'
   				},
   				to: {
   					height: '0'

@@ -17,6 +17,7 @@ import { Archive } from "lucide-react";
 import { Trash2 } from "lucide-react";
 import { Bookmark } from "lucide-react";
 import { NotebookText } from "lucide-react";
+import { MessageCircle, ChevronDown } from "lucide-react";
 import { IoIosAddCircleOutline } from "react-icons/io";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
@@ -93,35 +94,34 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
 
   return (
     <>
-      <Sidebar className="bg-gradient-to-br from-neutral-600 to-neutral-800 border-none shadow-2xl">
+      <Sidebar className="bg-neutral-700 border-none shadow-2xl">
         {/* Header with Logo */}
-        <SidebarHeader className="p-6 pt-6 pb-8 flex flex-col items-center justify-center space-y-0.5">
+        <SidebarHeader className="p-4 pt-4 pb-6 flex flex-col items-center justify-center space-y-0.5">
           <div className="relative">
             <Image 
               src="/logo.png" 
               alt="logo" 
-              width={150} 
-              height={150} 
+              width={120} 
+              height={120} 
               quality={100}
-              className="filter brightness-110" 
-             // style={{filter: 'brightness(1.1) drop-shadow(0 25px 25px rgba(0, 0, 0, 0.5)) drop-shadow(0 10px 10px rgba(0, 0, 0, 0.3))'}}
+              className="filter brightness-110 transition-transform duration-300 hover:scale-105" 
             />
           </div>
-        {/*
+        {/* 
          <h1 className="text-3xl font-bold tracking-wide bg-gradient-to-r from-white to-emerald-500 bg-clip-text text-transparent" >
             Bee Well
           </h1>  
          */} 
           </SidebarHeader>
 
-        <SidebarContent className="px-4 flex-1 overflow-y-auto">
+        <SidebarContent className="px-3 flex-1 overflow-y-auto">
           {/* Add Note Button */}
-          <div className="flex justify-center mb-6">
+          <div className="flex justify-center mb-4">
             <button 
               onClick={() => setIsNewNoteDialogOpen(true)}
-              className="w-full max-w-40 flex justify-center items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium hover:from-green-500 hover:to-green-600 active:scale-95 transition-all duration-300 bg-gradient-to-r from-green-600 to-green-700 text-white shadow-lg hover:shadow-xl"
+              className="w-full max-w-36 flex justify-center items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium active:scale-95 transition-all duration-300 bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl border border-green-500/30"
             >
-              Add Note <IoIosAddCircleOutline size={18} />
+              Add Note <IoIosAddCircleOutline size={16} />
             </button>
           </div>
 
@@ -133,13 +133,13 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
                   <SidebarMenuItem key={item.title} className="list-none">
                     <SidebarMenuButton 
                       asChild 
-                      className="text-white/90 hover:text-white hover:bg-gradient-to-r hover:from-neutral-800/50 hover:to-neutral-700/50 p-3 h-auto justify-start !rounded-xl gap-3 transition-all duration-200 border-none outline-none"
+                      className="text-white/90 hover:text-white hover:bg-neutral-600/50 p-2 h-auto justify-start !rounded-lg gap-3 transition-all duration-200 border-none outline-none"
                     >
                       <a href={item.url} className="flex items-center gap-3 no-underline">
                         <div className="flex-shrink-0">
-                          <item.icon size={20} />
+                          <item.icon size={18} />
                         </div>
-                        <span className="text-base font-medium">{item.title}</span>
+                        <span className="text-sm font-medium">{item.title}</span>
                       </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -147,26 +147,59 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
 
                 {/* AI Agent with Chat History */}
                 <SidebarMenuItem className="list-none">
-                  <RecentChatsDropdown 
-                    onNavigateToChat={(chatId) => {
-                      router.push(`/ai-chat?chatId=${chatId}`);
-                    }}
-                  />
+                  <div 
+                    onClick={() => router.push('/ai-chat')}
+                    className="text-white/90 hover:text-white hover:bg-neutral-600/50 p-2 h-auto justify-start !rounded-lg gap-3 transition-all duration-200 border-none outline-none flex items-center cursor-pointer"
+                  >
+                    <div className="flex-shrink-0">
+                      <MessageCircle size={18} />
+                    </div>
+                    <span className="text-sm font-medium flex-1">AI Agent</span>
+                    <ChevronDown 
+                      className={`transition-transform duration-200 ${false ? 'rotate-180' : ''}`} 
+                      size={18} 
+                    />
+                  </div>
+                  
+                  {/* Dropdown Menu */}
+                  <div className="mt-1 ml-2 flex flex-col gap-1">
+                    {(() => {
+                      const recentChats: any[] = [];
+                      return recentChats.length === 0 ? (
+                        <div className="text-xs text-center w-full rounded-lg px-2 py-1.5 text-white/60 font-medium">
+                          No chat history yet
+                        </div>
+                      ) : (
+                        recentChats.map((chat: any) => (
+                          <div
+                            key={chat.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push(`/ai-chat?chatId=${chat.id}`);
+                            }}
+                            className="text-xs w-full hover:bg-neutral-600/50 rounded-lg px-2 py-1.5 cursor-pointer text-white/80 hover:text-white transition-all duration-200 font-medium border border-transparent hover:border-neutral-500/30 truncate"
+                          >
+                            {chat.title}
+                          </div>
+                        ))
+                      );
+                    })()}
+                  </div>
                 </SidebarMenuItem>
                 
                 {/* Labels Section Integrated */}
                 <SidebarMenuItem className="list-none">
                   <div 
                     onClick={() => setLabelIsClicked(!labelIsClicked)} 
-                    className="text-white/90 hover:text-white hover:bg-gradient-to-r hover:from-neutral-800/50 hover:to-neutral-700/50 p-3 h-auto justify-start !rounded-xl gap-3 transition-all duration-200 border-none outline-none flex items-center cursor-pointer"
+                    className="text-white/90 hover:text-white hover:bg-neutral-600/50 p-2 h-auto justify-start !rounded-lg gap-3 transition-all duration-200 border-none outline-none flex items-center cursor-pointer"
                   >
                     <div className="flex-shrink-0">
-                      <Bookmark size={20} />
+                      <Bookmark size={18} />
                     </div>
-                    <span className="text-base font-medium flex-1">My Labels</span>
+                    <span className="text-sm font-medium flex-1">My Labels</span>
                     <RiArrowDropDownLine 
                       className={`transition-transform duration-200 ${labelIsClicked ? 'rotate-180' : ''}`} 
-                      size={20} 
+                      size={18} 
                     />
                   </div>
                 </SidebarMenuItem>
@@ -182,7 +215,7 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
                             e.stopPropagation();
                             router.push(`/notes/${label.id}`);
                           }}
-                          className="text-sm text-center w-full hover:bg-gradient-to-r hover:from-neutral-500/50 hover:to-neutral-600/50 rounded-xl px-3 py-2 cursor-pointer text-white/80 hover:text-white transition-all duration-200 font-medium"
+                          className="text-xs text-center w-full hover:bg-neutral-600/50 rounded-lg px-2 py-1.5 cursor-pointer text-white/80 hover:text-white transition-all duration-200 font-medium border border-transparent hover:border-neutral-500/30"
                         >
                           {label.name}
                         </div>
@@ -196,24 +229,24 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
         </SidebarContent>
 
         {/* Footer with User Info */}
-        <SidebarFooter className="p-4 border-t border-neutral-500/30 flex flex-col justify-center items-center">
-          <div className="flex flex-col gap-3 items-center">
-            <div className="flex items-center gap-3 w-full justify-center">
+        <SidebarFooter className="p-3 border-t border-neutral-500/30 flex flex-col justify-center items-center">
+          <div className="flex flex-col gap-2 items-center w-full">
+            <div className="flex items-center gap-2 w-full justify-center">
               <div className="relative">
                 <Image 
                   src={userPhoto || "/don.jpg"} 
                   alt="User Photo" 
-                  width={40} 
-                  height={40} 
-                  className="size-10 rounded-full object-cover ring-2 ring-white/20 shadow-lg" 
+                  width={36} 
+                  height={36} 
+                  className="size-9 rounded-full object-cover ring-2 ring-white/20 shadow-lg transition-all duration-300 hover:ring-white/40" 
                 />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-medium text-white/90">{userName}</p>
+                <p className="text-xs font-medium text-white/90">{userName}</p>
               </div>
             </div>
             <div className="w-full">
-              <Button text="Sign Out" icon="signOut" color="bg-gradient-to-r from-neutral-800 to-neutral-900 hover:from-neutral-700 hover:to-neutral-800" />
+              <Button text="Sign Out" icon="signOut" color="bg-neutral-800 hover:bg-neutral-700 border border-neutral-600/30" />
             </div>
           </div>
         </SidebarFooter>
