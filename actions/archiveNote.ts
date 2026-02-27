@@ -47,7 +47,7 @@ export async function archiveNote(id: string): Promise<ArchiveNoteResult> {
             .from('notes')
                             //@ts-ignore
 
-            .update({ labelname: 'archived' })
+            .update({ labelName: 'archived' })
             .eq('id', id)
             .eq('userId', userId);
 

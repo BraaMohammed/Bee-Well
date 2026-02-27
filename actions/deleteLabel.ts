@@ -14,9 +14,9 @@ export async function deleteLabel(labelName: string) {
             .from('notes')
                             //@ts-ignore
 
-            .update({ labelname: '' })
+            .update({ labelName: '' })
             .eq('userId', session.user.id)
-            .eq('labelname', labelName);
+            .eq('labelName', labelName);
 
         if (updateError) throw updateError;
 

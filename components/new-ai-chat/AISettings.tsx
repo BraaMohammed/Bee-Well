@@ -98,58 +98,7 @@ export default function AISettings({ children }: AISettingsProps) {
 
         <div className="space-y-8 py-6">
           {/* Model Selection */}
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-gradient-to-r from-neutral-600 to-neutral-700 rounded-xl">
-                <Sparkles className="h-5 w-5 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold text-white">Model Selection</h3>
-            </div>
-            <p className="text-neutral-300">
-              Choose your preferred AI model and provider.
-            </p>
-            
-            <div className="bg-neutral-700/50 p-4 rounded-xl border border-neutral-600">
-              <div className="space-y-3">
-                <Label className="text-white font-medium">AI Provider & Model</Label>
-                <Select 
-                  value={`${selectedProvider}:${selectedModel}`} 
-                  onValueChange={handleModelChange}
-                >
-                  <SelectTrigger className="bg-neutral-600 border-neutral-500 rounded-xl text-white">
-                    <div className="flex items-center gap-3">
-                      <div className="p-1.5 bg-white/20 rounded-xl">
-                        {selectedProvider === 'google' && <Sparkles className="h-4 w-4" />}
-                        {selectedProvider === 'ollama' && <Cpu className="h-4 w-4" />}
-                      </div>
-                      <span>{getCurrentModels().find(m => m.id === selectedModel)?.name || selectedModel}</span>
-                    </div>
-                  </SelectTrigger>
-                  <SelectContent className="bg-neutral-700 border-neutral-600  rounded-xl">
-                    {getAllModelOptions().map((model) => (
-                      <SelectItem 
-                        key={`${model.provider}:${model.id}`} 
-                        value={`${model.provider}:${model.id}`}
-                        className="text-white hover:bg-neutral-600"
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="p-1.5 bg-white/20 rounded-xl">
-                            {model.provider === 'google' && <Sparkles className="h-4 w-4" />}
-                            {model.provider === 'ollama' && <Cpu className="h-4 w-4" />}
-                          </div>
-                          <div>
-                            <div className="font-medium">{model.name}</div>
-                            <div className="text-xs text-neutral-400">{model.description}</div>
-                          </div>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-          </div>
-
+        
           <Separator className="bg-neutral-600" />
 
           {/* Data Access Permissions */}

@@ -31,6 +31,11 @@ export async function saveNote({
             throw new Error('You must be logged in to get labels');
         }
 
+        console.log('saveNote called', { heading, content, isNewNote, id, labelName, backgroundColor, htmlContent });
+        // normalize undefined/null to empty string to avoid DB null constraint problems
+        if (labelName === undefined || labelName === null) {
+            labelName = '';
+        }
         if (isNewNote) {
             const { data: note, error } = await supabase
                 .from('notes')
@@ -39,18 +44,22 @@ export async function saveNote({
                 .insert({
                     heading: heading || '',
                     content,
-                    user_id: session.user.id,
-                    labelname: labelName,
-                    backgroundcolor: backgroundColor || 'rgb(64 64 64)',
-                    htmlcontent: htmlContent,
+                    userId: session.user.id,
+                    labelName: labelName, // already guaranteed to be string
+                    backgroundColor: backgroundColor || 'rgb(64 64 64)',
+                    htmlContent: htmlContent,
                     created_at: new Date().toISOString(),
                     id: crypto.randomUUID()
-                })
+                } as any)
                 .select()
                 .single();
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase insert error', error);
+                throw error;
+            }
             return note;
         } else if (id) {
+            console.log('updating note', id, 'session user id', session.user.id, 'labelName', labelName);
             const { data: note, error } = await supabase
                 .from('notes')
                 .update({
@@ -59,17 +68,20 @@ export async function saveNote({
                     content,
                     //@ts-ignore
 
-                    labelname: labelName,
-                    backgroundcolor: backgroundColor,
+                    labelName: labelName,
+                    backgroundColor: backgroundColor,
                     //@ts-ignore
 
-                    htmlcontent: htmlContent
-                })
+                    htmlContent: htmlContent
+                } as any)
                 .eq('id', id)
-                .eq('user_id', session.user.id)
+                .eq('userId', session.user.id)
                 .select()
                 .single();
-            if (error) throw error;
+            if (error) {
+                console.error('Supabase update error', error);
+                throw error;
+            }
             return note;
         }
         throw new Error('Invalid request - missing id for update');

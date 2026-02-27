@@ -92,15 +92,3 @@ export default HomePageClient
 
 
 
-/*   useEffect(() => {
-        fetchNotes();
-    }, [refresh]);
-
-    //
-
-    const refreshFunction = useCallback((trigger) => {
-        if (trigger) {
-            setRefresh(prevRefresh => !prevRefresh);
-        }
-
-    }, []);*/

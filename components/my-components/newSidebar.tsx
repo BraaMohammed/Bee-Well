@@ -119,7 +119,7 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
           <div className="flex justify-center mb-4">
             <button 
               onClick={() => setIsNewNoteDialogOpen(true)}
-              className="w-full max-w-36 flex justify-center items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium active:scale-95 transition-all duration-300 bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl border border-green-500/30"
+              className="w-full max-w-36 flex justify-center  items-center gap-2 px-3 py-2 !rounded-lg text-sm font-medium active:scale-95 transition-all duration-300 bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl border border-green-500/30"
             >
               Add Note <IoIosAddCircleOutline size={16} />
             </button>
