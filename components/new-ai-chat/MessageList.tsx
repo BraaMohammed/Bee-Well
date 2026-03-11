@@ -1,6 +1,6 @@
 import ChatMessage from './ChatMessage';
 import LoadingIndicator from './LoadingIndicator';
-import { type ChatMessage as ChatMessageType } from '@/actions/chatWithAI';
+import { type ChatMessage as ChatMessageType } from '@/hooks/useClientChat';
 
 interface MessageListProps {
   messages: ChatMessageType[];
@@ -8,18 +8,27 @@ interface MessageListProps {
 }
 
 export default function MessageList({ messages, isLoading }: MessageListProps) {
-  // Filter messages to only show user and assistant messages
-  const chatMessages = messages.filter(message => 
+  const chatMessages = messages.filter(message =>
     message.role === 'user' || message.role === 'assistant'
+  );
+
+  // The last assistant message is "streaming" if we're currently loading
+  const lastAssistantIndex = chatMessages.reduce((last, msg, i) =>
+    msg.role === 'assistant' ? i : last, -1
   );
 
   return (
     <div>
-      {chatMessages.map((message) => (
-        <ChatMessage key={message.id} message={message} />
+      {chatMessages.map((message, index) => (
+        <ChatMessage
+          key={message.id}
+          message={message}
+          isStreaming={isLoading && index === lastAssistantIndex}
+        />
       ))}
-      
-      {isLoading && <LoadingIndicator />}
+
+      {/* Show DeepSeek-style loading only when there's no assistant message yet */}
+      {isLoading && lastAssistantIndex === -1 && <LoadingIndicator />}
     </div>
   );
 }

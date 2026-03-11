@@ -1,0 +1,4 @@
+﻿hooks/useClientChat.ts(6,22): error TS2305: Module '"ai"' has no exported member 'CoreMessage'.
+hooks/useClientChat.ts(113,17): error TS2353: Object literal may only specify known properties, and 'maxSteps' does not exist in type 'CallSettings & { system?: string | SystemModelMessage | SystemModelMessage[] | undefined; } & { messages: ModelMessage[]; prompt?: undefined; } & { ...; }'.
+hooks/useClientChat.ts(124,42): error TS2339: Property 'args' does not exist on type 'TypedToolCall<Record<string, any>>'.
+  Property 'args' does not exist on type 'DynamicToolCall'.

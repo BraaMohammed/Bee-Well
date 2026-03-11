@@ -28,8 +28,12 @@ export default function AISettings({ children }: AISettingsProps) {
   const {
     dataAccess,
     customPrompt,
+    googleApiKey,
+    ollamaUrl,
     setDataAccess,
     setCustomPrompt,
+    setGoogleApiKey,
+    setOllamaUrl,
     resetToDefaults,
     getEnabledDataSources,
     hasAnyDataAccess,
@@ -224,6 +228,49 @@ export default function AISettings({ children }: AISettingsProps) {
                 </p>
               </div>
             )}
+          </div>
+
+          <Separator className="bg-neutral-600" />
+
+          {/* API Providers Configurations */}
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-r from-neutral-600 to-neutral-700 rounded-xl">
+                <Settings className="h-5 w-5 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-white">API Providers</h3>
+            </div>
+            <p className="text-neutral-300">
+              Configure your API keys directly to avoid serverless timeouts. Keys are safely stored only in your browser.
+            </p>
+
+            <div className="bg-neutral-700/50 border border-neutral-600 rounded-xl p-4 space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="google-api-key" className="text-white font-medium">Google Gemini API Key</Label>
+                <input
+                  id="google-api-key"
+                  type="password"
+                  placeholder="AIzaSy..."
+                  value={googleApiKey}
+                  onChange={(e) => setGoogleApiKey(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-neutral-600 border border-neutral-500 text-white placeholder:text-neutral-400 focus:outline-none focus:border-green-500"
+                />
+                <p className="text-xs text-neutral-400">Required when using Google models.</p>
+              </div>
+
+              <div className="space-y-2 pt-2">
+                <Label htmlFor="ollama-url" className="text-white font-medium">Ollama Server URL</Label>
+                <input
+                  id="ollama-url"
+                  type="text"
+                  placeholder="http://localhost:11434"
+                  value={ollamaUrl}
+                  onChange={(e) => setOllamaUrl(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-neutral-600 border border-neutral-500 text-white placeholder:text-neutral-400 focus:outline-none focus:border-green-500"
+                />
+                <p className="text-xs text-neutral-400">Required when using local Ollama models.</p>
+              </div>
+            </div>
           </div>
 
           <Separator className="bg-neutral-600" />

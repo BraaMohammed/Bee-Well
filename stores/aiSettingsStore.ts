@@ -8,19 +8,25 @@ export interface AISettingsState {
     habits: boolean;
     journal: boolean;
   };
-  
+
   // Custom Context Prompt
   customPrompt: string;
-  
+
+  // Provider API Keys
+  googleApiKey: string;
+  ollamaUrl: string;
+
   // Model Selection (inherited from aiChatStore but can be overridden here)
   useCustomModelSettings: boolean;
-  
+
   // Actions
   setDataAccess: (type: 'notes' | 'habits' | 'journal', enabled: boolean) => void;
   setCustomPrompt: (prompt: string) => void;
+  setGoogleApiKey: (key: string) => void;
+  setOllamaUrl: (url: string) => void;
   setUseCustomModelSettings: (enabled: boolean) => void;
   resetToDefaults: () => void;
-  
+
   // Helper methods
   getEnabledDataSources: () => string[];
   hasAnyDataAccess: () => boolean;
@@ -33,6 +39,8 @@ const defaultSettings = {
     journal: true,
   },
   customPrompt: '',
+  googleApiKey: '',
+  ollamaUrl: 'http://localhost:11434',
   useCustomModelSettings: false,
 };
 
@@ -52,6 +60,10 @@ export const useAISettingsStore = create<AISettingsState>()(
         })),
 
       setCustomPrompt: (prompt) => set({ customPrompt: prompt }),
+
+      setGoogleApiKey: (key) => set({ googleApiKey: key }),
+
+      setOllamaUrl: (url) => set({ ollamaUrl: url }),
 
       setUseCustomModelSettings: (enabled) => set({ useCustomModelSettings: enabled }),
 

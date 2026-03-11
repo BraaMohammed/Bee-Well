@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { ChatHeader, WelcomeScreen, MessageList, ChatInput } from '@/components/new-ai-chat';
 import { useAIChatStore } from '@/stores/aiChatStore';
 import { useChatHistoryStore } from '@/stores/chatHistoryStore';
-import { useChatServerActions } from '@/hooks/useChatServerActions';
+import { useClientChat } from '@/hooks/useClientChat';
 
 export default function AIChatPage() {
   const searchParams = useSearchParams();
@@ -13,16 +13,16 @@ export default function AIChatPage() {
   const chatIdFromUrl = searchParams.get('chatId');
 
   const { selectedProvider, selectedModel, initialize } = useAIChatStore();
-  const { 
-    currentChatId, 
-    setCurrentChatId, 
-    loadChat, 
+  const {
+    currentChatId,
+    setCurrentChatId,
+    loadChat,
     createNewChat,
     getCurrentChat,
     updateCurrentChatMessages
   } = useChatHistoryStore();
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useChatServerActions({
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useClientChat({
     provider: selectedProvider,
     model: selectedModel,
   });
@@ -57,7 +57,7 @@ export default function AIChatPage() {
   // Save messages to chat history whenever messages change
   useEffect(() => {
     if (messages.length > 0 && currentChatId) {
-      updateCurrentChatMessages(messages);
+      updateCurrentChatMessages(messages as any);
     }
   }, [messages, currentChatId, updateCurrentChatMessages]);
 
@@ -65,7 +65,7 @@ export default function AIChatPage() {
     <div className="h-screen bg-[#FAFAF9] text-stone-900 flex flex-col relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 bg-[url('/assets/noise.png')] opacity-[0.03] pointer-events-none mix-blend-multiply z-0"></div>
-      
+
       {/* Main chat area - full width */}
       <div className="flex-1 flex flex-col min-h-0 z-10 relative">
         <ChatHeader />
@@ -74,7 +74,7 @@ export default function AIChatPage() {
         <div className="flex-1 overflow-y-auto scroll-smooth relative">
           {/* Top gradient inside the scroll area so header stays crisp */}
           <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#FAFAF9] to-transparent pointer-events-none z-10"></div>
-          
+
           {messages.length === 0 ? (
             <WelcomeScreen />
           ) : (
@@ -82,7 +82,7 @@ export default function AIChatPage() {
           )}
         </div>
 
-        <ChatInput 
+        <ChatInput
           input={input}
           isLoading={isLoading}
           onInputChange={handleInputChange}

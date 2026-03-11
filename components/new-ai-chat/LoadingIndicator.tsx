@@ -1,18 +1,37 @@
-import { Sparkles, Loader2 } from 'lucide-react';
+'use client';
+
+import { GiBee } from 'react-icons/gi';
 
 export default function LoadingIndicator() {
   return (
-    <div className="w-full py-6 bg-stone-50/50">
-      <div className="max-w-4xl mx-auto px-6 flex gap-6 md:gap-8">
-        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm ring-1 ring-inset bg-emerald-600 text-emerald-50 ring-emerald-600/20">
-          <Sparkles className="h-4 w-4 animate-pulse" strokeWidth={1.5} />
+    <div className="w-full py-5">
+      <div className="max-w-4xl mx-auto px-6 flex gap-4">
+        {/* Avatar matching AI messages */}
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-emerald-600 ring-1 ring-inset ring-emerald-700/30 shadow-sm mt-0.5">
+          <GiBee className="h-4.5 w-4.5 text-white" />
         </div>
-        
-        <div className="flex items-center gap-3 pt-1">
-          <span className="text-stone-400 text-xs font-medium uppercase tracking-wider animate-pulse flex items-center gap-2">
-            Thinking
-            <Loader2 className="h-3 w-3 animate-spin" />
-          </span>
+
+        <div className="flex-1 space-y-2 pt-1.5">
+          {/* Sender label */}
+          <div className="text-xs font-semibold uppercase tracking-widest text-emerald-700">
+            BEE-WELL AI
+          </div>
+
+          {/* DeepSeek-style thinking block placeholder */}
+          <div className="rounded-xl border border-emerald-200/60 bg-emerald-50/40 px-4 py-2.5 flex items-center gap-2.5">
+            {/* Pulsing dot */}
+            <span className="relative flex h-2 w-2 flex-shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <span className="text-xs font-medium text-emerald-700">Thinking…</span>
+            {/* Animated dots */}
+            <span className="inline-flex gap-1 ml-auto">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-bounce [animation-delay:0ms]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-bounce [animation-delay:150ms]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-300 animate-bounce [animation-delay:300ms]" />
+            </span>
+          </div>
         </div>
       </div>
     </div>
