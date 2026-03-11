@@ -28,15 +28,15 @@ export interface OllamaModel {
 export async function getOllamaModels(): Promise<{ success: boolean; models?: OllamaModel[]; error?: string }> {
   try {
     const ollamaUrl = process.env.OLLAMA_API_URL || 'http://localhost:11434';
-    
+
     const response = await fetch(`${ollamaUrl}/api/tags`);
-    
+
     if (!response.ok) {
       throw new Error(`Failed to fetch Ollama models: ${response.statusText}`);
     }
-    
+
     const data = await response.json();
-    
+
     return {
       success: true,
       models: data.models || []
@@ -67,7 +67,7 @@ export interface ChatRequest {
 // Implements function calling with rate limit protection
 async function handleGoogleGeminiChat(messages: ChatMessage[], model: string, userId: string, systemPrompt?: string, tools?: any) {
   const apiKey = process.env.GOOGLE_AI_API_KEY;
-  
+
   if (!apiKey) {
     return {
       success: false,
@@ -110,7 +110,7 @@ async function handleGoogleGeminiChat(messages: ChatMessage[], model: string, us
           }
 
           const typeName = zodSchema._def.typeName;
-          
+
           if (typeName === 'ZodObject') {
             const shape = zodSchema._def.shape();
             const properties: any = {};
@@ -121,7 +121,7 @@ async function handleGoogleGeminiChat(messages: ChatMessage[], model: string, us
               if (field._def) {
                 const fieldType = field._def.typeName;
                 let isOptional = false;
-                
+
                 if (fieldType === 'ZodString') {
                   properties[key] = {
                     type: 'string',
@@ -144,8 +144,8 @@ async function handleGoogleGeminiChat(messages: ChatMessage[], model: string, us
                     type: 'array',
                     description: field._def.description || '',
                     items: itemType === 'ZodString' ? { type: 'string' } :
-                           itemType === 'ZodNumber' ? { type: 'number' } :
-                           { type: 'string' }
+                      itemType === 'ZodNumber' ? { type: 'number' } :
+                        { type: 'string' }
                   };
                 } else if (fieldType === 'ZodOptional') {
                   isOptional = true;
@@ -166,12 +166,12 @@ async function handleGoogleGeminiChat(messages: ChatMessage[], model: string, us
                       type: 'array',
                       description: field._def.innerType._def.description || '',
                       items: arrayItemType === 'ZodString' ? { type: 'string' } :
-                             arrayItemType === 'ZodNumber' ? { type: 'number' } :
-                             { type: 'string' }
+                        arrayItemType === 'ZodNumber' ? { type: 'number' } :
+                          { type: 'string' }
                     };
                   }
                 }
-                
+
                 // Only add to required if not optional and property was defined
                 if (!isOptional && fieldType !== 'ZodOptional' && properties[key]) {
                   required.push(key);
@@ -189,7 +189,7 @@ async function handleGoogleGeminiChat(messages: ChatMessage[], model: string, us
           return { type: 'object', properties: {} };
         };
 
-        const parameters = toolDef.parameters 
+        const parameters = toolDef.parameters
           ? convertZodToJsonSchema(toolDef.parameters)
           : { type: 'object', properties: {} };
 
@@ -223,11 +223,11 @@ async function handleGoogleGeminiChat(messages: ChatMessage[], model: string, us
 
     const data = await response.json();
 
-    console.log('💬 Model response received from Google Gemini' , data  );
-    
+    console.log('💬 Model response received from Google Gemini', data);
+
     // Extract the response text
     let responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from Gemini';
-    
+
     // Clean the response
     responseText = responseText.replace(/<think>[\s\S]*?<\/think>/gi, '');
     responseText = responseText.replace(/<\/?think>/gi, '');
@@ -240,7 +240,7 @@ async function handleGoogleGeminiChat(messages: ChatMessage[], model: string, us
 
     if (functionCall && tools) {
       console.log('🔧 Function call detected:', functionCall.name, 'with args:', functionCall.args);
-      
+
       // Execute the function call
       const tool = tools[functionCall.name];
       if (tool && tool.execute) {
@@ -248,20 +248,20 @@ async function handleGoogleGeminiChat(messages: ChatMessage[], model: string, us
           console.log('⚙️ Executing function:', functionCall.name);
           const result = await tool.execute(functionCall.args || {});
           console.log('✅ Function executed successfully, result:', JSON.stringify(result).substring(0, 200) + '...');
-          
+
           toolInvocations.push({
             toolName: functionCall.name,
             args: functionCall.args,
             result
           });
-          
+
           // Add random delay to avoid rate limiting (1-3 seconds)
           const delayMs = 1000 + Math.random() * 2000;
           console.log(`⏳ Waiting ${Math.round(delayMs)}ms to avoid rate limiting...`);
           await new Promise(resolve => setTimeout(resolve, delayMs));
-          
+
           console.log('🔄 Sending function result back to model for final response...');
-          
+
           // Make a follow-up request with the tool result
           const followUpBody = {
             ...requestBody,
@@ -340,7 +340,7 @@ async function handleGoogleGeminiChat(messages: ChatMessage[], model: string, us
 // Custom Ollama provider function with tool support
 async function handleOllamaChat(messages: ChatMessage[], model: string, userId: string, systemPrompt?: string, tools?: any) {
   const ollamaUrl = process.env.OLLAMA_API_URL || 'http://localhost:11434';
-  
+
   // Get available models and validate the requested model
   let validatedModel = model;
   try {
@@ -348,17 +348,17 @@ async function handleOllamaChat(messages: ChatMessage[], model: string, userId: 
     if (modelsResponse.ok) {
       const modelsData = await modelsResponse.json();
       const availableModels = modelsData.models?.map((m: any) => m.name) || [];
-      
+
       console.log('Available models:', availableModels);
       console.log('Requested model:', model);
-      
+
       // Check if the exact model exists
       if (!availableModels.includes(model)) {
         // Try to find a model that starts with the requested name
-        const partialMatch = availableModels.find((m: string) => 
+        const partialMatch = availableModels.find((m: string) =>
           m.startsWith(model) || model.startsWith(m.split(':')[0])
         );
-        
+
         if (partialMatch) {
           validatedModel = partialMatch;
           console.log('Using matched model:', validatedModel);
@@ -375,7 +375,7 @@ async function handleOllamaChat(messages: ChatMessage[], model: string, userId: 
 
   try {
     console.log('Making request to Ollama with validated model:', validatedModel);
-    
+
     // Convert messages to Ollama chat format
     const ollamaMessages = messages
       .filter(m => m.role !== 'system')
@@ -402,7 +402,7 @@ async function handleOllamaChat(messages: ChatMessage[], model: string, userId: 
     // Add tools if provided (for models that support function calling)
     if (tools && Object.keys(tools).length > 0) {
       console.log('🔧 Adding tools to Ollama request');
-      
+
       const ollamaTools = Object.entries(tools).map(([name, toolDef]: [string, any]) => {
         // Convert Zod schema to simple JSON Schema
         const convertZodToJsonSchema = (zodSchema: any): any => {
@@ -411,7 +411,7 @@ async function handleOllamaChat(messages: ChatMessage[], model: string, userId: 
           }
 
           const typeName = zodSchema._def.typeName;
-          
+
           if (typeName === 'ZodObject') {
             const shape = zodSchema._def.shape();
             const properties: any = {};
@@ -422,7 +422,7 @@ async function handleOllamaChat(messages: ChatMessage[], model: string, userId: 
               if (field._def) {
                 const fieldType = field._def.typeName;
                 let isOptional = false;
-                
+
                 if (fieldType === 'ZodString') {
                   properties[key] = {
                     type: 'string',
@@ -445,8 +445,8 @@ async function handleOllamaChat(messages: ChatMessage[], model: string, userId: 
                     type: 'array',
                     description: field._def.description || '',
                     items: itemType === 'ZodString' ? { type: 'string' } :
-                           itemType === 'ZodNumber' ? { type: 'number' } :
-                           { type: 'string' }
+                      itemType === 'ZodNumber' ? { type: 'number' } :
+                        { type: 'string' }
                   };
                 } else if (fieldType === 'ZodOptional') {
                   isOptional = true;
@@ -467,12 +467,12 @@ async function handleOllamaChat(messages: ChatMessage[], model: string, userId: 
                       type: 'array',
                       description: field._def.innerType._def.description || '',
                       items: arrayItemType === 'ZodString' ? { type: 'string' } :
-                             arrayItemType === 'ZodNumber' ? { type: 'number' } :
-                             { type: 'string' }
+                        arrayItemType === 'ZodNumber' ? { type: 'number' } :
+                          { type: 'string' }
                     };
                   }
                 }
-                
+
                 // Only add to required if not optional and property was defined
                 if (!isOptional && fieldType !== 'ZodOptional' && properties[key]) {
                   required.push(key);
@@ -490,7 +490,7 @@ async function handleOllamaChat(messages: ChatMessage[], model: string, userId: 
           return { type: 'object', properties: {} };
         };
 
-        const parameters = toolDef.parameters 
+        const parameters = toolDef.parameters
           ? convertZodToJsonSchema(toolDef.parameters)
           : { type: 'object', properties: {} };
 
@@ -509,7 +509,7 @@ async function handleOllamaChat(messages: ChatMessage[], model: string, userId: 
 
     const response = await fetch(`${ollamaUrl}/api/chat`, {
       method: 'POST',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       },
@@ -526,26 +526,26 @@ async function handleOllamaChat(messages: ChatMessage[], model: string, userId: 
 
     const data = await response.json();
     console.log('Ollama response:', data);
-    
+
     // Check for tool calls in response
     const toolCalls = data.message?.tool_calls;
     const toolInvocations: ToolInvocation[] = [];
 
     if (toolCalls && toolCalls.length > 0 && tools) {
       console.log('🔧 Tool calls detected:', toolCalls.length);
-      
+
       // Execute all tool calls
       for (const toolCall of toolCalls) {
         const functionName = toolCall.function?.name;
         const functionArgs = toolCall.function?.arguments;
-        
+
         if (functionName && tools[functionName]) {
           console.log('⚙️ Executing function:', functionName, 'with args:', functionArgs);
-          
+
           try {
             const result = await tools[functionName].execute(functionArgs || {});
             console.log('✅ Function executed successfully');
-            
+
             toolInvocations.push({
               toolName: functionName,
               args: functionArgs,
@@ -571,7 +571,7 @@ async function handleOllamaChat(messages: ChatMessage[], model: string, userId: 
 
             const followUpResponse = await fetch(`${ollamaUrl}/api/chat`, {
               method: 'POST',
-              headers: { 
+              headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
               },
@@ -589,14 +589,14 @@ async function handleOllamaChat(messages: ChatMessage[], model: string, userId: 
               const followUpData = await followUpResponse.json();
               const finalResponse = followUpData.message?.content || data.message?.content || 'No response';
               console.log('💬 Model generated final response after function call');
-              
+
               // Clean the response
               let cleanedResponse = finalResponse;
               cleanedResponse = cleanedResponse.replace(/<think>[\s\S]*?<\/think>/gi, '');
               cleanedResponse = cleanedResponse.replace(/<\/?think>/gi, '');
               cleanedResponse = cleanedResponse.replace(/\*\*Response:\*\*/gi, '');
               cleanedResponse = cleanedResponse.trim();
-              
+
               return {
                 success: true,
                 message: {
@@ -615,16 +615,16 @@ async function handleOllamaChat(messages: ChatMessage[], model: string, userId: 
     } else {
       console.log('💬 Direct response (no tool calls)');
     }
-    
+
     // Get response text
     let cleanedResponse = data.message?.content || 'No response from Ollama';
-    
+
     // Clean the response
     cleanedResponse = cleanedResponse.replace(/<think>[\s\S]*?<\/think>/gi, '');
     cleanedResponse = cleanedResponse.replace(/<\/?think>/gi, '');
     cleanedResponse = cleanedResponse.replace(/\*\*Response:\*\*/gi, '');
     cleanedResponse = cleanedResponse.trim();
-    
+
     return {
       success: true,
       message: {
@@ -634,7 +634,7 @@ async function handleOllamaChat(messages: ChatMessage[], model: string, userId: 
         toolInvocations: toolInvocations.length > 0 ? toolInvocations : undefined
       }
     };
-    
+
   } catch (error) {
     console.error('Ollama chat error:', error);
     return {
@@ -645,6 +645,7 @@ async function handleOllamaChat(messages: ChatMessage[], model: string, userId: 
 }
 
 export async function chatWithAI({ messages, provider = 'google', model = 'gemini-2.5-flash', dataAccessSettings }: ChatRequest & { dataAccessSettings?: { notes: boolean; habits: boolean; journal: boolean } }) {
+  console.log(`🤖 Chat request - Provider: ${provider}, Model: ${model}`);
   try {
     // Check authentication
     const session = await getServerSession(authOptions);
@@ -655,7 +656,7 @@ export async function chatWithAI({ messages, provider = 'google', model = 'gemin
     // Build tools object based on data access settings
     const defaultDataAccess = { notes: true, habits: true, journal: true };
     const dataAccess = dataAccessSettings || defaultDataAccess;
-    
+
     const tools: any = {};
 
     // Add notes-related tools if access is granted
@@ -670,9 +671,9 @@ export async function chatWithAI({ messages, provider = 'google', model = 'gemin
         execute: async ({ labelName }) => {
           try {
             const notes = await getNotes({ labelName });
-            
+
             console.log(`📋 Overview: Found ${notes.length} notes${labelName ? ` in label "${labelName}"` : ''}`);
-            
+
             return {
               success: true,
               count: notes.length,
@@ -705,16 +706,16 @@ export async function chatWithAI({ messages, provider = 'google', model = 'gemin
           try {
             const allNotes = await getNotes({});
             const selectedNotes = allNotes.filter(note => noteIds.includes(note.id));
-            
+
             console.log(`📝 Fetching ${selectedNotes.length} specific notes by ID`);
-            
+
             if (selectedNotes.length === 0) {
               return {
                 success: false,
                 error: 'No notes found with provided IDs'
               };
             }
-            
+
             return {
               success: true,
               count: selectedNotes.length,
@@ -745,9 +746,9 @@ export async function chatWithAI({ messages, provider = 'google', model = 'gemin
         execute: async () => {
           try {
             const labels = await getLabels();
-            
+
             console.log(`🏷️ Found ${labels.length} labels`);
-            
+
             return {
               success: true,
               labels: labels.map(label => ({
@@ -780,9 +781,9 @@ export async function chatWithAI({ messages, provider = 'google', model = 'gemin
         execute: async ({ year }) => {
           try {
             const entries = await getJournalEntriesByYear(year);
-            
+
             console.log(`📅 Journal overview: Found ${entries.length} entries in ${year}`);
-            
+
             return {
               success: true,
               year,
@@ -816,17 +817,17 @@ export async function chatWithAI({ messages, provider = 'google', model = 'gemin
             // Extract year from startDate to query
             const year = parseInt(startDate.split('-')[0]);
             const allEntries = await getJournalEntriesByYear(year);
-            
+
             // Filter by date range
             const filteredEntries = allEntries.filter(entry => {
-              const entryDate = entry.date instanceof Date 
+              const entryDate = entry.date instanceof Date
                 ? entry.date.toISOString().split('T')[0]
                 : entry.date;
               return entryDate >= startDate && entryDate <= endDate;
             });
-            
+
             console.log(`📖 Fetching ${filteredEntries.length} journal entries from ${startDate} to ${endDate}`);
-            
+
             return {
               success: true,
               count: filteredEntries.length,
@@ -856,7 +857,7 @@ export async function chatWithAI({ messages, provider = 'google', model = 'gemin
     if (dataAccess.habits) {
       const { getHabitTemplate } = await import('@/actions/getHabitTemplate');
       const { getDailyEntries } = await import('@/actions/getDailyEntries');
-      
+
       // STEP 1: Get habit template (current habits being tracked)
       tools.getHabitsOverview = tool({
         description: 'Get an overview of all habits currently being tracked (names, categories, types). Use this FIRST to see what habits exist, then use getHabitRecords for historical data.',
@@ -864,30 +865,30 @@ export async function chatWithAI({ messages, provider = 'google', model = 'gemin
         execute: async () => {
           try {
             const result = await getHabitTemplate();
-            
+
             if (!result.success || !result.data) {
               return {
                 success: false,
                 error: result.error || 'No habit template found'
               };
             }
-            
+
             // Extract habit overview from categories
-            const habitsOverview = Object.entries(result.data.categories || {}).flatMap(([categoryName, category]: [string, any]) => 
+            const habitsOverview = Object.entries(result.data.categories || {}).flatMap(([categoryName, category]: [string, any]) =>
               Object.entries((category as any).habits || {}).map(([habitKey, habit]: [string, any]) => ({
                 habitKey,
                 name: habit.name || habitKey,
                 category: categoryName,
                 type: habit.type || 'unknown',
-                config: habit.type === 'checkbox' ? 'Yes/No tracking' : 
-                        habit.type === 'counter' ? `Counter (Goal: ${habit.goal || 'N/A'})` :
-                        habit.type === 'slider' ? `Slider (Range: ${habit.min || 0}-${habit.max || 100})` :
-                        'Unknown type'
+                config: habit.type === 'checkbox' ? 'Yes/No tracking' :
+                  habit.type === 'counter' ? `Counter (Goal: ${habit.goal || 'N/A'})` :
+                    habit.type === 'slider' ? `Slider (Range: ${habit.min || 0}-${habit.max || 100})` :
+                      'Unknown type'
               }))
             );
-            
+
             console.log(`🎯 Habits overview: Found ${habitsOverview.length} tracked habits`);
-            
+
             return {
               success: true,
               count: habitsOverview.length,
@@ -913,16 +914,16 @@ export async function chatWithAI({ messages, provider = 'google', model = 'gemin
         execute: async ({ startDate, endDate }) => {
           try {
             const result = await getDailyEntries(session.user.id!, startDate, endDate);
-            
+
             if (!result.success) {
               return {
                 success: false,
                 error: result.error || 'Failed to fetch habit records'
               };
             }
-            
+
             console.log(`📊 Fetched ${result.data?.length || 0} habit records from ${startDate} to ${endDate}`);
-            
+
             return {
               success: true,
               count: result.data?.length || 0,
@@ -947,16 +948,16 @@ export async function chatWithAI({ messages, provider = 'google', model = 'gemin
         execute: async () => {
           try {
             const result = await getHabitTemplate();
-            
+
             if (!result.success) {
               return {
                 success: false,
                 error: result.error || 'Failed to fetch habit template'
               };
             }
-            
+
             console.log(`⚙️ Retrieved complete habit template configuration`);
-            
+
             return {
               success: true,
               template: result.data
@@ -978,14 +979,16 @@ export async function chatWithAI({ messages, provider = 'google', model = 'gemin
 
     // Handle Ollama separately
     if (provider === 'ollama') {
+      console.log('🔌 Routing to Ollama provider');
       let ollamaModel = model;
-      if (model === 'gemini-2.5-flash' || !model) {
+      // If we're accidentally passed a Google model name but provider is ollama, use a default ollama model
+      if (model.includes('gemini') || !model) {
         ollamaModel = 'deepseek-r1:7b';
       }
       return await handleOllamaChat(
-        messages, 
-        ollamaModel, 
-        session.user.id, 
+        messages,
+        ollamaModel,
+        session.user.id,
         systemPrompt,
         Object.keys(tools).length > 0 ? tools : undefined
       );
@@ -993,9 +996,9 @@ export async function chatWithAI({ messages, provider = 'google', model = 'gemin
 
     // Handle Google Gemini (default provider)
     return await handleGoogleGeminiChat(
-      messages, 
-      model, 
-      session.user.id, 
+      messages,
+      model,
+      session.user.id,
       systemPrompt,
       Object.keys(tools).length > 0 ? tools : undefined
     );

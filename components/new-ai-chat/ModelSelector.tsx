@@ -24,8 +24,10 @@ export default function ModelSelector() {
   };
 
   const handleModelChange = (value: string) => {
-    const [provider, model] = value.split(':');
-    setSelectedProvider(provider as 'google' | 'ollama');
+    const parts = value.split(':');
+    const provider = parts[0] as 'google' | 'ollama';
+    const model = parts.slice(1).join(':');
+    setSelectedProvider(provider);
     setSelectedModel(model);
   };
 
@@ -34,8 +36,8 @@ export default function ModelSelector() {
 
   return (
     <div className="relative">
-      <Select 
-        value={`${selectedProvider}:${selectedModel}`} 
+      <Select
+        value={`${selectedProvider}:${selectedModel}`}
         onValueChange={handleModelChange}
       >
         <SelectTrigger className="h-9 border-0 bg-stone-100 hover:bg-stone-200/60 focus:ring-0 focus:ring-offset-0 px-3 pl-3.5 text-stone-600 rounded-full transition-all gap-2 w-auto shadow-sm ring-1 ring-stone-200/50">
@@ -50,14 +52,14 @@ export default function ModelSelector() {
           </div>
         </SelectTrigger>
         <SelectContent className="bg-white/95 backdrop-blur-xl border-stone-100 shadow-[0_8px_30px_rgb(0,0,0,0.08)] rounded-2xl p-2 min-w-[260px] ml-2" align="start">
-          
+
           <div className="px-3 py-2 text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1">
             Cloud (Gemini)
           </div>
           {allModelOptions.filter(m => m.provider === 'google').map((model) => (
-            <SelectItem 
-              key={`google:${model.id}`} 
-              value={`google:${model.id}`} 
+            <SelectItem
+              key={`google:${model.id}`}
+              value={`google:${model.id}`}
               className="rounded-xl text-stone-700 focus:bg-stone-50 focus:text-stone-900 cursor-pointer p-2 mb-1 last:mb-0"
             >
               <div className="flex items-center gap-3">
@@ -71,16 +73,16 @@ export default function ModelSelector() {
               </div>
             </SelectItem>
           ))}
-          
+
           {ollamaModels.length > 0 && (
             <>
               <div className="px-3 py-2 text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1 mt-2 border-t border-stone-100 pt-3">
                 Local (Ollama)
               </div>
               {allModelOptions.filter(m => m.provider === 'ollama').map((model) => (
-                <SelectItem 
-                  key={`ollama:${model.id}`} 
-                  value={`ollama:${model.id}`} 
+                <SelectItem
+                  key={`ollama:${model.id}`}
+                  value={`ollama:${model.id}`}
                   className="rounded-xl text-stone-700 focus:bg-stone-50 focus:text-stone-900 cursor-pointer p-2 mb-1 last:mb-0"
                 >
                   <div className="flex items-center gap-3">

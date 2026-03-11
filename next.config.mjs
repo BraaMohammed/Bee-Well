@@ -11,15 +11,15 @@ const withPWA = withPWAInit({
 
 
 const nextConfig = {
-    images: {
-      domains: ['lh3.googleusercontent.com'],
+  images: {
+    domains: ['lh3.googleusercontent.com'],
+  },
+  // Increase API body size limit to 10MB for AI chat with large function results
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb',
     },
-    // Increase API body size limit to 10MB for AI chat with large function results
-    experimental: {
-      serverActions: {
-        bodySizeLimit: '10mb',
-      },
-    },
-  };
-  
-  export default withPWA(nextConfig);
+  },
+};
+
+export default withPWA(nextConfig);

@@ -49,8 +49,10 @@ export default function AISettings({ children }: AISettingsProps) {
   };
 
   const handleModelChange = (value: string) => {
-    const [provider, model] = value.split(':');
-    setSelectedProvider(provider as 'google' | 'ollama');
+    const parts = value.split(':');
+    const provider = parts[0] as 'google' | 'ollama';
+    const model = parts.slice(1).join(':');
+    setSelectedProvider(provider);
     setSelectedModel(model);
   };
 
@@ -98,7 +100,75 @@ export default function AISettings({ children }: AISettingsProps) {
 
         <div className="space-y-8 py-6">
           {/* Model Selection */}
-        
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-gradient-to-r from-neutral-600 to-neutral-700 rounded-xl">
+                <Cpu className="h-5 w-5 text-white" />
+              </div>
+              <h3 className="text-xl font-semibold text-white">Model Selection</h3>
+            </div>
+            <p className="text-neutral-300">
+              Choose which AI model to use for your assistance.
+            </p>
+
+            <div className="bg-neutral-700/50 border border-neutral-600 rounded-xl p-4">
+              <div className="flex flex-col gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="model-select" className="text-white font-medium">Active AI Model</Label>
+                  <Select
+                    value={`${selectedProvider}:${selectedModel}`}
+                    onValueChange={handleModelChange}
+                  >
+                    <SelectTrigger id="model-select" className="w-full bg-neutral-600 border-neutral-500 text-white rounded-xl focus:ring-green-500">
+                      <SelectValue placeholder="Select a model" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-neutral-800 border-neutral-700 text-white rounded-xl">
+                      <div className="px-2 py-1.5 text-xs font-bold text-neutral-400 uppercase tracking-widest">
+                        Google Gemini
+                      </div>
+                      {getAllModelOptions().filter(m => m.provider === 'google').map((model) => (
+                        <SelectItem
+                          key={`google:${model.id}`}
+                          value={`google:${model.id}`}
+                          className="focus:bg-neutral-700 focus:text-white"
+                        >
+                          <div className="flex flex-col text-left">
+                            <span className="font-semibold text-sm">{model.name}</span>
+                            {model.description && <span className="text-xs text-neutral-400">{model.description}</span>}
+                          </div>
+                        </SelectItem>
+                      ))}
+
+                      {getAllModelOptions().filter(m => m.provider === 'ollama').length > 0 && (
+                        <>
+                          <Separator className="my-2 bg-neutral-700" />
+                          <div className="px-2 py-1.5 text-xs font-bold text-neutral-400 uppercase tracking-widest">
+                            Ollama (Local)
+                          </div>
+                          {getAllModelOptions().filter(m => m.provider === 'ollama').map((model) => (
+                            <SelectItem
+                              key={`ollama:${model.id}`}
+                              value={`ollama:${model.id}`}
+                              className="focus:bg-neutral-700 focus:text-white"
+                            >
+                              <div className="flex flex-col text-left">
+                                <span className="font-semibold text-sm">{model.name}</span>
+                                {model.description && <span className="text-xs text-neutral-400">{model.description}</span>}
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <p className="text-xs text-neutral-400 italic">
+                  Note: Ollama models require a local Ollama server running on your computer.
+                </p>
+              </div>
+            </div>
+          </div>
+
           <Separator className="bg-neutral-600" />
 
           {/* Data Access Permissions */}
@@ -112,7 +182,7 @@ export default function AISettings({ children }: AISettingsProps) {
             <p className="text-neutral-300">
               Control which data sources the AI can access for personalized assistance.
             </p>
-            
+
             <div className="space-y-3">
               {dataSourcesConfig.map((source) => (
                 <div key={source.key} className="bg-neutral-700/50 border border-neutral-600 rounded-xl p-4">
@@ -166,7 +236,7 @@ export default function AISettings({ children }: AISettingsProps) {
               </div>
               <h3 className="text-xl font-semibold text-white">Custom Instructions</h3>
             </div>
-            
+
             <div className="bg-neutral-700/50 border border-neutral-600 rounded-xl p-4 space-y-4">
               <div>
                 <p className="text-neutral-300 text-sm mb-3">
@@ -174,7 +244,7 @@ export default function AISettings({ children }: AISettingsProps) {
                 </p>
                 <Label htmlFor="custom-prompt" className="text-white font-medium">Your Instructions</Label>
               </div>
-              
+
               <Textarea
                 id="custom-prompt"
                 placeholder="e.g., Be direct and concise, focus on actionable advice, be encouraging but honest..."
@@ -219,15 +289,15 @@ export default function AISettings({ children }: AISettingsProps) {
         </div>
 
         <div className="flex justify-end gap-3 pt-4 border-t border-neutral-600">
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             onClick={() => setIsOpen(false)}
             className="border-neutral-500 text-white rounded-xl hover:bg-neutral-600"
           >
             Cancel
           </Button>
-          <Button 
-            onClick={() => setIsOpen(false)} 
+          <Button
+            onClick={() => setIsOpen(false)}
             className="bg-gradient-to-r rounded-xl from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white shadow-lg"
           >
             Save Settings
