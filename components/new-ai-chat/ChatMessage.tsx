@@ -6,6 +6,8 @@ import { type ChatMessage } from '@/hooks/useClientChat';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface ChatMessageProps {
   message: ChatMessage;
@@ -151,12 +153,18 @@ export default function ChatMessage({ message, isStreaming = false }: ChatMessag
 
               {/* Main response text */}
               {displayContent && (
-                <div className={`text-[0.97rem] leading-7 ${isUser ? 'text-right' : 'text-left'} ${
+                <div className={`text-[0.97rem] leading-7 ${
                   isUser
-                    ? 'bg-stone-100 rounded-2xl px-5 py-3 text-stone-700 inline-block'
-                    : 'text-stone-800'
-                } whitespace-pre-wrap`}>
-                  {displayContent}
+                    ? 'text-right bg-stone-100 rounded-2xl px-5 py-3 text-stone-700 inline-block whitespace-pre-wrap'
+                    : 'text-left text-stone-800 prose prose-stone max-w-none prose-p:leading-relaxed prose-pre:p-0'
+                }`}>
+                  {isUser ? (
+                    displayContent
+                  ) : (
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {displayContent}
+                    </ReactMarkdown>
+                  )}
                   {/* Blinking cursor while streaming main text */}
                   {isStreaming && !isThinkingInProgress && (
                     <span className="inline-block w-[2px] h-[1.1em] bg-emerald-500 ml-0.5 align-middle animate-pulse rounded-sm" />
