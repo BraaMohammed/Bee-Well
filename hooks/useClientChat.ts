@@ -1,9 +1,10 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useAISettingsStore } from '@/stores/aiSettingsStore';
+import { useAIChatStore } from '@/stores/aiChatStore';
 import { getClientModel } from '@/lib/ai/clientProviders';
 import { getClientTools } from '@/lib/ai/clientTools';
 import { SYSTEM_PROMPT } from '@/components/new-ai-chat/systemPrompt';
-import { streamText } from 'ai';
+import { stepCountIs, streamText } from 'ai';
 
 export interface ToolInvocation {
     toolName: string;
@@ -18,7 +19,7 @@ export interface ChatMessage {
 }
 
 interface UseClientChatOptions {
-    provider?: 'google' | 'ollama';
+    provider?: 'google' | 'ollama' | 'groq';
     model?: string;
 }
 
@@ -34,7 +35,23 @@ export function useClientChat(options: UseClientChatOptions = {}) {
     // Ref to hold an abort controller for stopping generations
     const abortControllerRef = useRef<AbortController | null>(null);
 
-    const { dataAccess, customPrompt, googleApiKey, ollamaUrl } = useAISettingsStore();
+    const { dataAccess, customPrompt, googleApiKey, ollamaUrl, groqApiKey } = useAISettingsStore();
+
+    // ------------------------------------------------------------------
+    // FIX: The handleSubmit callback captures provider/model via closure.
+    // When the user changes the model in the selector, the closure still
+    // holds the OLD values. We use live refs that are always kept in sync
+    // with the store so handleSubmit always reads the latest selection.
+    // ------------------------------------------------------------------
+    const { selectedProvider, selectedModel } = useAIChatStore();
+    const liveProviderRef = useRef(selectedProvider);
+    const liveModelRef = useRef(selectedModel);
+
+    useEffect(() => {
+        liveProviderRef.current = selectedProvider;
+        liveModelRef.current = selectedModel;
+        console.log(`[ModelSelector] 🔄 Store updated → provider=${selectedProvider} | model=${selectedModel}`);
+    }, [selectedProvider, selectedModel]);
 
     const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setInput(e.target.value);
@@ -52,12 +69,17 @@ export function useClientChat(options: UseClientChatOptions = {}) {
         e.preventDefault();
         if (!input.trim() || isLoading) return;
 
-        // 1. Initial Setup Data
-        const providerType = options.provider || 'google';
-        const modelId = options.model || 'gemini-2.5-flash';
+        // 1. Initial Setup Data — always read from live refs to defeat stale closure
+        const providerType = liveProviderRef.current || options.provider || 'google';
+        const modelId = liveModelRef.current || options.model || 'gemini-2.5-flash';
+
+        console.log(`[Chat] ────────────── New Submission ──────────────`);
+        console.log(`[Chat] 📤 provider=${providerType} | model=${modelId}`);
+        console.log(`[Chat] 🔑 googleApiKey=${!!googleApiKey} | groqApiKey=${!!groqApiKey} | ollamaUrl=${ollamaUrl}`);
 
         // Warn if missing API keys
         if (providerType === 'google' && !googleApiKey) {
+            console.warn('[Chat] ⚠️ No Google API key — showing inline warning');
             setMessages(prev => [...prev, {
                 id: crypto.randomUUID(),
                 role: 'user',
@@ -66,6 +88,21 @@ export function useClientChat(options: UseClientChatOptions = {}) {
                 id: crypto.randomUUID(),
                 role: 'assistant',
                 content: '⚠️ **Missing Google API Key**: Please open the Settings (gear icon) and configure your Google Gemini API Key to use this provider.',
+            }]);
+            setInput('');
+            return;
+        }
+
+        if (providerType === 'groq' && !groqApiKey) {
+            console.warn('[Chat] ⚠️ No Groq API key — showing inline warning');
+            setMessages(prev => [...prev, {
+                id: crypto.randomUUID(),
+                role: 'user',
+                content: input.trim()
+            }, {
+                id: crypto.randomUUID(),
+                role: 'assistant',
+                content: '⚠️ **Missing Groq API Key**: Please open the Settings (gear icon) and configure your Groq API Key. You can get a free key at [console.groq.com](https://console.groq.com).',
             }]);
             setInput('');
             return;
@@ -87,7 +124,9 @@ export function useClientChat(options: UseClientChatOptions = {}) {
 
         try {
             // 3. Compose model instance
-            const curModel = getClientModel(providerType, modelId, { googleApiKey, ollamaUrl });
+            console.log(`[Chat] 🤖 Creating model client for ${providerType}/${modelId}...`);
+            const curModel = getClientModel(providerType, modelId, { googleApiKey, ollamaUrl, groqApiKey });
+            console.log('[Chat] ✅ Model client created successfully');
 
             // 4. Compose system instructions
             const finalSystemPrompt = customPrompt
@@ -106,14 +145,31 @@ export function useClientChat(options: UseClientChatOptions = {}) {
             abortControllerRef.current = new AbortController();
 
             // 6. Leverage Vercel SDK streamText natively in JS Environment
+            // CRITICAL: maxSteps must be > 1 to allow tool-call → result → reply loops.
+            // Default is maxSteps=1, which calls the tool then STOPS before the model
+            // can read the result and generate the final answer.
+            console.log('[Chat] 🌊 Starting streamText with maxSteps=10...');
             const { textStream } = await streamText({
                 model: curModel as any,
                 messages: coreMessages,
                 tools: getClientTools(dataAccess),
+                stopWhen: stepCountIs(5),
                 abortSignal: abortControllerRef.current.signal,
                 onStepFinish: (step: any) => {
-                    // Whenever a step finishes (which might include a tool call),
-                    // We can intercept the tool calls made to display them in the UI.
+                    const stepType = step.stepType ?? 'unknown';
+                    console.log(`[Chat] 📍 Step finished | type=${stepType} | text_len=${step.text?.length ?? 0} | toolCalls=${step.toolCalls?.length ?? 0} | toolResults=${step.toolResults?.length ?? 0} | finishReason=${step.finishReason}`);
+
+                    if (step.toolCalls && step.toolCalls.length > 0) {
+                        console.log(`[Chat] 🔧 Tool calls:`, step.toolCalls.map((tc: any) => `${tc.toolName}(${JSON.stringify(tc.args).substring(0, 80)})`));
+                    }
+                    if (step.toolResults && step.toolResults.length > 0) {
+                        step.toolResults.forEach((tr: any) => {
+                            const resultPreview = JSON.stringify(tr.result).substring(0, 120);
+                            console.log(`[Chat] 📦 Tool result [${tr.toolName}]: ${resultPreview}`);
+                        });
+                    }
+
+                    // Surface tool call badges in the UI on every step
                     if (step.toolCalls && step.toolCalls.length > 0) {
                         setMessages(prev => prev.map(msg => {
                             if (msg.id !== assistantMessageId) return msg;
@@ -132,11 +188,34 @@ export function useClientChat(options: UseClientChatOptions = {}) {
                 }
             });
 
+
             // 7. Process the incoming text stream and apply characters to state gradually
             let cumulativeResponse = '';
+            let chunkCount = 0;
+            let hasLoggedFirstThinkBlock = false;
+
             for await (const textPart of textStream) {
                 if (abortControllerRef.current?.signal.aborted) break;
                 cumulativeResponse += textPart;
+                chunkCount++;
+
+                // On first chunk — log it so we can see what we're getting
+                if (chunkCount === 1) {
+                    console.log(`[Chat] 📡 First chunk received: ${JSON.stringify(textPart)}`);
+                }
+
+                // Every 25 chunks log a snapshot so we can trace think blocks forming
+                if (chunkCount % 25 === 0) {
+                    const preview = JSON.stringify(cumulativeResponse.substring(0, 150));
+                    console.log(`[Chat] 📡 Chunk #${chunkCount} | len=${cumulativeResponse.length} | preview=${preview}`);
+                }
+
+                // Log the first time we detect a think-block opening in the stream
+                if (!hasLoggedFirstThinkBlock && /<(think|thinking|reasoning|reason|reflection|reflect)>/i.test(cumulativeResponse)) {
+                    hasLoggedFirstThinkBlock = true;
+                    console.log(`[Thinking] 🧠 Detected think block opening at chunk #${chunkCount}`);
+                    console.log(`[Thinking] 🧠 Content so far: ${JSON.stringify(cumulativeResponse.substring(0, 200))}`);
+                }
 
                 setMessages(prev => prev.map(msg =>
                     msg.id === assistantMessageId
@@ -145,11 +224,23 @@ export function useClientChat(options: UseClientChatOptions = {}) {
                 ));
             }
 
+            console.log(`[Chat] ✅ Stream complete | total chunks=${chunkCount} | total length=${cumulativeResponse.length}`);
+            // Log the full think-block structure at the end
+            const thinkStart = cumulativeResponse.indexOf('<think');
+            const thinkEnd = cumulativeResponse.indexOf('</think');
+            if (thinkStart !== -1) {
+                console.log(`[Thinking] 🧠 Think block found at [${thinkStart}..${thinkEnd}]`);
+                console.log(`[Thinking] 🧠 First 300 chars of content: ${JSON.stringify(cumulativeResponse.substring(0, 300))}`);
+            } else {
+                console.log(`[Thinking] ℹ️ No <think> block detected in final response`);
+            }
+
         } catch (error: any) {
             if (error.name === 'AbortError') {
-                console.log('Stream aborted');
+                console.log('[Chat] 🛑 Stream aborted by user');
             } else {
-                console.error('Chat error:', error);
+                console.error('[Chat] ❌ Chat error:', error);
+                console.error('[Chat] ❌ Details:', { name: error.name, message: error.message, status: error.status });
                 setMessages(prev => prev.map(msg =>
                     msg.id === assistantMessageId
                         ? { ...msg, content: msg.content + '\n\n*Error: Failed to fetch response. Please check your AI API key and connection.*' }
@@ -160,7 +251,7 @@ export function useClientChat(options: UseClientChatOptions = {}) {
             setIsLoading(false);
             abortControllerRef.current = null;
         }
-    }, [input, messages, isLoading, options.provider, options.model, dataAccess, customPrompt, googleApiKey, ollamaUrl]);
+    }, [input, messages, isLoading, dataAccess, customPrompt, googleApiKey, ollamaUrl, groqApiKey]);
 
     return {
         messages,

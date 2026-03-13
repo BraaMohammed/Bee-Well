@@ -3,20 +3,20 @@ import { create } from 'zustand';
 export interface ModelOption {
   id: string;
   name: string;
-  provider: 'google' | 'ollama';
+  provider: 'google' | 'ollama' | 'groq';
   description?: string;
 }
 
 interface AIChatState {
   // Model selection state
-  selectedProvider: 'google' | 'ollama';
+  selectedProvider: 'google' | 'ollama' | 'groq';
   selectedModel: string;
   availableModels: ModelOption[];
   ollamaModels: any[];
   isModelLoading: boolean;
 
   // Actions
-  setSelectedProvider: (provider: 'google' | 'ollama') => void;
+  setSelectedProvider: (provider: 'google' | 'ollama' | 'groq') => void;
   setSelectedModel: (model: string) => void;
   setOllamaModels: (models: any[]) => void;
   setIsModelLoading: (loading: boolean) => void;
@@ -55,6 +55,13 @@ export const useAIChatStore = create<AIChatState>((set, get) => ({
       // Google Gemini Models
       { id: 'gemini-2.5-pro', name: 'Gemini 2.5 Pro', provider: 'google', description: 'Most capable, advanced reasoning' },
       { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash', provider: 'google', description: 'Fast and efficient' },
+
+      // Groq Free-Tier Models
+      { id: 'groq/compound', name: 'Groq Compound', provider: 'groq', description: 'Groq native compound model' },
+      { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B Versatile', provider: 'groq', description: 'Best quality • 1K RPD free' },
+      { id: 'moonshotai/kimi-k2-instruct-0905', name: 'Kimi K2 Instruct', provider: 'groq', description: 'Moonshot AI • 1K RPD free' },
+      { id: 'qwen/qwen3-32b', name: 'Qwen3 32B', provider: 'groq', description: 'Strong reasoning • 1K RPD free' },
+      { id: 'openai/gpt-oss-120b', name: 'GPT OSS 120B', provider: 'groq', description: 'Large OSS model • 1K RPD free' },
     ];
 
     // Add Ollama models

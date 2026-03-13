@@ -13,32 +13,55 @@ interface ChatMessageProps {
 }
 
 /**
- * Parses <think> ... </think> or an unclosed <think> block (mid-stream).
+ * Parses thinking blocks from various LLM formats:
+ *   <think>, <thinking>, <reason>, <reasoning>, <reflect>, <reflection>
+ * Handles both closed blocks and unclosed (mid-stream) blocks.
  * Returns { thinkContent, displayContent, isThinkingInProgress }
  */
+const THINK_TAGS = ['thinking', 'think', 'reasoning', 'reason', 'reflection', 'reflect'];
+const CLOSED_THINK_RE = new RegExp(
+  `<(${THINK_TAGS.join('|')})>([\\s\\S]*?)<\\/\\1>`,
+  'i'
+);
+// FIX: removed ^ anchor — streamed content may have leading whitespace/newlines
+// before the opening tag, which caused silently missed matches.
+const OPEN_THINK_RE = new RegExp(
+  `^\\s*<(${THINK_TAGS.join('|')})>([\\s\\S]*)$`,
+  'i'
+);
+
 function parseThinkBlocks(raw: string) {
-  // Closed thinking block: <think>...</think>
-  const closedMatch = raw.match(/<think>([\s\S]*?)<\/think>/);
+  // Closed thinking block: <think>...</think> (and variants)
+  const closedMatch = raw.match(CLOSED_THINK_RE);
   if (closedMatch) {
-    return {
-      thinkContent: closedMatch[1].trim(),
-      displayContent: raw.replace(/<think>[\s\S]*?<\/think>/, '').trim(),
+    const result = {
+      thinkContent: closedMatch[2].trim(),
+      displayContent: raw.replace(CLOSED_THINK_RE, '').trim(),
       isThinkingInProgress: false,
     };
+    console.log(`[Thinking] ✅ Closed think block detected | thinkLen=${result.thinkContent.length} | displayLen=${result.displayContent.length}`);
+    return result;
   }
 
-  // Open block (still streaming inside <think>)
-  const openMatch = raw.match(/^<think>([\s\S]*)$/);
+  // Open block (still streaming inside a thinking tag)
+  const openMatch = raw.match(OPEN_THINK_RE);
   if (openMatch) {
+    console.log(`[Thinking] 🔄 Open (in-progress) think block detected | contentLen=${openMatch[2].length}`);
     return {
-      thinkContent: openMatch[1],  // don't trim — still coming in
+      thinkContent: openMatch[2], // don't trim — still coming in
       displayContent: '',
       isThinkingInProgress: true,
     };
   }
 
+  // No think block at all — log once when content is non-trivial
+  if (raw.length > 20) {
+    console.log(`[Thinking] ℹ️ No think block in content (len=${raw.length}) | starts with: ${JSON.stringify(raw.substring(0, 60))}`);
+  }
+
   return { thinkContent: '', displayContent: raw, isThinkingInProgress: false };
 }
+
 
 export default function ChatMessage({ message, isStreaming = false }: ChatMessageProps) {
   const isUser = message.role === 'user';

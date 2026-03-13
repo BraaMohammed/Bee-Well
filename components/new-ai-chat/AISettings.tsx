@@ -30,10 +30,12 @@ export default function AISettings({ children }: AISettingsProps) {
     customPrompt,
     googleApiKey,
     ollamaUrl,
+    groqApiKey,
     setDataAccess,
     setCustomPrompt,
     setGoogleApiKey,
     setOllamaUrl,
+    setGroqApiKey,
     resetToDefaults,
     getEnabledDataSources,
     hasAnyDataAccess,
@@ -54,7 +56,7 @@ export default function AISettings({ children }: AISettingsProps) {
 
   const handleModelChange = (value: string) => {
     const parts = value.split(':');
-    const provider = parts[0] as 'google' | 'ollama';
+    const provider = parts[0] as 'google' | 'ollama' | 'groq';
     const model = parts.slice(1).join(':');
     setSelectedProvider(provider);
     setSelectedModel(model);
@@ -163,6 +165,23 @@ export default function AISettings({ children }: AISettingsProps) {
                           ))}
                         </>
                       )}
+
+                      <Separator className="my-2 bg-neutral-700" />
+                      <div className="px-2 py-1.5 text-xs font-bold text-neutral-400 uppercase tracking-widest">
+                        ⚡ Groq (Cloud · Free Tier)
+                      </div>
+                      {getAllModelOptions().filter(m => m.provider === 'groq').map((model) => (
+                        <SelectItem
+                          key={`groq:${model.id}`}
+                          value={`groq:${model.id}`}
+                          className="focus:bg-neutral-700 focus:text-white"
+                        >
+                          <div className="flex flex-col text-left">
+                            <span className="font-semibold text-sm">{model.name}</span>
+                            {model.description && <span className="text-xs text-neutral-400">{model.description}</span>}
+                          </div>
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -256,6 +275,25 @@ export default function AISettings({ children }: AISettingsProps) {
                   className="w-full px-3 py-2 rounded-xl bg-neutral-600 border border-neutral-500 text-white placeholder:text-neutral-400 focus:outline-none focus:border-green-500"
                 />
                 <p className="text-xs text-neutral-400">Required when using Google models.</p>
+              </div>
+
+              <div className="space-y-2 pt-2">
+                <Label htmlFor="groq-api-key" className="text-white font-medium flex items-center gap-2">
+                  ⚡ Groq API Key
+                  <span className="text-xs font-normal text-green-400 bg-green-900/40 px-2 py-0.5 rounded-full">Free</span>
+                </Label>
+                <input
+                  id="groq-api-key"
+                  type="password"
+                  placeholder="gsk_..."
+                  value={groqApiKey}
+                  onChange={(e) => setGroqApiKey(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-neutral-600 border border-neutral-500 text-white placeholder:text-neutral-400 focus:outline-none focus:border-green-500"
+                />
+                <p className="text-xs text-neutral-400">
+                  Required for Groq models. Get a free key at{' '}
+                  <a href="https://console.groq.com" target="_blank" rel="noopener noreferrer" className="text-green-400 hover:underline">console.groq.com</a>.
+                </p>
               </div>
 
               <div className="space-y-2 pt-2">

@@ -25,11 +25,16 @@ export default function ModelSelector() {
 
   const handleModelChange = (value: string) => {
     const parts = value.split(':');
-    const provider = parts[0] as 'google' | 'ollama';
+    const provider = parts[0] as 'google' | 'ollama' | 'groq';
     const model = parts.slice(1).join(':');
     setSelectedProvider(provider);
     setSelectedModel(model);
   };
+
+  const triggerBg =
+    selectedProvider === 'google' ? 'bg-blue-100 text-blue-600' :
+    selectedProvider === 'groq'   ? 'bg-orange-100 text-orange-500' :
+                                    'bg-orange-100 text-orange-600';
 
   const currentModels = getCurrentModels();
   const allModelOptions = getAllModelOptions();
@@ -42,7 +47,7 @@ export default function ModelSelector() {
       >
         <SelectTrigger className="h-9 border-0 bg-stone-100 hover:bg-stone-200/60 focus:ring-0 focus:ring-offset-0 px-3 pl-3.5 text-stone-600 rounded-full transition-all gap-2 w-auto shadow-sm ring-1 ring-stone-200/50">
           <div className="flex items-center gap-2">
-            <div className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] ${selectedProvider === 'google' ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'}`}>
+            <div className={`flex items-center justify-center w-5 h-5 rounded-full text-[10px] ${triggerBg}`}>
               {getProviderIcon(selectedProvider)}
             </div>
             <span className="font-semibold text-xs truncate max-w-[120px] tracking-tight">
@@ -98,6 +103,28 @@ export default function ModelSelector() {
               ))}
             </>
           )}
+
+          <div className="px-3 py-2 text-[10px] font-bold text-stone-400 uppercase tracking-widest mb-1 mt-2 border-t border-stone-100 pt-3">
+            ⚡ Groq (Free Tier)
+          </div>
+          {allModelOptions.filter(m => m.provider === 'groq').map((model) => (
+            <SelectItem
+              key={`groq:${model.id}`}
+              value={`groq:${model.id}`}
+              className="rounded-xl text-stone-700 focus:bg-stone-50 focus:text-stone-900 cursor-pointer p-2 mb-1 last:mb-0"
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-1.5 bg-orange-50 text-orange-500 rounded-lg ring-1 ring-orange-100">
+                  <Zap className="h-3.5 w-3.5" strokeWidth={2.5} />
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="font-semibold text-xs">{model.name}</span>
+                  {model.description && <span className="text-[10px] text-stone-400 font-medium">{model.description}</span>}
+                </div>
+              </div>
+            </SelectItem>
+          ))}
+
         </SelectContent>
       </Select>
     </div>

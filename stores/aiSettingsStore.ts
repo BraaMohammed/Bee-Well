@@ -15,6 +15,7 @@ export interface AISettingsState {
   // Provider API Keys
   googleApiKey: string;
   ollamaUrl: string;
+  groqApiKey: string;
 
   // Model Selection (inherited from aiChatStore but can be overridden here)
   useCustomModelSettings: boolean;
@@ -24,6 +25,7 @@ export interface AISettingsState {
   setCustomPrompt: (prompt: string) => void;
   setGoogleApiKey: (key: string) => void;
   setOllamaUrl: (url: string) => void;
+  setGroqApiKey: (key: string) => void;
   setUseCustomModelSettings: (enabled: boolean) => void;
   resetToDefaults: () => void;
 
@@ -41,6 +43,7 @@ const defaultSettings = {
   customPrompt: '',
   googleApiKey: '',
   ollamaUrl: 'http://localhost:11434',
+  groqApiKey: '',
   useCustomModelSettings: false,
 };
 
@@ -64,6 +67,8 @@ export const useAISettingsStore = create<AISettingsState>()(
       setGoogleApiKey: (key) => set({ googleApiKey: key }),
 
       setOllamaUrl: (url) => set({ ollamaUrl: url }),
+
+      setGroqApiKey: (key) => set({ groqApiKey: key }),
 
       setUseCustomModelSettings: (enabled) => set({ useCustomModelSettings: enabled }),
 
