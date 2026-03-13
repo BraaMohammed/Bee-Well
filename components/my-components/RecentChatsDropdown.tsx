@@ -82,19 +82,19 @@ export default function RecentChatsDropdown({ onNavigateToChat }: RecentChatsDro
       {/* AI Agent Button */}
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center justify-between w-full p-3 h-auto !rounded-xl gap-3 transition-all duration-200 cursor-pointer ${
+        className={`flex items-center justify-between w-full p-2 h-auto !rounded-lg gap-3 transition-all duration-200 cursor-pointer ${
           isAIChatActive
             ? 'bg-gradient-to-r from-neutral-800/50 to-neutral-700/50 text-white'
             : 'text-white/90 hover:text-white hover:bg-gradient-to-r hover:from-neutral-800/50 hover:to-neutral-700/50'
         }`}
       >
         <div className="flex items-center gap-3">
-          <MessageCircle size={20} />
-          <span className="text-base font-medium">AI Agent</span>
+          <MessageCircle size={18} />
+          <span className="text-sm font-medium">AI Agent</span>
         </div>
         <ChevronDown 
           className={`transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-          size={20} 
+          size={18} 
         />
       </div>
 
@@ -125,7 +125,7 @@ export default function RecentChatsDropdown({ onNavigateToChat }: RecentChatsDro
                 {/* Delete Button - Shows on hover */}
                 <button
                   onClick={(e) => handleDeleteChat(chat.id, e)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-red-500/20 rounded-lg flex-shrink-0"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-red-500/20 rounded-full flex-shrink-0"
                   title="Delete chat"
                 >
                   <Trash2 size={14} className="text-red-400 hover:text-red-300" />

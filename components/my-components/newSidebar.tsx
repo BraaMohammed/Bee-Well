@@ -114,12 +114,12 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
          */} 
           </SidebarHeader>
 
-        <SidebarContent className="px-3 flex-1 overflow-y-auto">
+        <SidebarContent className="px-3 flex-1 overflow-y-auto sidebar-content">
           {/* Add Note Button */}
           <div className="flex justify-center mb-4">
             <button 
               onClick={() => setIsNewNoteDialogOpen(true)}
-              className="w-full max-w-36 flex justify-center  items-center gap-2 px-3 py-2 !rounded-lg text-sm font-medium active:scale-95 transition-all duration-300 bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl border border-green-500/30"
+              className="w-full max-w-36 flex justify-center  items-center gap-2 px-3 py-2 !rounded-2xl text-sm font-medium active:scale-95 transition-all duration-300 bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl border border-green-500/30"
             >
               Add Note <IoIosAddCircleOutline size={16} />
             </button>
@@ -147,44 +147,9 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
 
                 {/* AI Agent with Chat History */}
                 <SidebarMenuItem className="list-none">
-                  <div 
-                    onClick={() => router.push('/ai-chat')}
-                    className="text-white/90 hover:text-white hover:bg-neutral-600/50 p-2 h-auto justify-start !rounded-lg gap-3 transition-all duration-200 border-none outline-none flex items-center cursor-pointer"
-                  >
-                    <div className="flex-shrink-0">
-                      <MessageCircle size={18} />
-                    </div>
-                    <span className="text-sm font-medium flex-1">AI Agent</span>
-                    <ChevronDown 
-                      className={`transition-transform duration-200 ${false ? 'rotate-180' : ''}`} 
-                      size={18} 
-                    />
-                  </div>
-                  
-                  {/* Dropdown Menu */}
-                  <div className="mt-1 ml-2 flex flex-col gap-1">
-                    {(() => {
-                      const recentChats: any[] = [];
-                      return recentChats.length === 0 ? (
-                        <div className="text-xs text-center w-full rounded-lg px-2 py-1.5 text-white/60 font-medium">
-                          No chat history yet
-                        </div>
-                      ) : (
-                        recentChats.map((chat: any) => (
-                          <div
-                            key={chat.id}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              router.push(`/ai-chat?chatId=${chat.id}`);
-                            }}
-                            className="text-xs w-full hover:bg-neutral-600/50 rounded-lg px-2 py-1.5 cursor-pointer text-white/80 hover:text-white transition-all duration-200 font-medium border border-transparent hover:border-neutral-500/30 truncate"
-                          >
-                            {chat.title}
-                          </div>
-                        ))
-                      );
-                    })()}
-                  </div>
+                  <RecentChatsDropdown 
+                    onNavigateToChat={(chatId) => router.push(`/ai-chat?chatId=${chatId}`)} 
+                  />
                 </SidebarMenuItem>
                 
                 {/* Labels Section Integrated */}

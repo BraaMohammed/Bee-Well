@@ -334,19 +334,25 @@ body .dropdown  , .character-style-popup ,.link-editor {
 }
 
 /* Custom scrollbar for sidebar content */
-[data-sidebar] .sidebar-content::-webkit-scrollbar {
-  width: 4px;
+.sidebar-content::-webkit-scrollbar {
+  width: 5px;
 }
 
-[data-sidebar] .sidebar-content::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
+.sidebar-content::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-[data-sidebar] .sidebar-content::-webkit-scrollbar-thumb {
+.sidebar-content::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 2px;
 }
 
-[data-sidebar] .sidebar-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+/* Firefox scrollbar */
+.sidebar-content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
 }
