@@ -8,7 +8,7 @@
   <img src="https://yydxbfiibfjsxowspgiq.supabase.co/storage/v1/object/public/bee-well/Screenshot%202025-08-02%20233819.png" alt="Bee-Well application dashboard" width="800"/>
 </p>
 
-### A comprehensive tool for personal productivity featuring an advanced habit tracker, a Notion-style block editor, and an automated daily journal.
+### A comprehensive tool for personal productivity featuring an advanced habit tracker, a Notion-style block editor, an automated daily journal, and an integrated AI Assistant.
 
 **Live App:** ((https://bee-well.vercel.app/))
 
@@ -16,19 +16,21 @@
 
 ## 🚀 The Story
 
-I built Bee-Well as my first major solo project to learn full-stack development and solve a personal need: integrating daily planning with deep self-reflection. It was developed between March and August 2024 and served as the foundation for all my subsequent work.
+I built Bee-Well as my first major solo project to learn full-stack development and solve a personal need: integrating daily planning with deep self-reflection. Developed initially in 2024, it served as the foundation for all my subsequent work and has recently been upgraded into an AI-powered workspace.
 
-While the code isn't perfect (I was learning!), this project proves my ability to architect and ship a feature-rich, user-focused application from concept to launch. It was the "training ground" where I made mistakes, learned, and grew into the developer I am today.
+This project proves my ability to architect and ship a feature-rich, user-focused application from concept to launch. It was the "training ground" where I made mistakes, learned, and grew into the developer I am today.
 
 Specifically, building Bee-Well taught me the importance of:
-* **Scalable State Management:** The prop-drilling in this app directly inspired me to adopt tools like Zustand and React Query in my later projects.
-* **TypeScript:** Managing a growing JavaScript codebase here convinced me of the necessity of TypeScript for building robust, maintainable applications.
-* **Backend Architecture:** I learned a great deal about data modeling and API design, which I later refined in my microservices-based projects.
+* **Scalable State Management:** Adopting tools like Zustand and React Query to manage complex app states efficiently.
+* **TypeScript:** Managing a growing codebase with TypeScript for building robust, maintainable applications.
+* **AI Integration:** Designing structured systems to bridge LLMs (Google, Groq, Ollama) with application logic using customized tools safely.
 
 ---
 
 ## ✨ Core Features & Screenshots
 
+* **Advanced AI Assistant:** A customizable, context-aware AI chat client (supporting Google, Ollama, and Groq models) that dynamically aids in task management and incorporates model thinking blocks and tool utilization.
+* **Progressive Web App (PWA) Support:** Installable as a native-like app across devices for a seamless experience.
 * **Advanced Habit Tracking:** Go beyond simple checkboxes with a system designed for consistency and progress.
 * **Custom Analytics Engine:** Visualize your habit data over time to identify patterns and stay motivated.
 * **Notion-Style Block Editor:** A flexible, powerful editor for capturing notes, ideas, and journal entries.
@@ -47,11 +49,13 @@ Specifically, building Bee-Well taught me the importance of:
 ## 🛠️ Tech Stack & Architecture
 
 * **Framework:** Next.js (App Router)
+* **AI Interoperability:** Vercel AI SDK, Ollama, Google Gen AI SDK
 * **Database:** MongoDB
 * **Authentication:** NextAuth.js
-* **UI:** Shadcn/UI, Tailwind CSS
-* **Editor:** BlockNote.js (for the Notion-style editor)
-* **Deployment:** Vercel
+* **UI:** Shadcn/UI, Tailwind CSS, Lucide Icons
+* **Editor/Markdown:** BlockNote.js, react-markdown, remark-gfm
+* **State Management:** Zustand, React Query
+* **Deployment:** Vercel (PWA Enabled)
 
 ---
 
@@ -78,4 +82,4 @@ Specifically, building Bee-Well taught me the importance of:
 
 ---
 
-*This project is for portfolio purposes. I am currently building a new, AI-powered version that addresses the architectural lessons learned here.*
+*This project continues to evolve as my personal workspace and testing ground for new technologies like client-side AI integration.*
