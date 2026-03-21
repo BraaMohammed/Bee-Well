@@ -1,6 +1,6 @@
 'use client';
 
-import { CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
+import { CheckCircle2, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
 import { GiBee } from 'react-icons/gi';
 import { type ChatMessage } from '@/hooks/useClientChat';
 import { useState } from 'react';
@@ -175,15 +175,29 @@ export default function ChatMessage({ message, isStreaming = false }: ChatMessag
               {/* Tool invocations */}
               {message.toolInvocations && message.toolInvocations.length > 0 && (
                 <div className="flex flex-wrap gap-1.5 pt-1">
-                  {message.toolInvocations.map((tool, index) => (
-                    <div
-                      key={index}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 border border-emerald-100 rounded-full text-[11px] font-medium text-emerald-700"
-                    >
-                      <CheckCircle2 className="h-3 w-3" />
-                      <span>{tool.toolName.replace(/([A-Z])/g, ' $1').trim()}</span>
-                    </div>
-                  ))}
+                  {message.toolInvocations.map((tool, index) => {
+                    const isLoading = tool.state === 'call';
+                    return (
+                      <div
+                        key={index}
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 border rounded-full text-[11px] font-medium transition-colors ${
+                          isLoading 
+                            ? 'bg-emerald-50/50 border-emerald-200/50 text-emerald-600' 
+                            : 'bg-emerald-50 border-emerald-100 text-emerald-700'
+                        }`}
+                      >
+                        {isLoading ? (
+                          <Loader2 className="h-3 w-3 animate-spin" />
+                        ) : (
+                          <CheckCircle2 className="h-3 w-3" />
+                        )}
+                        <span>
+                          {isLoading ? 'Using ' : 'Used '}
+                          {tool.toolName.replace(/([A-Z])/g, ' $1').trim()}
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>

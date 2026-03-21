@@ -1,11 +1,10 @@
 "use client"
 import React, { useState, useEffect } from 'react'
 import {
-    AlertDialog,
-    AlertDialogContent,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog'
+    Dialog,
+    DialogContent,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -161,14 +160,17 @@ const HabitSettings: React.FC<HabitSettingsProps> = ({ habit, categoryId }) => {
     }
 
     return (
-        <AlertDialog>
-            <AlertDialogTrigger>
-                <Settings
-                    className="lg:hidden lg:group-hover:block block ease-in-out duration-300 hover:text-green-500 active:opacity-60 justify-self-end mb-1"
-                    size={18}
-                />
-            </AlertDialogTrigger>
-            <AlertDialogContent
+        <Dialog>
+            <DialogTrigger asChild>
+                <div role="button" className="cursor-pointer">
+                    <Settings
+                        className="lg:hidden lg:group-hover:block block ease-in-out duration-300 hover:text-green-500 active:opacity-60 justify-self-end mb-1"
+                        size={18}
+                    />
+                </div>
+            </DialogTrigger>
+            <DialogContent
+                onKeyDown={(e) => e.stopPropagation()}
                 style={{ borderRadius: "15px" }}
                 className="bg-neutral-600 border-none shadow-none flex flex-col gap-6 p-4 items-center max-w-md max-h-[80vh] overflow-y-auto"
             >
@@ -361,25 +363,27 @@ const HabitSettings: React.FC<HabitSettingsProps> = ({ habit, categoryId }) => {
                     </div>
                 )}
 
-                <div className='flex gap-2'>
-                    <AlertDialogAction
-                        className="px-4 py-1 bg-green-600 hover:bg-green-800 ease-in-out duration-300 rounded-xl"
+                <div className='flex gap-2 w-full justify-center'>
+                    <button
+                        className="px-4 py-1.5 bg-green-600 hover:bg-green-800 text-white ease-in-out duration-300 rounded-xl font-medium flex-1"
                         onClick={handleSubmit}
                     >
-                        Save Settings
-                    </AlertDialogAction>
-                    <AlertDialogAction
-                        className="px-4 py-1 bg-red-600 hover:bg-red-800 ease-in-out duration-300 rounded-xl"
+                        Save
+                    </button>
+                    <button
+                        className="px-4 py-1.5 bg-red-600 hover:bg-red-800 text-white ease-in-out duration-300 rounded-xl font-medium flex-1"
                         onClick={handleDelete}
                     >
-                        Delete Habit
-                    </AlertDialogAction>
-                    <AlertDialogCancel className='px-4 py-1 bg-neutral-300 text-black hover:bg-neutral-500 ease-in-out duration-300 rounded-xl'>
-                        Cancel
-                    </AlertDialogCancel>
+                        Delete
+                    </button>
+                    <DialogTrigger asChild>
+                        <button className='px-4 py-1.5 bg-neutral-300 text-black hover:bg-neutral-500 ease-in-out duration-300 rounded-xl font-medium flex-1'>
+                            Cancel
+                        </button>
+                    </DialogTrigger>
                 </div>
-            </AlertDialogContent>
-        </AlertDialog>
+            </DialogContent>
+        </Dialog>
     )
 }
 

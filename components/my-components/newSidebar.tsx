@@ -23,7 +23,6 @@ import Image from "next/image";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { RiArrowDropDownLine } from "react-icons/ri";
 import { getLabels, GetLabelsResult } from "@/actions/getLabels";
 import Button from "./Button";
 import CardFocusedDialog from "./notes/CardFocusedDialog";
@@ -98,26 +97,26 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
         {/* Header with Logo */}
         <SidebarHeader className="p-4 pt-4 pb-6 flex flex-col items-center justify-center space-y-0.5">
           <div className="relative">
-            <Image 
-              src="/logo.png" 
-              alt="logo" 
-              width={120} 
-              height={120} 
+            <Image
+              src="/logo.png"
+              alt="logo"
+              width={120}
+              height={120}
               quality={100}
-              className="filter brightness-110 transition-transform duration-300 hover:scale-105" 
+              className="filter brightness-110 transition-transform duration-300 hover:scale-105"
             />
           </div>
-        {/* 
+          {/* 
          <h1 className="text-3xl font-bold tracking-wide bg-gradient-to-r from-white to-emerald-500 bg-clip-text text-transparent" >
             Bee Well
           </h1>  
-         */} 
-          </SidebarHeader>
+         */}
+        </SidebarHeader>
 
         <SidebarContent className="px-3 flex-1 overflow-y-auto sidebar-content">
           {/* Add Note Button */}
           <div className="flex justify-center mb-4">
-            <button 
+            <button
               onClick={() => setIsNewNoteDialogOpen(true)}
               className="w-full max-w-36 flex justify-center  items-center gap-2 px-3 py-2 !rounded-2xl text-sm font-medium active:scale-95 transition-all duration-300 bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl border border-green-500/30"
             >
@@ -128,12 +127,12 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
           {/* Main Navigation */}
           <SidebarGroup>
             <SidebarGroupContent>
-              <SidebarMenu className="space-y-2">
+              <SidebarMenu className="space-y-2 gap-5">
                 {items.map((item) => (
                   <SidebarMenuItem key={item.title} className="list-none">
-                    <SidebarMenuButton 
-                      asChild 
-                      className="text-white/90 hover:text-white hover:bg-neutral-600/50 p-2 h-auto justify-start !rounded-lg gap-3 transition-all duration-200 border-none outline-none"
+                    <SidebarMenuButton
+                      asChild
+                      className="text-white/90 hover:text-white hover:bg-neutral-600/50 hover:rounded-xl p-2 h-auto justify-start gap-3 transition-all duration-200 border-none outline-none"
                     >
                       <a href={item.url} className="flex items-center gap-3 no-underline">
                         <div className="flex-shrink-0">
@@ -147,47 +146,49 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
 
                 {/* AI Agent with Chat History */}
                 <SidebarMenuItem className="list-none">
-                  <RecentChatsDropdown 
-                    onNavigateToChat={(chatId) => router.push(`/ai-chat?chatId=${chatId}`)} 
+                  <RecentChatsDropdown
+                    onNavigateToChat={(chatId) => router.push(`/ai-chat?chatId=${chatId}`)}
                   />
                 </SidebarMenuItem>
-                
+
                 {/* Labels Section Integrated */}
-                <SidebarMenuItem className="list-none">
-                  <div 
-                    onClick={() => setLabelIsClicked(!labelIsClicked)} 
-                    className="text-white/90 hover:text-white hover:bg-neutral-600/50 p-2 h-auto justify-start !rounded-lg gap-3 transition-all duration-200 border-none outline-none flex items-center cursor-pointer"
+                <SidebarMenuItem className="list-none ">
+                  <div
+                    onClick={() => setLabelIsClicked(!labelIsClicked)}
+                    className="text-white/90 hover:text-white hover:bg-neutral-600/50  p-2 h-auto justify-start hover:rounded-xl gap-3 transition-all duration-200 border-none outline-none flex items-center cursor-pointer"
                   >
                     <div className="flex-shrink-0">
                       <Bookmark size={18} />
                     </div>
                     <span className="text-sm font-medium flex-1">My Labels</span>
-                    <RiArrowDropDownLine 
-                      className={`transition-transform duration-200 ${labelIsClicked ? 'rotate-180' : ''}`} 
-                      size={18} 
+                    <ChevronDown
+                      className={`transition-transform duration-200 ${labelIsClicked ? 'rotate-180' : ''}`}
+                      size={18}
                     />
                   </div>
+
+                  {labelIsClicked && (
+                    <div className="flex flex-col gap-2 pt-2">
+                      {labels
+                        .filter(label => label.name !== "archived" && label.name !== "deleted")
+                        .map(label => (
+                          <div
+                            key={label.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              router.push(`/notes/${label.id}`);
+                            }}
+                            className="text-xs text-center w-full hover:rounded-xl hover:bg-neutral-600/50 rounded-lg px-2 cursor-pointer text-white/80 hover:text-white transition-all duration-200 font-medium border border-transparent "
+                          >
+                            {label.name}
+                          </div>
+                        ))
+                      }
+                    </div>
+                  )}
                 </SidebarMenuItem>
 
-                {labelIsClicked && (
-                  <div className="flex flex-col gap-1">
-                    {labels
-                      .filter(label => label.name !== "archived" && label.name !== "deleted")
-                      .map(label => (
-                        <div
-                          key={label.id}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            router.push(`/notes/${label.id}`);
-                          }}
-                          className="text-xs text-center w-full hover:bg-neutral-600/50 rounded-lg px-2 py-1.5 cursor-pointer text-white/80 hover:text-white transition-all duration-200 font-medium border border-transparent hover:border-neutral-500/30"
-                        >
-                          {label.name}
-                        </div>
-                      ))
-                    }
-                  </div>
-                )}
+
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
@@ -198,12 +199,12 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
           <div className="flex flex-col gap-3 items-center w-full max-w-xs">
             <div className="flex items-center gap-3 justify-center w-full">
               <div className="relative">
-                <Image 
-                  src={userPhoto || "/don.jpg"} 
-                  alt="User Photo" 
-                  width={40} 
-                  height={40} 
-                  className="rounded-full object-cover ring-2 ring-white/20 shadow-lg transition-all duration-300 hover:ring-white/40" 
+                <Image
+                  src={userPhoto || "/don.jpg"}
+                  alt="User Photo"
+                  width={40}
+                  height={40}
+                  className="rounded-full object-cover ring-2 ring-white/20 shadow-lg transition-all duration-300 hover:ring-white/40"
                 />
               </div>
               <div>
@@ -211,10 +212,10 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
               </div>
             </div>
             <div className="w-full flex justify-center">
-              <Button 
-                text="Sign Out" 
-                icon="signOut" 
-                color="bg-neutral-800 hover:bg-neutral-700 border border-neutral-600/30 text-white" 
+              <Button
+                text="Sign Out"
+                icon="signOut"
+                color="bg-neutral-800 hover:bg-neutral-700 border border-neutral-600/30 text-white"
               />
             </div>
           </div>
@@ -224,7 +225,7 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
       {/* CardFocusedDialog for creating new notes */}
       {isNewNoteDialogOpen && (
         <CardFocusedDialog
-          setCurrentHtmlNoteContent={() => {}}
+          setCurrentHtmlNoteContent={() => { }}
           isNewNote={true}
           intialContentFocused={null}
           id={null}
@@ -233,10 +234,10 @@ export default function NewSidebar({ refreshFunction }: NewSidebarProps = {}) {
           labelFromDb=""
           backgroundColorFromDb="rgb(64 64 64)"
           dateFromDb=""
-          setCurrentHeading={() => {}}
+          setCurrentHeading={() => { }}
           currentHtmlContent=""
-          setCardBackgroundColor={() => {}}
-          setCurrentCardLabel={() => {}}
+          setCardBackgroundColor={() => { }}
+          setCurrentCardLabel={() => { }}
           open={isNewNoteDialogOpen}
           onOpenChange={setIsNewNoteDialogOpen}
         />

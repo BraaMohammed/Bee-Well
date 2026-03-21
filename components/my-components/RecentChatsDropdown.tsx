@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MessageCircle, Plus, Trash2, Edit2, Search, ChevronDown } from 'lucide-react';
 import { useChatHistoryStore } from '@/stores/chatHistoryStore';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 interface RecentChatsDropdownProps {
   onNavigateToChat: (chatId: string) => void;
@@ -13,6 +13,7 @@ export default function RecentChatsDropdown({ onNavigateToChat }: RecentChatsDro
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
   const pathname = usePathname();
+  const router = useRouter();
 
   const {
     getAllChats,
@@ -67,35 +68,44 @@ export default function RecentChatsDropdown({ onNavigateToChat }: RecentChatsDro
   const formatDate = (date: Date) => {
     const now = new Date();
     const diffInDays = Math.floor((now.getTime() - new Date(date).getTime()) / (1000 * 60 * 60 * 24));
-    
+
     if (diffInDays === 0) return 'Today';
     if (diffInDays === 1) return 'Yesterday';
     if (diffInDays < 7) return `${diffInDays} days ago`;
-    
+
     return new Date(date).toLocaleDateString();
   };
 
   const isAIChatActive = pathname.startsWith('/ai-chat');
 
   return (
-    <div className="relative">
+    <div className="relative ">
       {/* AI Agent Button */}
       <div
-        onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center justify-between w-full p-2 h-auto !rounded-lg gap-3 transition-all duration-200 cursor-pointer ${
-          isAIChatActive
-            ? 'bg-gradient-to-r from-neutral-800/50 to-neutral-700/50 text-white'
-            : 'text-white/90 hover:text-white hover:bg-gradient-to-r hover:from-neutral-800/50 hover:to-neutral-700/50'
-        }`}
+        className={`flex items-center justify-between w-full p-2 h-auto rounded-xl gap-3 transition-all duration-200 cursor-pointer ${isAIChatActive
+          ? 'bg-neutral-600/50 text-white'
+          : 'text-white/90 hover:text-white hover:bg-neutral-600/50'
+          }`}
       >
-        <div className="flex items-center gap-3">
+        <div
+          onClick={() => router.push('/ai-chat')}
+          className="flex items-center gap-3 flex-1"
+        >
           <MessageCircle size={18} />
           <span className="text-sm font-medium">AI Agent</span>
         </div>
-        <ChevronDown 
-          className={`transform transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
-          size={18} 
-        />
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsOpen(!isOpen);
+          }}
+          className="flex items-center justify-center p-0.5 hover:bg-white/10 rounded-lg transition-colors"
+        >
+          <ChevronDown
+            className={`transform transition-transform hover:rounded-full duration-200 ${isOpen ? 'rotate-180' : ''}`}
+            size={18}
+          />
+        </div>
       </div>
 
       {/* Dropdown Menu */}
@@ -109,19 +119,18 @@ export default function RecentChatsDropdown({ onNavigateToChat }: RecentChatsDro
             recentChats.map((chat) => (
               <div
                 key={chat.id}
-                className={`group relative text-sm w-full rounded-xl px-3 py-2 cursor-pointer transition-all duration-200 font-medium flex items-center justify-between ${
-                  currentChatId === chat.id
-                    ? 'bg-gradient-to-r from-neutral-500/50 to-neutral-600/50 text-white'
-                    : 'text-white/80 hover:bg-gradient-to-r hover:from-neutral-500/50 hover:to-neutral-600/50 hover:text-white'
-                }`}
+                className={`group relative text-sm w-full rounded-xl px-3 py-2 cursor-pointer transition-all duration-200 font-medium flex items-center justify-between ${currentChatId === chat.id
+                  ? 'bg-neutral-600/50 text-white'
+                  : 'text-white/80 hover:bg-neutral-600/50 hover:text-white'
+                  }`}
               >
-                <div 
+                <div
                   onClick={() => handleChatClick(chat.id)}
                   className="flex-1 text-left truncate pr-2"
                 >
                   {chat.title}
                 </div>
-                
+
                 {/* Delete Button - Shows on hover */}
                 <button
                   onClick={(e) => handleDeleteChat(chat.id, e)}

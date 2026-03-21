@@ -19,16 +19,28 @@ export default function MessageList({ messages, isLoading }: MessageListProps) {
 
   return (
     <div>
-      {chatMessages.map((message, index) => (
-        <ChatMessage
-          key={message.id}
-          message={message}
-          isStreaming={isLoading && index === lastAssistantIndex}
-        />
-      ))}
+      {chatMessages.map((message, index) => {
+        const isStreamingThis = isLoading && index === lastAssistantIndex;
+        
+        // If it's an assistant message with absolutely no content and no tools yet,
+        // it's just been initiated. Show the dedicated LoadingIndicator instead of a blank avatar.
+        const isEmptyAssistant =
+          message.role === 'assistant' &&
+          !message.content &&
+          (!message.toolInvocations || message.toolInvocations.length === 0);
 
-      {/* Show DeepSeek-style loading only when there's no assistant message yet */}
-      {isLoading && lastAssistantIndex === -1 && <LoadingIndicator />}
+        if (isEmptyAssistant && isStreamingThis) {
+          return <LoadingIndicator key={message.id} />;
+        }
+
+        return (
+          <ChatMessage
+            key={message.id}
+            message={message}
+            isStreaming={isStreamingThis}
+          />
+        );
+      })}
     </div>
   );
 }

@@ -7,7 +7,11 @@ import { SYSTEM_PROMPT } from '@/components/new-ai-chat/systemPrompt';
 import { stepCountIs, streamText } from 'ai';
 
 export interface ToolInvocation {
+    toolCallId: string;
     toolName: string;
+    state: 'call' | 'result';
+    args?: any;
+    result?: any;
     [key: string]: any;
 }
 
@@ -149,7 +153,7 @@ export function useClientChat(options: UseClientChatOptions = {}) {
             // Default is maxSteps=1, which calls the tool then STOPS before the model
             // can read the result and generate the final answer.
             console.log('[Chat] 🌊 Starting streamText with maxSteps=10...');
-            const { textStream } = await streamText({
+            const { fullStream } = await streamText({
                 model: curModel as any,
                 messages: coreMessages,
                 tools: getClientTools(dataAccess),
@@ -169,59 +173,78 @@ export function useClientChat(options: UseClientChatOptions = {}) {
                         });
                     }
 
-                    // Surface tool call badges in the UI on every step
-                    if (step.toolCalls && step.toolCalls.length > 0) {
-                        setMessages(prev => prev.map(msg => {
-                            if (msg.id !== assistantMessageId) return msg;
-
-                            const newTools = step.toolCalls.map((tc: any) => ({
-                                toolName: tc.toolName,
-                                args: tc.args || tc.arguments || {}
-                            }));
-
-                            return {
-                                ...msg,
-                                toolInvocations: [...(msg.toolInvocations || []), ...newTools]
-                            };
-                        }));
-                    }
+                    // UI updates are now handled by fullStream's tool-call and tool-result events.
                 }
             });
 
 
-            // 7. Process the incoming text stream and apply characters to state gradually
+            // 7. Process the incoming full stream
             let cumulativeResponse = '';
             let chunkCount = 0;
             let hasLoggedFirstThinkBlock = false;
 
-            for await (const textPart of textStream) {
+            for await (const part of fullStream) {
                 if (abortControllerRef.current?.signal.aborted) break;
-                cumulativeResponse += textPart;
-                chunkCount++;
+                
+                if (part.type === 'text-delta') {
+                    const p = part as any;
+                    const delta = p.textDelta || p.text || '';
+                    cumulativeResponse += delta;
+                    chunkCount++;
 
-                // On first chunk — log it so we can see what we're getting
-                if (chunkCount === 1) {
-                    console.log(`[Chat] 📡 First chunk received: ${JSON.stringify(textPart)}`);
+                    // On first chunk — log it so we can see what we're getting
+                    if (chunkCount === 1) {
+                        console.log(`[Chat] 📡 First text chunk received: ${JSON.stringify(delta)}`);
+                    }
+
+                    // Every 25 chunks log a snapshot so we can trace think blocks forming
+                    if (chunkCount % 25 === 0) {
+                        const preview = JSON.stringify(cumulativeResponse.substring(0, 150));
+                        console.log(`[Chat] 📡 Chunk #${chunkCount} | len=${cumulativeResponse.length} | preview=${preview}`);
+                    }
+
+                    // Log the first time we detect a think-block opening in the stream
+                    if (!hasLoggedFirstThinkBlock && /<(think|thinking|reasoning|reason|reflection|reflect)>/i.test(cumulativeResponse)) {
+                        hasLoggedFirstThinkBlock = true;
+                        console.log(`[Thinking] 🧠 Detected think block opening at chunk #${chunkCount}`);
+                        console.log(`[Thinking] 🧠 Content so far: ${JSON.stringify(cumulativeResponse.substring(0, 200))}`);
+                    }
+
+                    setMessages(prev => prev.map(msg =>
+                        msg.id === assistantMessageId
+                            ? { ...msg, content: cumulativeResponse }
+                            : msg
+                    ));
+                } else if (part.type === 'tool-call') {
+                    console.log(`[Chat] 🔧 Tool call started: ${part.toolName}`);
+                    const p = part as any;
+                    setMessages(prev => prev.map(msg => {
+                        if (msg.id !== assistantMessageId) return msg;
+                        const existingTools = msg.toolInvocations || [];
+                        return {
+                            ...msg,
+                            toolInvocations: [
+                                ...existingTools, 
+                                { toolCallId: part.toolCallId, toolName: part.toolName, state: 'call', args: p.args || p.input || {} }
+                            ]
+                        };
+                    }));
+                } else if (part.type === 'tool-result') {
+                    console.log(`[Chat] 📦 Tool result finished: ${part.toolName}`);
+                    const p = part as any;
+                    setMessages(prev => prev.map(msg => {
+                        if (msg.id !== assistantMessageId) return msg;
+                        const existingTools = msg.toolInvocations || [];
+                        return {
+                            ...msg,
+                            toolInvocations: existingTools.map(t => 
+                                t.toolCallId === part.toolCallId 
+                                    ? { ...t, state: 'result', result: p.result || p.output } 
+                                    : t
+                            )
+                        };
+                    }));
                 }
-
-                // Every 25 chunks log a snapshot so we can trace think blocks forming
-                if (chunkCount % 25 === 0) {
-                    const preview = JSON.stringify(cumulativeResponse.substring(0, 150));
-                    console.log(`[Chat] 📡 Chunk #${chunkCount} | len=${cumulativeResponse.length} | preview=${preview}`);
-                }
-
-                // Log the first time we detect a think-block opening in the stream
-                if (!hasLoggedFirstThinkBlock && /<(think|thinking|reasoning|reason|reflection|reflect)>/i.test(cumulativeResponse)) {
-                    hasLoggedFirstThinkBlock = true;
-                    console.log(`[Thinking] 🧠 Detected think block opening at chunk #${chunkCount}`);
-                    console.log(`[Thinking] 🧠 Content so far: ${JSON.stringify(cumulativeResponse.substring(0, 200))}`);
-                }
-
-                setMessages(prev => prev.map(msg =>
-                    msg.id === assistantMessageId
-                        ? { ...msg, content: cumulativeResponse }
-                        : msg
-                ));
             }
 
             console.log(`[Chat] ✅ Stream complete | total chunks=${chunkCount} | total length=${cumulativeResponse.length}`);

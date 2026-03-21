@@ -1,11 +1,10 @@
 "use client"
 import React, { useState, useEffect } from 'react'
 import {
-    AlertDialog,
-    AlertDialogContent,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { AlertDialogAction, AlertDialogCancel } from '@/components/ui/alert-dialog'
+    Dialog,
+    DialogContent,
+    DialogTrigger,
+} from "@/components/ui/dialog"
 import { Settings } from 'lucide-react'
 import { useHabitStore } from '@/stores/habitStore'
 import { habitsCategoryType } from '@/types/new-habit-tracker'
@@ -46,14 +45,17 @@ const CategorySettings: React.FC<CategorySettingsProps> = ({ category }) => {
     }
 
     return (
-        <AlertDialog open={open} onOpenChange={setOpen}>
-            <AlertDialogTrigger>
-                <Settings
-                    className="lg:hidden active:opacity-60 block lg:group-hover:block hover:text-green-500 ease-in-out duration-300"
-                    size={20}
-                />
-            </AlertDialogTrigger>
-            <AlertDialogContent
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <div role="button" className="cursor-pointer">
+                    <Settings
+                        className="lg:hidden active:opacity-60 block lg:group-hover:block hover:text-green-500 ease-in-out duration-300"
+                        size={20}
+                    />
+                </div>
+            </DialogTrigger>
+            <DialogContent
+                onKeyDown={(e) => e.stopPropagation()}
                 style={{ borderRadius: "15px" }}
                 className="bg-neutral-600 border-none shadow-none flex flex-col gap-6 p-4 items-center max-w-md"
             >
@@ -87,23 +89,23 @@ const CategorySettings: React.FC<CategorySettingsProps> = ({ category }) => {
                     </label>
                 </div>
 
-                <div className='flex gap-2'>
-                    <AlertDialogAction
-                        className="px-4 py-1 bg-green-600 hover:bg-green-800 ease-in-out duration-300 rounded-xl"
+                <div className='flex gap-2 w-full justify-center'>
+                    <button
+                        className="px-4 py-1.5 bg-green-600 hover:bg-green-800 disabled:opacity-50 disabled:cursor-not-allowed text-white ease-in-out duration-300 rounded-xl font-medium"
                         onClick={handleSubmit}
                         disabled={!currentName.trim()}
                     >
                         Save Changes
-                    </AlertDialogAction>
-                    <AlertDialogCancel 
-                        className='px-4 py-1 bg-neutral-300 text-black hover:bg-neutral-500 ease-in-out duration-300 rounded-xl'
+                    </button>
+                    <button 
+                        className='px-4 py-1.5 bg-neutral-300 text-black hover:bg-neutral-500 ease-in-out duration-300 rounded-xl font-medium'
                         onClick={handleCancel}
                     >
                         Cancel
-                    </AlertDialogCancel>
+                    </button>
                 </div>
-            </AlertDialogContent>
-        </AlertDialog>
+            </DialogContent>
+        </Dialog>
     )
 }
 

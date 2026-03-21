@@ -108,139 +108,18 @@ const Divider = dynamic(
 const NoteViewer = ({ intialContentFocused, getEditorState }) => {
 
 
- const [hoveredElement , setHoveredElement] = useState(null)
+  const [hoveredElement, setHoveredElement] = useState(null)
 
- 
-// old code dont change
+
+  // old code dont change
   const onChangeHandler = (editorState) => {
     getEditorState(editorState)
   }
 
 
 
-/*
-  const setupDragAndDrop = useCallback((editor) => {
-    if (!editor) return;
 
-    const handleMouseEnter = (event) => {
-      const paragraph = event.target.closest('p');
-      if (paragraph) {
-        setHoveredElement(paragraph);
-      }
-    };
 
-    const handleMouseLeave = () => {
-      setHoveredElement(null);
-    };
-
-    const handleDragStart = (event) => {
-      const dragHandle = event.target.closest('.drag-handle');
-      if (!dragHandle) return;
-
-      const paragraph = dragHandle.parentElement;
-      event.dataTransfer.setData('text/html', paragraph.outerHTML);
-      event.dataTransfer.setData('text/plain', paragraph.textContent);
-    };
-
-    const handleDragOver = (event) => {
-      event.preventDefault();
-      const paragraph = event.target.closest('p');
-      if (paragraph) {
-        const rect = paragraph.getBoundingClientRect();
-        const middleY = rect.top + rect.height / 2;
-        if (event.clientY < middleY) {
-          paragraph.style.borderTop = '2px solid #007bff';
-          paragraph.style.borderBottom = 'none';
-        } else {
-          paragraph.style.borderBottom = '2px solid #007bff';
-          paragraph.style.borderTop = 'none';
-        }
-      }
-    };
-
-    const handleDragLeave = (event) => {
-      const paragraph = event.target.closest('p');
-      if (paragraph) {
-        paragraph.style.borderTop = 'none';
-        paragraph.style.borderBottom = 'none';
-      }
-    };
-
-    const handleDrop = (event) => {
-      event.preventDefault();
-      const content = event.dataTransfer.getData('text/html');
-      const targetParagraph = event.target.closest('p');
-      
-      if (targetParagraph) {
-        const rect = targetParagraph.getBoundingClientRect();
-        const middleY = rect.top + rect.height / 2;
-        const insertBefore = event.clientY < middleY;
-
-        editor.update(() => {
-          const selection = $getSelection();
-          if ($isRangeSelection(selection)) {
-            const newNode = $createNodeFromHTML(content);
-            if (insertBefore) {
-              targetParagraph.insertAdjacentHTML('beforebegin', content);
-            } else {
-              targetParagraph.insertAdjacentHTML('afterend', content);
-            }
-            // Remove the original node
-            newNode.getParent().remove();
-          }
-        });
-      }
-
-      // Reset all paragraph borders
-      editor.getRootElement().querySelectorAll('p').forEach(p => {
-        p.style.borderTop = 'none';
-        p.style.borderBottom = 'none';
-      });
-    };
-
-    const rootElement = editor.getRootElement();
-    rootElement.addEventListener('mouseenter', handleMouseEnter, true);
-    rootElement.addEventListener('mouseleave', handleMouseLeave, true);
-    rootElement.addEventListener('dragstart', handleDragStart);
-    rootElement.addEventListener('dragover', handleDragOver);
-    rootElement.addEventListener('dragleave', handleDragLeave);
-    rootElement.addEventListener('drop', handleDrop);
-
-    return () => {
-      if (rootElement) {
-        rootElement.removeEventListener('mouseenter', handleMouseEnter, true);
-        rootElement.removeEventListener('mouseleave', handleMouseLeave, true);
-        rootElement.removeEventListener('dragstart', handleDragStart);
-        rootElement.removeEventListener('dragover', handleDragOver);
-        rootElement.removeEventListener('dragleave', handleDragLeave);
-        rootElement.removeEventListener('drop', handleDrop);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (hoveredElement) {
-      const dragHandle = document.createElement('div');
-      dragHandle.className = 'drag-handle';
-      dragHandle.style.position = 'absolute';
-      dragHandle.style.left = '-20px';
-      dragHandle.style.top = '50%';
-      dragHandle.style.transform = 'translateY(-50%)';
-      dragHandle.style.cursor = 'grab';
-      dragHandle.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M9 3h2v2H9V3zm4 0h2v2h-2V3zm0 4h2v2h-2V7zm0 4h2v2h-2v-2zm-4 0h2v2H9v-2zm0-4h2v2H9V7zm-4 4h2v2H5v-2zm0-4h2v2H5V7zm8 8h2v2h-2v-2zm-4 0h2v2H9v-2zm-4 0h2v2H5v-2z"/></svg>';
-      dragHandle.draggable = true;
-      hoveredElement.style.position = 'relative';
-      hoveredElement.appendChild(dragHandle);
-
-      return () => {
-        hoveredElement.removeChild(dragHandle);
-        hoveredElement.style.position = '';
-      };
-    }
-  }, [hoveredElement]);
-
-*/
-  
 
   return (
     <EditorComposer initialEditorState={intialContentFocused}>
@@ -250,7 +129,7 @@ const NoteViewer = ({ intialContentFocused, getEditorState }) => {
         emojisEnabled={true}
         emojiPickerEnabled={true}
         hashtagsEnabled={true}
-        
+
       >
         <ToolbarPlugin defaultBgColor="transparent" defaultFontColor="#FFFFFF" defaultFontSize="40px">
           <FontFamilyDropdown />
