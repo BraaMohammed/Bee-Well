@@ -1,5 +1,7 @@
 'use client'
 
+import { useAISettingsStore } from '@/stores/aiSettingsStore';
+
 export interface OllamaModel {
   name: string;
   size: number;
@@ -23,8 +25,9 @@ export interface OllamaModelsResponse {
 
 export async function getOllamaModels(): Promise<OllamaModelsResponse> {
   try {
-    // Default Ollama API endpoint
-    const ollamaUrl = process.env.OLLAMA_API_URL || 'http://localhost:11434';
+    // Get Ollama API endpoint from user settings, fallback to env or default
+    const settingsUrl = useAISettingsStore.getState().ollamaUrl;
+    const ollamaUrl = settingsUrl || process.env.OLLAMA_API_URL || 'http://localhost:11434';
     
     const response = await fetch(`${ollamaUrl}/api/tags`, {
       method: 'GET',
