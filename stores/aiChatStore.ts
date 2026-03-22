@@ -79,7 +79,7 @@ export const useAIChatStore = create<AIChatState>((set, get) => ({
   initialize: async () => {
     set({ isModelLoading: true });
     try {
-      const { getOllamaModels } = await import('@/actions/getOllamaModels');
+      const { getOllamaModels } = await import('@/lib/ai/getOllamaModels');
       const data = await getOllamaModels();
       if (data.available && data.models) {
         set({ ollamaModels: data.models });
