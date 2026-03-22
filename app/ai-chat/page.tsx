@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, type ChangeEvent } from 'react';
+import { useEffect, type ChangeEvent, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ChatHeader, WelcomeScreen, MessageList, ChatInput } from '@/components/new-ai-chat';
 import { useAIChatStore } from '@/stores/aiChatStore';
 import { useChatHistoryStore } from '@/stores/chatHistoryStore';
 import { useClientChat } from '@/hooks/useClientChat';
 
-export default function AIChatPage() {
+function AIChatContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const chatIdFromUrl = searchParams.get('chatId');
@@ -90,5 +90,13 @@ export default function AIChatPage() {
         />
       </div>
     </div>
+  );
+}
+
+export default function AIChatPage() {
+  return (
+    <Suspense fallback={<div className="h-screen bg-[#FAFAF9] flex items-center justify-center text-stone-500 font-medium">Loading chat...</div>}>
+      <AIChatContent />
+    </Suspense>
   );
 }
