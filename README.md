@@ -63,7 +63,7 @@ Specifically, building Bee-Well taught me the importance of:
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/YOUR_USERNAME/beewell-repo](https://github.com/YOUR_USERNAME/beewell-repo)
+    git clone [https://github.com/BraaMohammed/beewell-repo](https://github.com/YOUR_USERNAME/beewell-repo)
     ```
 2.  **Install dependencies:**
     ```bash
@@ -79,6 +79,27 @@ Specifically, building Bee-Well taught me the importance of:
     ```bash
     npm run dev
     ```
+
+---
+## 🦙 Using Local AI (Ollama) with the Live App
+
+Bee-Well supports 100% private, free AI by connecting the live web app directly to your local Ollama instance. Because modern browsers strictly block public websites from accessing local networks, you must make two quick one-time configurations:
+
+### 1. Allow Cross-Origin Requests in Ollama
+You need to tell Ollama it is allowed to accept requests from Bee-Well.
+* **Windows:** Open CMD and run `setx OLLAMA_ORIGINS "*"`
+* **Mac/Linux:** Run `export OLLAMA_ORIGINS="*"`
+* **⚠️ CRITICAL:** You must completely quit the Ollama app from your system tray/menu bar and restart it for the changes to take effect. 
+
+### 2. Bypass Chrome's Local Network Block
+By default, Chromium-based browsers (Chrome, Edge, Brave) kill background requests to `localhost`.
+1. Paste this exact URL into your browser's address bar: `chrome://flags/#local-network-access-check`
+2. Change the highlighted setting to **Disabled**.
+3. Click the **Relaunch** button at the bottom of the browser.
+
+Once done, simply select Ollama in the Bee-Well chat settings and it will instantly connect.
+
+
 
 ---
 
