@@ -47,6 +47,20 @@ interface ChatHistoryState {
   clearAllChats: () => void;
 }
 
+// Helper function to get persisted data directly from localStorage
+export const getPersistedChatData = () => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const stored = localStorage.getItem('chat-history-storage');
+    if (!stored) return null;
+    const parsed = JSON.parse(stored);
+    return parsed?.state || null;
+  } catch (error) {
+    console.error('Failed to parse persisted chat data:', error);
+    return null;
+  }
+};
+
 export const useChatHistoryStore = create<ChatHistoryState>()(
   persist(
     (set, get) => ({

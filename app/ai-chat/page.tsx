@@ -4,7 +4,7 @@ import { useEffect, useState, type ChangeEvent, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ChatHeader, WelcomeScreen, MessageList, ChatInput } from '@/components/new-ai-chat';
 import { useAIChatStore } from '@/stores/aiChatStore';
-import { useChatHistoryStore, isStoreHydrated } from '@/stores/chatHistoryStore';
+import { useChatHistoryStore, getPersistedChatData } from '@/stores/chatHistoryStore';
 import { useClientChat } from '@/hooks/useClientChat';
 
 function AIChatContent() {
@@ -33,21 +33,26 @@ function AIChatContent() {
     initialize();
   }, [initialize]);
 
-  // Poll for store hydration (sets state when ready)
+  // Check hydration - directly read from localStorage to detect if data exists
   useEffect(() => {
-    if (isStoreHydrated()) {
-      setIsHydrated(true);
-      return;
-    }
-
-    const interval = setInterval(() => {
-      if (isStoreHydrated()) {
+    const checkHydration = () => {
+      const persistedData = getPersistedChatData();
+      if (persistedData) {
+        // Data exists in localStorage, store should hydrate automatically
         setIsHydrated(true);
-        clearInterval(interval);
+      } else {
+        // No persisted data, hydration is "done" (nothing to restore)
+        setIsHydrated(true);
       }
-    }, 50); // Check every 50ms
+    };
 
-    return () => clearInterval(interval);
+    // Check immediately
+    checkHydration();
+
+    // Also check after a short delay to ensure Zustand has time to hydrate
+    const timeout = setTimeout(checkHydration, 100);
+
+    return () => clearTimeout(timeout);
   }, []);
 
   // Handle chat loading from URL or creating new chat
