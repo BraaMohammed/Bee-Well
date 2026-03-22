@@ -10,7 +10,7 @@
 
 ### A comprehensive tool for personal productivity featuring an advanced habit tracker, a Notion-style block editor, an automated daily journal, and an integrated AI Assistant.
 
-**Live App:** ((https://bee-well.vercel.app/))
+**Live App:** (((https://bee-well.netlify.app)))
 
 ---
 
