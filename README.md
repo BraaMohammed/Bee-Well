@@ -63,7 +63,7 @@ Specifically, building Bee-Well taught me the importance of:
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/BraaMohammed/beewell-repo](https://github.com/YOUR_USERNAME/beewell-repo)
+    git clone https://github.com/BraaMohammed/Bee-Well/
     ```
 2.  **Install dependencies:**
     ```bash
