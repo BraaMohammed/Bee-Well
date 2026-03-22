@@ -1,16 +1,17 @@
 'use client';
 
-import { useEffect, type ChangeEvent, Suspense } from 'react';
+import { useEffect, useState, type ChangeEvent, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ChatHeader, WelcomeScreen, MessageList, ChatInput } from '@/components/new-ai-chat';
 import { useAIChatStore } from '@/stores/aiChatStore';
-import { useChatHistoryStore } from '@/stores/chatHistoryStore';
+import { useChatHistoryStore, isStoreHydrated } from '@/stores/chatHistoryStore';
 import { useClientChat } from '@/hooks/useClientChat';
 
 function AIChatContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const chatIdFromUrl = searchParams.get('chatId');
+  const [isHydrated, setIsHydrated] = useState(false);
 
   const { selectedProvider, selectedModel, initialize } = useAIChatStore();
   const {
@@ -19,7 +20,7 @@ function AIChatContent() {
     loadChat,
     createNewChat,
     getCurrentChat,
-    updateCurrentChatMessages
+    updateCurrentChatMessages,
   } = useChatHistoryStore();
 
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages } = useClientChat({
@@ -32,8 +33,28 @@ function AIChatContent() {
     initialize();
   }, [initialize]);
 
+  // Poll for store hydration (sets state when ready)
+  useEffect(() => {
+    if (isStoreHydrated()) {
+      setIsHydrated(true);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      if (isStoreHydrated()) {
+        setIsHydrated(true);
+        clearInterval(interval);
+      }
+    }, 50); // Check every 50ms
+
+    return () => clearInterval(interval);
+  }, []);
+
   // Handle chat loading from URL or creating new chat
   useEffect(() => {
+    // Wait until store is hydrated from localStorage
+    if (!isHydrated) return;
+
     if (chatIdFromUrl && chatIdFromUrl !== currentChatId) {
       // Load existing chat from URL
       const chat = loadChat(chatIdFromUrl);
@@ -52,7 +73,19 @@ function AIChatContent() {
       // No chat in URL but we have a current chat, update URL
       router.replace(`/ai-chat?chatId=${currentChatId}`);
     }
-  }, [chatIdFromUrl, currentChatId, loadChat, setCurrentChatId, createNewChat, setMessages, router]);
+  }, [chatIdFromUrl, currentChatId, isHydrated, loadChat, setCurrentChatId, createNewChat, setMessages, router]);
+
+  // Emergency fallback: if nothing loads after 5 seconds, create a new chat
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!messages.length && !chatIdFromUrl) {
+        const newChatId = createNewChat();
+        router.replace(`/ai-chat?chatId=${newChatId}`);
+      }
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [messages.length, chatIdFromUrl, createNewChat, router]);
 
   // Save messages to chat history whenever messages change
   useEffect(() => {

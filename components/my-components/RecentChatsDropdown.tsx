@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
-import { MessageCircle, Plus, Trash2, Edit2, Search, ChevronDown } from 'lucide-react';
+import { MessageCircle, Plus, Trash2, Edit2, ChevronDown } from 'lucide-react';
 import { useChatHistoryStore } from '@/stores/chatHistoryStore';
 import { usePathname, useRouter } from 'next/navigation';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Input } from '@/components/ui/input';
 
 interface RecentChatsDropdownProps {
   onNavigateToChat: (chatId: string) => void;
@@ -12,6 +20,9 @@ export default function RecentChatsDropdown({ onNavigateToChat }: RecentChatsDro
   const [searchQuery, setSearchQuery] = useState('');
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState('');
+  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
+  const [renamingChatId, setRenamingChatId] = useState<string | null>(null);
+  const [newChatName, setNewChatName] = useState('');
   const pathname = usePathname();
   const router = useRouter();
 
@@ -46,23 +57,20 @@ export default function RecentChatsDropdown({ onNavigateToChat }: RecentChatsDro
     }
   };
 
-  const handleStartEdit = (chatId: string, currentTitle: string, e: React.MouseEvent) => {
+  const handleOpenRenameDialog = (chatId: string, currentTitle: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setEditingChatId(chatId);
-    setEditTitle(currentTitle);
+    setRenamingChatId(chatId);
+    setNewChatName(currentTitle);
+    setIsRenameDialogOpen(true);
   };
 
-  const handleSaveEdit = (chatId: string) => {
-    if (editTitle.trim()) {
-      renameChat(chatId, editTitle.trim());
+  const handleConfirmRename = () => {
+    if (renamingChatId && newChatName.trim()) {
+      renameChat(renamingChatId, newChatName.trim());
+      setIsRenameDialogOpen(false);
+      setRenamingChatId(null);
+      setNewChatName('');
     }
-    setEditingChatId(null);
-    setEditTitle('');
-  };
-
-  const handleCancelEdit = () => {
-    setEditingChatId(null);
-    setEditTitle('');
   };
 
   const formatDate = (date: Date) => {
@@ -131,19 +139,70 @@ export default function RecentChatsDropdown({ onNavigateToChat }: RecentChatsDro
                   {chat.title}
                 </div>
 
-                {/* Delete Button - Shows on hover */}
-                <button
-                  onClick={(e) => handleDeleteChat(chat.id, e)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-red-500/20 rounded-full flex-shrink-0"
-                  title="Delete chat"
-                >
-                  <Trash2 size={14} className="text-red-400 hover:text-red-300" />
-                </button>
+                {/* Edit and Delete Buttons - Show on hover */}
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <button
+                    onClick={(e) => handleOpenRenameDialog(chat.id, chat.title, e)}
+                    className="p-1 hover:bg-green-500/20 rounded-full flex-shrink-0"
+                    title="Rename chat"
+                  >
+                    <Edit2 size={14} className="text-green-400 hover:text-green-300" />
+                  </button>
+                  <button
+                    onClick={(e) => handleDeleteChat(chat.id, e)}
+                    className="p-1 hover:bg-red-500/20 rounded-full flex-shrink-0"
+                    title="Delete chat"
+                  >
+                    <Trash2 size={14} className="text-red-400 hover:text-red-300" />
+                  </button>
+                </div>
               </div>
             ))
           )}
         </div>
       )}
+
+      {/* Rename Chat Dialog */}
+      <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
+        <DialogContent className="bg-neutral-800 border border-neutral-700 rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-white">Rename Chat</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              value={newChatName}
+              onChange={(e) => setNewChatName(e.target.value)}
+              placeholder="Enter new chat name"
+              className="bg-neutral-700 border-neutral-600 text-white placeholder:text-neutral-400 rounded-xl"
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleConfirmRename();
+                }
+              }}
+              autoFocus
+            />
+          </div>
+          <DialogFooter className="flex gap-2 justify-end">
+            <button
+              onClick={() => {
+                setIsRenameDialogOpen(false);
+                setRenamingChatId(null);
+                setNewChatName('');
+              }}
+              className="px-4 py-2 rounded-xl bg-neutral-700 hover:bg-neutral-600 text-white transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleConfirmRename}
+              disabled={!newChatName.trim()}
+              className="px-4 py-2 rounded-xl bg-green-600 hover:bg-green-700 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Save
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

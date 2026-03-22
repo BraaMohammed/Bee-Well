@@ -2,6 +2,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { ChatMessage } from '@/hooks/useClientChat';
 
+// Global flag to track if store has been hydrated
+let storeHydrated = false;
+
 export interface ChatSession {
   id: string;
   title: string;
@@ -216,6 +219,12 @@ export const useChatHistoryStore = create<ChatHistoryState>()(
         chatSessions: state.chatSessions,
         currentChatId: state.currentChatId,
       }),
+      onRehydrateStorage: () => () => {
+        // Mark store as hydrated after localStorage is restored
+        storeHydrated = true;
+      },
     }
   )
 );
+
+export const isStoreHydrated = () => storeHydrated;
