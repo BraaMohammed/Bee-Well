@@ -2,9 +2,6 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { ChatMessage } from '@/hooks/useClientChat';
 
-// Global flag to track if store has been hydrated
-let storeHydrated = false;
-
 export interface ChatSession {
   id: string;
   title: string;
@@ -47,19 +44,7 @@ interface ChatHistoryState {
   clearAllChats: () => void;
 }
 
-// Helper function to get persisted data directly from localStorage
-export const getPersistedChatData = () => {
-  if (typeof window === 'undefined') return null;
-  try {
-    const stored = localStorage.getItem('chat-history-storage');
-    if (!stored) return null;
-    const parsed = JSON.parse(stored);
-    return parsed?.state || null;
-  } catch (error) {
-    console.error('Failed to parse persisted chat data:', error);
-    return null;
-  }
-};
+
 
 export const useChatHistoryStore = create<ChatHistoryState>()(
   persist(
@@ -233,12 +218,6 @@ export const useChatHistoryStore = create<ChatHistoryState>()(
         chatSessions: state.chatSessions,
         currentChatId: state.currentChatId,
       }),
-      onRehydrateStorage: () => () => {
-        // Mark store as hydrated after localStorage is restored
-        storeHydrated = true;
-      },
     }
   )
 );
-
-export const isStoreHydrated = () => storeHydrated;

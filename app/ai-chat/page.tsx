@@ -4,7 +4,7 @@ import { useEffect, useState, type ChangeEvent, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { ChatHeader, WelcomeScreen, MessageList, ChatInput } from '@/components/new-ai-chat';
 import { useAIChatStore } from '@/stores/aiChatStore';
-import { useChatHistoryStore, getPersistedChatData } from '@/stores/chatHistoryStore';
+import { useChatHistoryStore } from '@/stores/chatHistoryStore';
 import { useClientChat } from '@/hooks/useClientChat';
 
 function AIChatContent() {
@@ -12,6 +12,7 @@ function AIChatContent() {
   const router = useRouter();
   const chatIdFromUrl = searchParams.get('chatId');
   const [isHydrated, setIsHydrated] = useState(false);
+  const [loadedChatId, setLoadedChatId] = useState<string | null>(null);
 
   const { selectedProvider, selectedModel, initialize } = useAIChatStore();
   const {
@@ -33,26 +34,22 @@ function AIChatContent() {
     initialize();
   }, [initialize]);
 
-  // Check hydration - directly read from localStorage to detect if data exists
+  // Check hydration using Zustand's persist API
   useEffect(() => {
-    const checkHydration = () => {
-      const persistedData = getPersistedChatData();
-      if (persistedData) {
-        // Data exists in localStorage, store should hydrate automatically
-        setIsHydrated(true);
-      } else {
-        // No persisted data, hydration is "done" (nothing to restore)
-        setIsHydrated(true);
-      }
+    // If it's already hydrated, set it to true immediately
+    if (useChatHistoryStore.persist.hasHydrated()) {
+      setIsHydrated(true);
+      return;
+    }
+
+    // Otherwise, listen for when hydration finishes
+    const unsubFinishHydration = useChatHistoryStore.persist.onFinishHydration(() => {
+      setIsHydrated(true);
+    });
+
+    return () => {
+      unsubFinishHydration();
     };
-
-    // Check immediately
-    checkHydration();
-
-    // Also check after a short delay to ensure Zustand has time to hydrate
-    const timeout = setTimeout(checkHydration, 100);
-
-    return () => clearTimeout(timeout);
   }, []);
 
   // Handle chat loading from URL or creating new chat
@@ -60,25 +57,35 @@ function AIChatContent() {
     // Wait until store is hydrated from localStorage
     if (!isHydrated) return;
 
-    if (chatIdFromUrl && chatIdFromUrl !== currentChatId) {
-      // Load existing chat from URL
-      const chat = loadChat(chatIdFromUrl);
-      if (chat) {
-        setCurrentChatId(chatIdFromUrl);
-        setMessages(chat.messages);
-      } else {
-        // Chat not found, redirect to clean AI chat page
-        router.replace('/ai-chat');
+    if (chatIdFromUrl) {
+      if (loadedChatId !== chatIdFromUrl) {
+        // Load existing chat from URL
+        const chat = loadChat(chatIdFromUrl);
+        if (chat) {
+          setCurrentChatId(chatIdFromUrl);
+          setMessages(chat.messages);
+          setLoadedChatId(chatIdFromUrl);
+        } else {
+          // Chat not found, redirect to clean AI chat page
+          router.replace('/ai-chat');
+        }
       }
-    } else if (!chatIdFromUrl && !currentChatId) {
+    } else if (!currentChatId) {
       // No chat specified and no current chat, create new one
       const newChatId = createNewChat();
       router.replace(`/ai-chat?chatId=${newChatId}`);
-    } else if (!chatIdFromUrl && currentChatId) {
-      // No chat in URL but we have a current chat, update URL
-      router.replace(`/ai-chat?chatId=${currentChatId}`);
+    } else if (currentChatId) {
+      // No chat in URL but we have a current chat, check if it's valid
+      const chat = loadChat(currentChatId);
+      if (chat) {
+        router.replace(`/ai-chat?chatId=${currentChatId}`);
+      } else {
+        // currentChatId points to a non-existent chat, create a new one instead
+        const newChatId = createNewChat();
+        router.replace(`/ai-chat?chatId=${newChatId}`);
+      }
     }
-  }, [chatIdFromUrl, currentChatId, isHydrated, loadChat, setCurrentChatId, createNewChat, setMessages, router]);
+  }, [chatIdFromUrl, currentChatId, isHydrated, loadChat, setCurrentChatId, createNewChat, setMessages, router, loadedChatId]);
 
   // Emergency fallback: if nothing loads after 5 seconds, create a new chat
   useEffect(() => {
@@ -94,10 +101,11 @@ function AIChatContent() {
 
   // Save messages to chat history whenever messages change
   useEffect(() => {
-    if (messages.length > 0 && currentChatId) {
+    // Only save if messages are not empty AND they belong to the correctly loaded chat
+    if (messages.length > 0 && currentChatId && currentChatId === loadedChatId) {
       updateCurrentChatMessages(messages as any);
     }
-  }, [messages, currentChatId, updateCurrentChatMessages]);
+  }, [messages, currentChatId, updateCurrentChatMessages, loadedChatId]);
 
   return (
     <div className="h-screen bg-[#FAFAF9] text-stone-900 flex flex-col relative overflow-hidden">
