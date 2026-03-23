@@ -4,18 +4,28 @@ export const calculateDailyRating = (dayEntry: dayEntry, habitTemplate: habitTem
     let totalImportance = 0;
     let weightedSuccess = 0;
 
-    if (!dayEntry || !habitTemplate || !dayEntry.habits) {
+    if (!habitTemplate || !Array.isArray(habitTemplate.categories)) {
         return 0;
     }
 
-    if (Array.isArray(habitTemplate.categories)) {
-        const allHabits = habitTemplate.categories.flatMap(category => category.categoryHabits);
+    // Build a map of entries for quick lookup
+    const entryMap = new Map<string, habitEntryType>();
+    if (dayEntry?.habits) {
+        for (const entry of dayEntry.habits) {
+            entryMap.set(entry.habitId, entry);
+        }
+    }
+
+    // Iterate over ALL template habits (not just ones with entries)
+    const allHabits = habitTemplate.categories.flatMap(category => category.categoryHabits);
     
     for (const habit of allHabits) {
-        const entry = dayEntry.habits.find(e => e.habitId === habit.id);
-        if (!entry) continue;
-
         totalImportance += habit.importance;
+        
+        const entry = entryMap.get(habit.id);
+        
+        // If no entry for this habit, it contributes 0 to weightedSuccess
+        if (!entry) continue;
 
         switch (habit.habitType) {
             case 'checkbox':
@@ -31,7 +41,7 @@ export const calculateDailyRating = (dayEntry: dayEntry, habitTemplate: habitTem
             case 'number':
                 const target = (habit as NumberHabitType).targetValue;
                 const value = Number(entry.value);
-                if (target !== undefined && !isNaN(value)) {
+                if (target !== undefined && !isNaN(value) && target > 0) {
                     const ratio = Math.min(value / target, 1);
                     weightedSuccess += ratio * habit.importance;
                 }
@@ -44,7 +54,4 @@ export const calculateDailyRating = (dayEntry: dayEntry, habitTemplate: habitTem
     }
 
     return (weightedSuccess / totalImportance) * 100;
-}else{
-    return 0;
-}
 }

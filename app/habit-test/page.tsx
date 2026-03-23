@@ -57,40 +57,64 @@ const page = () => {
     return entries
   }
 
-  // Utility: Convert local habitData to dayEntry[] for the last 30 days
-  const buildLocalDayEntries = (): dayEntry[] => {
-    const entries: dayEntry[] = []
+  // Utility: Merge local habitData with DB entries for the last 30 days
+  const buildMergedDayEntries = (): dayEntry[] => {
+    const entriesMap = new Map<string, dayEntry>()
     const today = new Date()
+
+    // First, add all DB entries to the map
+    for (const entry of dailyEntries) {
+      entriesMap.set(entry.date, entry)
+    }
+
+    // Then, merge with local data (local takes precedence for updated values)
     for (let i = 0; i <= 30; i++) {
       const date = new Date(today)
       date.setDate(today.getDate() - i)
       const dateStr = date.toISOString().split('T')[0]
-      const habitsObj = habitData[dateStr] || {}
-      const habits = Object.entries(habitsObj).map(([habitId, value]) => ({
-        id: `${habitId}-${dateStr}`,
-        habitId,
-        date: dateStr,
-        value,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }))
-      if (habits.length > 0) {
-        entries.push({
-          id: `entry-${dateStr}`,
+      const habitsObj = habitData[dateStr]
+
+      // Only process if we have local data for this date
+      if (habitsObj && Object.keys(habitsObj).length > 0) {
+        const localHabits = Object.entries(habitsObj).map(([habitId, value]) => ({
+          id: `${habitId}-${dateStr}`,
+          habitId,
           date: dateStr,
-          userId: session?.user?.id || 'local-user',
-          habits,
+          value,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-        })
+        }))
+
+        const existingEntry = entriesMap.get(dateStr)
+        if (existingEntry) {
+          // Merge: keep existing entry but update habits with local values
+          entriesMap.set(dateStr, {
+            ...existingEntry,
+            habits: localHabits,
+            updatedAt: new Date().toISOString(),
+          })
+        } else {
+          // Create new entry from local data
+          entriesMap.set(dateStr, {
+            id: `entry-${dateStr}`,
+            date: dateStr,
+            userId: session?.user?.id || 'local-user',
+            habits: localHabits,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          })
+        }
       }
     }
-    return entries
+
+    // Convert map back to array
+    return Array.from(entriesMap.values())
   }
 
-  // Prefer local entries for instant UI update
-  const localDayEntries = buildLocalDayEntries()
-  const displayEntries = localDayEntries.length > 0 ? localDayEntries : (dailyEntries.length > 0 ? dailyEntries : generateMockDayEntries())
+  // Merge DB entries with local entries for instant UI updates
+  const displayEntries = dailyEntries.length > 0 
+    ? buildMergedDayEntries() 
+    : (Object.keys(habitData).length > 0 ? buildMergedDayEntries() : generateMockDayEntries())
   const isLoading =  entriesLoading
 
   return (
@@ -117,7 +141,7 @@ const page = () => {
                   <SelectedHabbitsAnalytics dailyEntriesFromDb={displayEntries} trackedHabitsFromDb={habitTemplate || null} />
                   <SelectedDayAnalytics trackedHabbitsFromDb={habitTemplate || null} dailyEntriesFromDb={displayEntries} />
               </div>
-              <TotalSuccessAnalytics habitEntries={displayEntries} />
+              <TotalSuccessAnalytics habitEntries={displayEntries} habitTemplate={habitTemplate || null} />
           </div>
         </div>
     </div>

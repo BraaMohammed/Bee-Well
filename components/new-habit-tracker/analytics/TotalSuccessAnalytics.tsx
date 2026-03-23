@@ -16,7 +16,8 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart"
 import { useEffect, useState } from "react"
-import { dayEntry , habitEntry } from "@/types/new-habit-tracker"
+import { dayEntry, habitTemplateType } from "@/types/new-habit-tracker"
+import { calculateDailyRating } from "@/lib/utilis/calculateDailyRating"
 
 const chartData = [
   { month: "dumb data , your data is loading", desktop: 186, mobile: 80, percentage: 47 },
@@ -46,35 +47,16 @@ const chartConfig = {
 
 interface TotalSuccessAnalyticsProps {
   habitEntries: dayEntry[]
+  habitTemplate: habitTemplateType | null
 }
 
-const TotalSuccessAnalytics = ({ habitEntries }: TotalSuccessAnalyticsProps) => {
+const TotalSuccessAnalytics = ({ habitEntries, habitTemplate }: TotalSuccessAnalyticsProps) => {
   const [plotData, setPlotData] = useState<Array<{ date: string; score: number }>>([])
 
   const calculateDailySuccessPercentage = (entry: dayEntry): number => {
-    if (!entry.habits || Object.keys(entry.habits).length === 0) return 0;
-    
-    let totalHabits = 0;
-    let completedHabits = 0;
-    
-    Object.values(entry.habits).forEach((habit:habitEntry) => {
-      totalHabits++;
-      
-      // For checkbox habits, check if value is true
-      if (typeof habit.value === 'boolean' && habit.value) {
-        completedHabits++;
-      }
-      // For number habits, check if value is greater than 0
-      else if (typeof habit.value === 'number' && habit.value > 0) {
-        completedHabits++;
-      }
-      // For select/text habits, check if value is not empty
-      else if (typeof habit.value === 'string' && habit.value.trim() !== '') {
-        completedHabits++;
-      }
-    });
-    
-    return totalHabits > 0 ? Math.round((completedHabits / totalHabits) * 100) : 0;
+    // Use the same calculation as SelectedDayAnalytics for consistency
+    if (!habitTemplate) return 0;
+    return Math.round(calculateDailyRating(entry, habitTemplate));
   };
 
   const handleCreatingPlotingData = (entries: dayEntry[]) => {

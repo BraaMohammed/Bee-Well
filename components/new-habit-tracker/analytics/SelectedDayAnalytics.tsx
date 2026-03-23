@@ -44,6 +44,16 @@ const SelectedDayAnalytics = ({ dailyEntriesFromDb ,  trackedHabbitsFromDb }: Se
   const [currentPercent , setCurrentPercentage ] = useState(0)
 
 
+  // Calculate percentage when entry or template changes
+  useEffect(() => {
+    if (selectedDailyEntry && trackedHabbitsFromDb) {
+      const p = calculateDailyRating(selectedDailyEntry, trackedHabbitsFromDb)
+      setCurrentPercentage(p)
+    }
+  }, [selectedDailyEntry, trackedHabbitsFromDb]);
+
+
+  // Initialize with most recent entry
   useEffect(() => {
     if (dailyEntriesFromDb && dailyEntriesFromDb.length > 0) {
       const sortedEntries = [...dailyEntriesFromDb].sort((a, b) => {
@@ -52,33 +62,19 @@ const SelectedDayAnalytics = ({ dailyEntriesFromDb ,  trackedHabbitsFromDb }: Se
         return dateB.getTime() - dateA.getTime();
       });
       setSelectedDailyEntry(sortedEntries[0]);
-      if (trackedHabbitsFromDb) {
-        handlePercentCalc(sortedEntries[0])
+    }
+  }, [dailyEntriesFromDb]);
+
+
+  // Update when calendar selection changes
+  useEffect(() => {
+    if (selectedDayFromCalender && dailyEntriesFromDb) {
+      const day = dailyEntriesFromDb.find(d => d.date === selectedDayFromCalender)
+      if (day) {
+        setSelectedDailyEntry(day)
       }
     }
-  }, [dailyEntriesFromDb, trackedHabbitsFromDb]);
-
-
-  const handlePercentCalc = async (d: dayEntry ) => {
-    if (!trackedHabbitsFromDb) return;
-    const p = await calculateDailyRating(d ,trackedHabbitsFromDb)
-    setCurrentPercentage(p)
-    
-  }
-
-
-  useEffect(
-    () => {
-      if (selectedDayFromCalender && dailyEntriesFromDb && trackedHabbitsFromDb) {
-        const day = dailyEntriesFromDb.find(d => d.date == selectedDayFromCalender)
-        if (day) {
-          setSelectedDailyEntry(day)
-          handlePercentCalc(day)
-        }
-      }
-
-    }, [selectedDayFromCalender, dailyEntriesFromDb, trackedHabbitsFromDb]
-  )
+  }, [selectedDayFromCalender, dailyEntriesFromDb])
 
   const chartConfig: ChartConfig = {
     day: {
